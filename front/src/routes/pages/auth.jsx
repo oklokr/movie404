@@ -7,7 +7,7 @@ const auth = [
     element: <Content />,
     children: [
       {
-        path: "/login",
+        path: "login",
         element: <Login />,
       },
     ],
