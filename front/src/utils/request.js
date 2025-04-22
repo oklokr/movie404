@@ -1,20 +1,21 @@
 import axios from "axios"
-import {
-  getToken,
-  removeTokenPrev,
-  removeApikeyPrev,
-  removeToken,
-} from "@/utils/auth"
-import { getLanguage } from "@/utils/language"
-import qs from "qs"
-import store from "@/store"
+// import {
+//   getToken,
+//   removeTokenPrev,
+//   removeApikeyPrev,
+//   removeToken,
+// } from "@/utils/auth"
+// import { getLanguage } from "@/utils/language"
+// import qs from "qs"
+// import store from "@/store"
 // import { getAssetGroupId } from './assetGroupId'
 // import i18n from './i18n'
 // import { func } from './function'
 
 // create an axios instance
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API,
+  // baseURL: process.env.VUE_APP_BASE_API,
+  baseURL: "http://localhost:9080",
   timeout: 60000 * 10,
 })
 
@@ -44,17 +45,11 @@ const setInterceptors = (service) => {
       pendingRequests[config.url] = cancelTokenSource
 
       if (!config.test) {
-        if (getToken() !== null && getApikey() !== null) {
-          config.headers["authorization"] = `Bearer ${getToken()}`
-          config.headers["X-Api-Key"] = getApikey()
-        }
+        // if (getToken() !== null && getApikey() !== null) {
+        //   config.headers["authorization"] = `Bearer ${getToken()}`
+        // }
         if (config.longTime) {
-          config.baseURL = process.env.VUE_APP_BASE_API2
           config.timeout = 60000 * 10
-        }
-        if (config.ext) {
-          config.baseURL = process.env.VUE_APP_EXT_API
-          config.headers["X-Api-Key"] = store.state.user.info?.nxApiKey
         }
         // if (store.state.user.unit !== null) {
         //   for (const key of Object.keys(store.state.user.unit)) {
@@ -63,8 +58,7 @@ const setInterceptors = (service) => {
         //     }
         //   }
         // }
-        config.headers["languageTpcd"] =
-          getLanguage() || window.navigator.language.substring(0, 2)
+        // config.headers["languageTpcd"] = getLanguage() || window.navigator.language.substring(0, 2)
       }
       config.data = config.data || {}
       return config
@@ -81,12 +75,13 @@ const serviceInterceptors = setInterceptors(service)
 
 const forbiddenFunc = (code) => {
   if ([401, 403].includes(code)) {
-    if (getToken() === null) return true
+    // if (getToken() === null) return true
     // func.toast(i18n.t('MSG.41718'), 'error') //'로그아웃 되었습니다.',
-    removeTokenPrev()
-    removeApikeyPrev()
-    removeToken()
+    // removeTokenPrev()
+    // removeApikeyPrev()
+    // removeToken()
     // store.dispatch('user/setLogout')
+    console.log("api 통신 오류입니다")
     return true
   }
   return false
@@ -99,6 +94,7 @@ serviceInterceptors.interceptors.response.use(
     if (forbiddenFunc(parseInt(code))) {
       return Promise.reject(new Error("logout"))
     }
+    console.log(response)
     return response.data
   },
   (error) => {
