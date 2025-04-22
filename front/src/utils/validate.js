@@ -1,4 +1,6 @@
+import { $i18n } from "@/locales/i18n"
 import _ from "lodash"
+const { i18n } = $i18n()
 export const valid = {
   password: function (rule, value, callback) {
     //- 최소 8자리 이상 영문/숫자/특수문자 중 3가지 이상 조합

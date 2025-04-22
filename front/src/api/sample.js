@@ -10,7 +10,6 @@ export function mypageLoginInfo(data) {
 
 export function mypageLoginManual(data) {
   return request({
-    // url: '/web/v1/mypage/login/menu',
     url: "/web/v1/mypage/login/manual",
     method: "post",
     data,
