@@ -3,7 +3,7 @@ import Content from "@/layout/content"
 const main = [
   {
     path: "/main",
-    element: <Content />,
+    Component: Content,
   },
 ]
 

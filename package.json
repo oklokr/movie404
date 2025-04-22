@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.7.0",
+    "axios": "^1.8.4",
+    "i18next": "^25.0.1",
+    "react-i18next": "^15.4.1"
+  }
+}
