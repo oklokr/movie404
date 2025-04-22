@@ -1,7 +1,6 @@
 import axios from "axios"
 import {
   getToken,
-  getApikey,
   removeTokenPrev,
   removeApikeyPrev,
   removeToken,

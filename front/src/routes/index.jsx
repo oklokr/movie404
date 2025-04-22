@@ -6,11 +6,11 @@ const routers = Object.values(modules).flatMap((module) => module.default)
 const router = createBrowserRouter([
   {
     path: "/404",
-    element: <Page404 />,
+    Component: Page404,
   },
   {
     path: "*",
-    element: <Page404 />,
+    Component: Page404,
   },
   ...routers,
 ])

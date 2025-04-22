@@ -9,11 +9,13 @@
     "types": ["vite/client"],
     "target": "esnext", // 또는 es2020
     "module": "esnext", // 또는 es2020
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "resolveJsonModule": true
   },
   "include": [
     "src/**/*.js", // 'src' 폴더 내에 있는 모든 JavaScript 파일 포함
-    "src/**/*.jsx" // 'src' 폴더 내에 있는 모든 JSX 파일 포함 (React 파일)
+    "src/**/*.jsx", // 'src' 폴더 내에 있는 모든 JSX 파일 포함 (React 파일)
+    "src/**/*.json"
   ],
   "exclude": [
     "node_modules", // 'node_modules' 폴더는 검사하지 않음

@@ -3,12 +3,12 @@ import Login from "@/page/auth/login"
 
 const auth = [
   {
-    path: "/",
-    element: <Content />,
+    path: "/login",
+    Component: Content,
     children: [
       {
-        path: "login",
-        element: <Login />,
+        path: "",
+        Component: Login,
       },
     ],
   },
