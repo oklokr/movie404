@@ -1,7 +1,7 @@
 spring:
   devtools:
     livereload:
-      enabled: true
+      enabled: false
     restart:
       enabled: true
       additional-paths:

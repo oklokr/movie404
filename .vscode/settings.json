@@ -1,4 +1,14 @@
 {
   "java.compile.nullAnalysis.mode": "automatic",
-  "java.configuration.updateBuildConfiguration": "interactive"
+  "java.configuration.updateBuildConfiguration": "interactive",
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        "match": ".*\\.java$",
+        "cmd": "cd backend && gradlew.bat classes --rerun-tasks",
+        "isShellCommand": true,
+        "silent": false
+      }
+    ]
+  }
 }
