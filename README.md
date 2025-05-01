@@ -12,6 +12,8 @@ npm install @mui/icons-material
 
 4. build tool: vite
 
+5. !주의 # 확장 Run on Save 필수 설치
+
 https://velog.io/@onnuri/reactreact-router-dom-v6
 
 \***\* 폴더구조 \*\***
