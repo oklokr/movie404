@@ -1,6 +1,7 @@
-import Content from "@/layout/content"
-import Main from "@/page/main"
-import Reservation from "@/page/main/reservation"
+import { lazy } from "react"
+const Content = lazy(() => import("@/layout/content"))
+const Main = lazy(() => import("@/page/main"))
+const Reservation = lazy(() => import("@/page/main/reservation"))
 
 const main = [
   {

@@ -1,7 +1,8 @@
-import Content from "@/layout/content"
-import Community from "@/page/community"
-import Notice from "@/page/community/notice"
-import Qna from "@/page/community/qna"
+import { lazy } from "react"
+const Content = lazy(() => import("@/layout/content"))
+const Community = lazy(() => import("@/page/community"))
+const Notice = lazy(() => import("@/page/community/notice"))
+const Qna = lazy(() => import("@/page/community/qna"))
 
 const community = [
   {

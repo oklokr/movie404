@@ -1,18 +1,27 @@
-import { createBrowserRouter, RouterProvider } from "react-router"
+import { createBrowserRouter } from "react-router"
 import Page404 from "@/page/404"
-
+import Layout from "@/layout"
 const modules = import.meta.glob("./pages/*.jsx", { eager: true })
-const routers = Object.values(modules).flatMap((module) => module.default)
-const router = createBrowserRouter([
-  {
-    path: "/404",
-    Component: Page404,
-  },
-  {
-    path: "*",
-    Component: Page404,
-  },
-  ...routers,
-])
+const pageRoutes = Object.values(modules).flatMap((m) => m.default)
 
-export default router
+const routes = [
+  {
+    path: "/",
+    Component: Layout,
+    children: [
+      ...pageRoutes,
+      {
+        path: "404",
+        Component: Page404,
+      },
+      {
+        path: "*",
+        Component: Page404,
+        // loader: requiresAuth,
+      },
+    ],
+  },
+]
+
+const router = createBrowserRouter(routes)
+export { router }
