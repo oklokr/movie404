@@ -1,5 +1,6 @@
-import Content from "@/layout/content"
-import Mypage from "@/page/mypage"
+import { lazy } from "react"
+const Content = lazy(() => import("@/layout/content"))
+const Mypage = lazy(() => import("@/page/mypage"))
 
 const mypage = [
   {

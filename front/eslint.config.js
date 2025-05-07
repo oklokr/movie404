@@ -38,7 +38,12 @@ export default [
         "warn",
         { allowConstantExport: true },
       ],
-      "prettier/prettier": "error", // Prettier 규칙을 위반하면 ESLint에서 에러로 처리
+      "prettier/prettier": [
+        "error", // Prettier 규칙을 위반하면 ESLint에서 에러로 처리
+        {
+          endOfLine: "auto",
+        },
+      ],
     },
   },
 ]

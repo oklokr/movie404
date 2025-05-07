@@ -1,7 +1,8 @@
-import Content from "@/layout/content"
-import Admin from "@/page/admin"
-import Movie from "@/page/admin/movie"
-import User from "@/page/admin/user"
+import { lazy } from "react"
+const Content = lazy(() => import("@/layout/content"))
+const Admin = lazy(() => import("@/page/admin"))
+const Movie = lazy(() => import("@/page/admin/movie"))
+const User = lazy(() => import("@/page/admin/user"))
 
 const admin = [
   {

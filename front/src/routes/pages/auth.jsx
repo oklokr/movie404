@@ -1,7 +1,9 @@
-import Content from "@/layout/content"
-import FindId from "@/page/auth/findId"
-import FindPw from "@/page/auth/findPw"
-import Login from "@/page/auth/login"
+import { lazy } from "react"
+const Content = lazy(() => import("@/layout/content"))
+const FindId = lazy(() => import("@/page/auth/findId"))
+const FindPw = lazy(() => import("@/page/auth/findPw"))
+const Signup = lazy(() => import("@/page/auth/signup"))
+const Login = lazy(() => import("@/page/auth/login"))
 
 const auth = [
   {
@@ -31,6 +33,16 @@ const auth = [
       {
         path: "",
         Component: FindPw,
+      },
+    ],
+  },
+  {
+    path: "/signup",
+    Component: Content,
+    children: [
+      {
+        path: "",
+        Component: Signup,
       },
     ],
   },
