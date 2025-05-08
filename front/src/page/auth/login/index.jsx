@@ -34,7 +34,7 @@ function Login() {
     <div>
       <h1>로고</h1>
       <h2>로그인</h2>
-      <div className="input-form">
+      <div className="input-form input-form--row">
         <InputLabel htmlFor="id">아이디</InputLabel>
         <OutlinedInput id="id" label="id" />
       </div>

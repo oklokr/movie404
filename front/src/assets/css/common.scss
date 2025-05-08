@@ -1,9 +1,14 @@
 .input-form {
-  &--row {
-    // 가로
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  label {
+    min-width: 120px;
   }
-
-  &--col {
-    // 세로
+  &--row {
+    width: fit-content;
+    align-items: initial;
+    flex-direction: column;
+    gap: 6px;
   }
 }
