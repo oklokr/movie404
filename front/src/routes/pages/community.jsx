@@ -1,26 +1,18 @@
 import { lazy } from "react"
-const Content = lazy(() => import("@/layout/content"))
 const Community = lazy(() => import("@/page/community"))
 const Notice = lazy(() => import("@/page/community/notice"))
 const Qna = lazy(() => import("@/page/community/qna"))
+const Faq = lazy(() => import("@/page/community/faq"))
 
 const community = [
   {
     path: "/community",
-    Component: Content,
+    Component: Community,
     children: [
-      {
-        path: "",
-        Component: Community,
-      },
-      {
-        path: "notice",
-        Component: Notice,
-      },
-      {
-        path: "qna",
-        Component: Qna,
-      },
+      { path: "", Component: Notice },
+      { path: "notice", Component: Notice },
+      { path: "qna", Component: Qna },
+      { path: "faq", Component: Faq },
     ],
   },
 ]

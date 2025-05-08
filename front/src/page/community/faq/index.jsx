@@ -1,10 +1,10 @@
-function Notice() {
+function Faq() {
   return (
     <div style={{ padding: "40px 48px", background: "#f9f9f9", minHeight: "100vh" }}>
-      <h2>공지사항</h2>
-      {/* 공지사항 내용 */}
+      <h2>자주묻는질문</h2>
+      {/* 자주묻는질문 내용 */}
     </div>
   )
 }
 
-export default Notice
+export default Faq
