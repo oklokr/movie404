@@ -15,7 +15,7 @@ import {
 } from "@mui/material"
 import { useState } from "react"
 
-const style = css`
+const test = css`
   color: red;
 `
 
@@ -32,16 +32,9 @@ function Login() {
 
   return (
     <div>
-      <h1
-        css={css`
-          color: teal;
-          font-size: 24px;
-        `}
-      >
-        로고
-      </h1>
+      <h1>로고</h1>
       <h2>로그인</h2>
-      <div className="input-wrap">
+      <div className="input-form">
         <InputLabel htmlFor="id">아이디</InputLabel>
         <OutlinedInput id="id" label="id" />
       </div>
