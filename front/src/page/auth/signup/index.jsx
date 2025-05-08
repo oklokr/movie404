@@ -1,5 +1,5 @@
-function singup() {
-  return <div>singup</div>
+function signup() {
+  return <div>signup</div>
 }
 
-export default singup
+export default signup
