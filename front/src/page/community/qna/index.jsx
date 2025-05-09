@@ -1,6 +1,13 @@
 import { css } from "@emotion/react"
 import React, { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { communityGetQnaList } from "@/api/community"
+
+const FIXED_USER = {
+  userId: "admin",
+  userName: "관리자",
+  isAdmin: true,
+}
 
 export default function QnaList() {
   const navigate = useNavigate()
@@ -11,13 +18,18 @@ export default function QnaList() {
   const itemsPerPage = 10
   const [loading, setLoading] = useState(false)
 
+  // 앱 시작 시 고정 유저 정보 저장
+  useEffect(() => {
+    localStorage.setItem("user", JSON.stringify(FIXED_USER))
+  }, [])
+
   useEffect(() => {
     setLoading(true)
-    fetch("/api/qna")
-      .then((res) => res.json())
-      .then((data) => {
-        setList(data)
-        setFiltered(data)
+    const user = JSON.parse(localStorage.getItem("user"))
+    communityGetQnaList({ userId: user.userId, isAdmin: user.isAdmin })
+      .then((res) => {
+        setList(res.data)
+        setFiltered(res.data)
         setLoading(false)
       })
       .catch(() => {
@@ -30,7 +42,9 @@ export default function QnaList() {
   const handleSearch = () => {
     setFiltered(
       list.filter(
-        (item) => item.title.includes(search.title) && item.writer.includes(search.writer),
+        (item) =>
+          item.title.includes(search.title) &&
+          (item.userId?.includes(search.writer) || item.writer?.includes(search.writer)),
       ),
     )
     setCurrentPage(1)
@@ -85,9 +99,9 @@ export default function QnaList() {
             </thead>
             <tbody>
               {paged.map((item) => (
-                <tr key={item.id}>
-                  <td css={tdStyle}>{item.status}</td>
-                  <td css={tdStyle}>{item.writer}</td>
+                <tr key={item.qnaCode || item.id}>
+                  <td css={tdStyle}>{item.reply ? "답변완료" : "답변대기"}</td>
+                  <td css={tdStyle}>{item.userId || item.writer}</td>
                   <td
                     style={{
                       ...tdStyle,
@@ -95,11 +109,11 @@ export default function QnaList() {
                       cursor: "pointer",
                       textDecoration: "underline",
                     }}
-                    onClick={() => navigate(`/community/qna/${item.id}`)}
+                    onClick={() => navigate(`/community/qna/${item.qnaCode || item.id}`)}
                   >
                     {item.title}
                   </td>
-                  <td css={tdStyle}>{item.date}</td>
+                  <td css={tdStyle}>{item.writeDate || item.date}</td>
                 </tr>
               ))}
             </tbody>
@@ -131,22 +145,25 @@ export default function QnaList() {
 }
 
 const thStyle = css`
-  border: "1px solid #e0e0e0",
-  padding: "12px 8px",
-  background: "#f0f0f0",
-  fontWeight: 700,`
+  border: 1px solid #e0e0e0;
+  padding: 12px 8px;
+  background: #f0f0f0;
+  font-weight: 700;
+`
 const tdStyle = css`
-  border: "1px solid #e0e0e0",
-  padding: "10px 8px",
-  background: "#fff",`
+  border: 1px solid #e0e0e0;
+  padding: 10px 8px;
+  background: #fff;
+`
 const inputStyle = css`
-  marginLeft: 8,
-  padding: "6px 10px",
-  border: "1px solid #ccc",
-  borderRadius: 4,
-  background: "#fff",`
+  margin-left: 8px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+`
 const btnSearch = css`
-  padding: "7px 20px";
+  padding: 7px 20px;
   border: none;
   border-radius: 4px;
   background: #0078d4;
@@ -155,7 +172,7 @@ const btnSearch = css`
   cursor: pointer;
 `
 const btnWrite = css`
-  padding: "7px 20px";
+  padding: 7px 20px;
   border: none;
   border-radius: 4px;
   background: #28a745;

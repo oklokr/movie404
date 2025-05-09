@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.project.repository.community.QnaMapper">
+  <select id="selectQnaList" resultType="com.project.model.community.QnaDto">
+    SELECT QNA_CODE as qnaCode, TITLE as title, CONTENT as content, USER_ID as userId, WRITE_DATE as writeDate, REPLY as reply
+    FROM QNA
+        <where>
+            <if test="isAdmin == false">
+            USER_ID = #{userId}
+            </if>
+        </where>
+    ORDER BY WRITE_DATE DESC
+    </select>
+</mapper>
