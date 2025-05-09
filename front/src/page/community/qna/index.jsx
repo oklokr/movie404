@@ -134,20 +134,17 @@ const thStyle = css`
   border: "1px solid #e0e0e0",
   padding: "12px 8px",
   background: "#f0f0f0",
-  fontWeight: 700,
-  `
+  fontWeight: 700,`
 const tdStyle = css`
   border: "1px solid #e0e0e0",
   padding: "10px 8px",
-  background: "#fff",
-  `
+  background: "#fff",`
 const inputStyle = css`
   marginLeft: 8,
   padding: "6px 10px",
   border: "1px solid #ccc",
   borderRadius: 4,
-  background: "#fff",
-  `
+  background: "#fff",`
 const btnSearch = css`
   padding: "7px 20px";
   border: none;

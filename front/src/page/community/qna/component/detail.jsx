@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { css } from "@emotion/react"
 
@@ -32,18 +32,36 @@ export default function QnaDetail({
           padding: 24,
         }}
       >
-        <dt style={{ ...thStyle, gridColumn: "1/2" }}>구분</dt>
-        <dd style={{ ...tdStyle, gridColumn: "2/3" }}>{detail.status}</dd>
-        <dt style={{ ...thStyle, gridColumn: "3/4" }}>작성자</dt>
-        <dd style={{ ...tdStyle, gridColumn: "4/5" }}>{detail.writer}</dd>
+        <dt css={thStyle} style={{ gridColumn: "1/2" }}>
+          구분
+        </dt>
+        <dd css={tdStyle} style={{ gridColumn: "2/3" }}>
+          {detail.status}
+        </dd>
+        <dt css={thStyle} style={{ gridColumn: "3/4" }}>
+          작성자
+        </dt>
+        <dd css={tdStyle} style={{ gridColumn: "4/5" }}>
+          {detail.writer}
+        </dd>
 
-        <dt style={{ ...thStyle, gridColumn: "1/2" }}>작성일자</dt>
-        <dd style={{ ...tdStyle, gridColumn: "2/3" }}>{detail.date}</dd>
-        <dt style={{ ...thStyle, gridColumn: "3/4" }}>제목</dt>
-        <dd style={{ ...tdStyle, gridColumn: "4/5" }}>{detail.title}</dd>
+        <dt css={thStyle} style={{ gridColumn: "1/2" }}>
+          작성일자
+        </dt>
+        <dd css={tdStyle} style={{ gridColumn: "2/3" }}>
+          {detail.date}
+        </dd>
+        <dt css={thStyle} style={{ gridColumn: "3/4" }}>
+          제목
+        </dt>
+        <dd css={tdStyle} style={{ gridColumn: "4/5" }}>
+          {detail.title}
+        </dd>
 
-        <dt style={{ ...thStyle, gridColumn: "1/2" }}>내용</dt>
-        <dd style={{ ...tdStyle, gridColumn: "2/5", minHeight: 120, verticalAlign: "top" }}>
+        <dt css={thStyle} style={{ gridColumn: "1/2" }}>
+          내용
+        </dt>
+        <dd css={tdStyle} style={{ gridColumn: "2/5", minHeight: 120, verticalAlign: "top" }}>
           {detail.content}
         </dd>
       </dl>
@@ -67,7 +85,8 @@ export default function QnaDetail({
               disabled={loading}
             />
             <button
-              style={{ ...btnStyle, background: "#0078d4", color: "#fff", marginRight: 8 }}
+              css={btnStyle}
+              style={{ background: "#0078d4", color: "#fff", marginRight: 8 }}
               onClick={handleSaveAnswer}
               disabled={loading}
             >
@@ -95,14 +114,16 @@ export default function QnaDetail({
         {isAdmin && (
           <>
             <button
-              style={{ ...btnStyle, background: "#6c757d", color: "#fff", marginLeft: 8 }}
+              css={btnStyle}
+              style={{ background: "#6c757d", color: "#fff", marginLeft: 8 }}
               onClick={() => navigate(`/community/qna/${id}/edit`)}
               disabled={loading}
             >
               수정
             </button>
             <button
-              style={{ ...btnStyle, background: "#dc3545", color: "#fff", marginLeft: 8 }}
+              css={btnStyle}
+              style={{ background: "#dc3545", color: "#fff", marginLeft: 8 }}
               onClick={handleDelete}
               disabled={loading}
             >
@@ -116,21 +137,21 @@ export default function QnaDetail({
 }
 
 const thStyle = css`
-  border: "1px solid #e0e0e0",
-  padding: "12px 8px",
-  background: "#f0f0f0",
-  fontWeight: 700,
-  `
+  border: 1px solid #e0e0e0;
+  padding: 12px 8px;
+  background: #f0f0f0;
+  font-weight: 700;
+`
 const tdStyle = css`
-  border: "1px solid #e0e0e0",
-  padding: "10px 8px",
-  background: "#fff",
-  `
+  border: 1px solid #e0e0e0;
+  padding: 10px 8px;
+  background: #fff;
+`
 const btnStyle = css`
-  padding: "8px 24px",
-  background: "#f5f5f5",
-  border: "1px solid #ccc",
-  borderRadius: 4,
-  cursor: "pointer",
-  fontWeight: 600,
-  `
+  padding: 8px 24px;
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+`

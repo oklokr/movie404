@@ -73,30 +73,45 @@ export default function QnaEdit({ detail }) {
             padding: 24,
           }}
         >
-          <dt style={{ ...thStyle, gridColumn: "1/2" }}>구분</dt>
-          <dd style={{ ...tdStyle, gridColumn: "2/3" }}>답변대기</dd>
-          <dt style={{ ...thStyle, gridColumn: "3/4" }}>작성자</dt>
-          <dd style={{ ...tdStyle, gridColumn: "4/5" }}>{userName}</dd>
+          <dt css={thStyle} style={{ gridColumn: "1/2" }}>
+            구분
+          </dt>
+          <dd css={tdStyle} style={{ gridColumn: "2/3" }}>
+            답변대기
+          </dd>
+          <dt css={thStyle} style={{ gridColumn: "3/4" }}>
+            작성자
+          </dt>
+          <dd css={tdStyle} style={{ gridColumn: "4/5" }}>
+            {userName}
+          </dd>
 
-          <dt style={{ ...thStyle, gridColumn: "1/2" }}>제목</dt>
-          <dd style={{ ...tdStyle, gridColumn: "2/5" }}>
+          <dt css={thStyle} style={{ gridColumn: "1/2" }}>
+            제목
+          </dt>
+          <dd css={tdStyle} style={{ gridColumn: "2/5" }}>
             <input
               type="text"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
-              style={{ ...inputStyle, width: "90%" }}
+              css={inputStyle}
+              style={{ width: "90%" }}
               maxLength={100}
               disabled={loading}
             />
           </dd>
 
-          <dt style={{ ...thStyle, gridColumn: "1/2" }}>작성일자</dt>
-          <dd style={{ ...tdStyle, gridColumn: "2/5" }}>
+          <dt css={thStyle} style={{ gridColumn: "1/2" }}>
+            작성일자
+          </dt>
+          <dd css={tdStyle} style={{ gridColumn: "2/5" }}>
             {isEdit ? form.date : new Date().toISOString().slice(0, 16).replace("T", " ")}
           </dd>
 
-          <dt style={{ ...thStyle, gridColumn: "1/2" }}>내용</dt>
-          <dd style={{ ...tdStyle, gridColumn: "2/5" }}>
+          <dt css={thStyle} style={{ gridColumn: "1/2" }}>
+            내용
+          </dt>
+          <dd css={tdStyle} style={{ gridColumn: "2/5" }}>
             <textarea
               value={form.content}
               onChange={(e) => setForm({ ...form, content: e.target.value })}
@@ -127,7 +142,8 @@ export default function QnaEdit({ detail }) {
           </button>
           <button
             type="button"
-            style={{ ...btnStyle, marginLeft: 8 }}
+            css={btnStyle}
+            style={{ marginLeft: 8 }}
             onClick={() => navigate(-1)}
             disabled={loading}
           >
@@ -135,7 +151,8 @@ export default function QnaEdit({ detail }) {
           </button>
           <button
             type="submit"
-            style={{ ...btnStyle, background: "#0078d4", color: "#fff", marginLeft: 8 }}
+            css={btnStyle}
+            style={{ background: "#0078d4", color: "#fff", marginLeft: 8 }}
             disabled={loading}
           >
             {isEdit ? "수정" : "작성"}
@@ -147,28 +164,28 @@ export default function QnaEdit({ detail }) {
 }
 
 const thStyle = css`
-  border: "1px solid #e0e0e0",
-  padding: "12px 8px",
-  background: "#f0f0f0",
-  fontWeight: 700,
-  `
+  border: 1px solid #e0e0e0;
+  padding: 12px 8px;
+  background: #f0f0f0;
+  font-weight: 700;
+`
 const tdStyle = css`
-  border: "1px solid #e0e0e0",
-  padding: "10px 8px",
-  background: "#fff",
-  `
+  border: 1px solid #e0e0e0;
+  padding: 10px 8px;
+  background: #fff;
+`
 const inputStyle = css`
-  marginLeft: 8,
-  padding: "6px 10px",
-  border: "1px solid #ccc",
-  borderRadius: 4,
-  background: "#fff",
-  `
+  margin-left: 8px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+`
 const btnStyle = css`
-  padding: "8px 24px",
-  background: "#f5f5f5",
-  border: "1px solid #ccc",
-  borderRadius: 4,
-  cursor: "pointer",
-  fontWeight: 600,
-  `
+  padding: 8px 24px;
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+`
