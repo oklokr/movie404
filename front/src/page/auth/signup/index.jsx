@@ -5,24 +5,31 @@ import Button from "@mui/material/Button"
 import Stack from "@mui/material/Stack"
 import OutlinedInput from "@mui/material/OutlinedInput"
 import { useState } from "react"
-import { InputLabel } from "@mui/material"
+import { Visibility, VisibilityOff } from "@mui/icons-material"
+import InputLabel from "@mui/material/InputLabel"
+import InputAdornment from "@mui/material/InputAdornment"
+import IconButton from "@mui/material/IconButton"
 
 const test = {
   color: "black",
 }
 function signup() {
   const [test2, setTest2] = useState("아이디를 입력해주세요")
+  const [test3, setTest3] = useState("비밀번호를 입력해주세요")
+  const [showPassword, setShowPassword] = useState(false)
+  const handleClickShowPassword = () => setShowPassword((show) => !show)
 
   function handleChange(e) {
     const val = e.target.value
-    if (val === "") setTest2("ㅇㅇ")
+    if (/[!@#$%^&*|ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(val)) setTest2("특수문자/한글 포함 불가")
+    else setTest2("아이디를 입력해주세요")
   }
+
   return (
     <>
       <h1 style={test}> 정보 입력 </h1>
-
       <div>
-        <InputLabel className="input-form--col">아이디 </InputLabel>
+        <InputLabel className="input-form">아이디 </InputLabel>
         <TextField
           id="signup_id"
           aria-describedby="outlined-weight-helper-text"
@@ -35,35 +42,37 @@ function signup() {
       <div>
         <InputLabel>비밀번호 </InputLabel>
         <OutlinedInput
-          id="signup_pwd"
           aria-describedby="outlined-weight-helper-text"
           required
+          id="signup_pwd"
+          type={showPassword ? "text" : "password"}
+          endAdornment={
+            <InputAdornment position="end">
+              <IconButton
+                aria-label={showPassword ? "hide the password" : "display the password"}
+                onClick={handleClickShowPassword}
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          }
+
+          //helperText={}
+          //onChange={}
         />
       </div>
 
       <div>
         <InputLabel>비밀번호 확인 </InputLabel>
-        <OutlinedInput
-          id="signup_repwd"
-          aria-describedby="outlined-weight-helper-text"
-          required
-        />
+        <OutlinedInput id="signup_repwd" aria-describedby="outlined-weight-helper-text" required />
       </div>
       <div>
         <InputLabel>이메일 </InputLabel>
-        <OutlinedInput
-          id="signup_email"
-          aria-describedby="outlined-weight-helper-text"
-          required
-        />
+        <OutlinedInput id="signup_email" aria-describedby="outlined-weight-helper-text" required />
       </div>
       <div>
         <InputLabel>전화번호 </InputLabel>
-        <OutlinedInput
-          id="signup_tel"
-          aria-describedby="outlined-weight-helper-text"
-          required
-        />
+        <OutlinedInput id="signup_tel" aria-describedby="outlined-weight-helper-text" required />
       </div>
 
       <Stack spacing={2} direction="row">
