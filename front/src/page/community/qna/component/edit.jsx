@@ -2,29 +2,6 @@ import React, { useState, useEffect } from "react"
 import { css } from "@emotion/react"
 import { useNavigate, useParams, useLocation } from "react-router-dom"
 
-const thStyle = css`
-  border: "1px solid #e0e0e0",
-  padding: "12px 8px",
-  background: "#f0f0f0",
-  fontWeight: 700,`
-const tdStyle = css`
-  border: "1px solid #e0e0e0",
-  padding: "10px 8px",
-  background: "#fff",`
-const inputStyle = css`
-  marginLeft: 8,
-  padding: "6px 10px",
-  border: "1px solid #ccc",
-  borderRadius: 4,
-  background: "#fff",`
-const btnStyle = css`
-  padding: "8px 24px",
-  background: "#f5f5f5",
-  border: "1px solid #ccc",
-  borderRadius: 4,
-  cursor: "pointer",
-  fontWeight: 600,`
-
 function getUserName() {
   return ""
 }
@@ -168,3 +145,30 @@ export default function QnaEdit({ detail }) {
     </div>
   )
 }
+
+const thStyle = css`
+  border: "1px solid #e0e0e0",
+  padding: "12px 8px",
+  background: "#f0f0f0",
+  fontWeight: 700,
+  `
+const tdStyle = css`
+  border: "1px solid #e0e0e0",
+  padding: "10px 8px",
+  background: "#fff",
+  `
+const inputStyle = css`
+  marginLeft: 8,
+  padding: "6px 10px",
+  border: "1px solid #ccc",
+  borderRadius: 4,
+  background: "#fff",
+  `
+const btnStyle = css`
+  padding: "8px 24px",
+  background: "#f5f5f5",
+  border: "1px solid #ccc",
+  borderRadius: 4,
+  cursor: "pointer",
+  fontWeight: 600,
+  `

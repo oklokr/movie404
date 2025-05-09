@@ -2,46 +2,6 @@ import { css } from "@emotion/react"
 import React, { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
-const thStyle = css`
-  border: "1px solid #e0e0e0",
-  padding: "12px 8px",
-  background: "#f0f0f0",
-  fontWeight: 700,`
-const tdStyle = css`
-  border: "1px solid #e0e0e0",
-  padding: "10px 8px",
-  background: "#fff",`
-const inputStyle = css`
-  marginLeft: 8,
-  padding: "6px 10px",
-  border: "1px solid #ccc",
-  borderRadius: 4,
-  background: "#fff",`
-const btnSearch = css`
-  padding: "7px 20px";
-  border: none;
-  border-radius: 4px;
-  background: #0078d4;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-`
-const btnWrite = css`
-  padding: "7px 20px";
-  border: none;
-  border-radius: 4px;
-  background: #28a745;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-`
-const tableStyle = css`
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-`
-
 export default function QnaList() {
   const navigate = useNavigate()
   const [search, setSearch] = useState({ title: "", writer: "" })
@@ -169,3 +129,46 @@ export default function QnaList() {
     </div>
   )
 }
+
+const thStyle = css`
+  border: "1px solid #e0e0e0",
+  padding: "12px 8px",
+  background: "#f0f0f0",
+  fontWeight: 700,
+  `
+const tdStyle = css`
+  border: "1px solid #e0e0e0",
+  padding: "10px 8px",
+  background: "#fff",
+  `
+const inputStyle = css`
+  marginLeft: 8,
+  padding: "6px 10px",
+  border: "1px solid #ccc",
+  borderRadius: 4,
+  background: "#fff",
+  `
+const btnSearch = css`
+  padding: "7px 20px";
+  border: none;
+  border-radius: 4px;
+  background: #0078d4;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+`
+const btnWrite = css`
+  padding: "7px 20px";
+  border: none;
+  border-radius: 4px;
+  background: #28a745;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+`
+const tableStyle = css`
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+`

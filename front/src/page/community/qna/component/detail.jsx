@@ -2,23 +2,6 @@ import React, { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { css } from "@emotion/react"
 
-const thStyle = css`
-  border: "1px solid #e0e0e0",
-  padding: "12px 8px",
-  background: "#f0f0f0",
-  fontWeight: 700,`
-const tdStyle = css`
-  border: "1px solid #e0e0e0",
-  padding: "10px 8px",
-  background: "#fff",`
-const btnStyle = css`
-  padding: "8px 24px",
-  background: "#f5f5f5",
-  border: "1px solid #ccc",
-  borderRadius: 4,
-  cursor: "pointer",
-  fontWeight: 600,`
-
 export default function QnaDetail({
   detail,
   answer,
@@ -131,3 +114,23 @@ export default function QnaDetail({
     </div>
   )
 }
+
+const thStyle = css`
+  border: "1px solid #e0e0e0",
+  padding: "12px 8px",
+  background: "#f0f0f0",
+  fontWeight: 700,
+  `
+const tdStyle = css`
+  border: "1px solid #e0e0e0",
+  padding: "10px 8px",
+  background: "#fff",
+  `
+const btnStyle = css`
+  padding: "8px 24px",
+  background: "#f5f5f5",
+  border: "1px solid #ccc",
+  borderRadius: 4,
+  cursor: "pointer",
+  fontWeight: 600,
+  `
