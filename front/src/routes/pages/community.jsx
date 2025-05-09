@@ -1,7 +1,9 @@
 import { lazy } from "react"
 const Community = lazy(() => import("@/page/community"))
 const Notice = lazy(() => import("@/page/community/notice"))
-const Qna = lazy(() => import("@/page/community/qna"))
+const QnaList = lazy(() => import("@/page/community/qna")) // 목록
+const QnaEdit = lazy(() => import("@/page/community/qna/component/edit")) // 작성/수정
+const QnaDetail = lazy(() => import("@/page/community/qna/component/detail")) // 상세
 const Faq = lazy(() => import("@/page/community/faq"))
 
 const community = [
@@ -11,10 +13,10 @@ const community = [
     children: [
       { path: "", Component: Notice },
       { path: "notice", Component: Notice },
-      { path: "qna", Component: Qna },
-      { path: "qna/write", Component: Qna },
-      { path: "qna/:id", Component: Qna },
-      { path: "qna/:id/edit", Component: Qna },
+      { path: "qna", Component: QnaList },
+      { path: "qna/write", Component: QnaEdit },
+      { path: "qna/:id", Component: QnaDetail },
+      { path: "qna/:id/edit", Component: QnaEdit },
       { path: "faq", Component: Faq },
     ],
   },
