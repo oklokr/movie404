@@ -3,12 +3,6 @@ import React, { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { communityGetQnaList } from "@/api/community"
 
-const FIXED_USER = {
-  userId: "admin",
-  userName: "관리자",
-  isAdmin: true,
-}
-
 export default function QnaList() {
   const navigate = useNavigate()
   const [search, setSearch] = useState({ title: "", writer: "" })
@@ -17,15 +11,17 @@ export default function QnaList() {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
   const [loading, setLoading] = useState(false)
+  const [user, setUser] = useState({ userId: "", userName: "", isAdmin: false })
 
-  // 앱 시작 시 고정 유저 정보 저장
+  // 로그인한 사용자 정보 불러오기
   useEffect(() => {
-    localStorage.setItem("user", JSON.stringify(FIXED_USER))
+    const userInfo = JSON.parse(localStorage.getItem("user") || "{}")
+    setUser(userInfo)
   }, [])
 
   useEffect(() => {
+    if (!user.userId) return
     setLoading(true)
-    const user = JSON.parse(localStorage.getItem("user"))
     communityGetQnaList({ userId: user.userId, isAdmin: user.isAdmin })
       .then((res) => {
         setList(res.data)
@@ -37,7 +33,7 @@ export default function QnaList() {
         setFiltered([])
         setLoading(false)
       })
-  }, [])
+  }, [user.userId, user.isAdmin])
 
   const handleSearch = () => {
     setFiltered(
