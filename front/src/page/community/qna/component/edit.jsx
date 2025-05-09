@@ -1,164 +1,144 @@
-import React, { useState, useEffect } from "react"
+import React, { useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
 import { css } from "@emotion/react"
-import { useNavigate, useParams, useLocation } from "react-router-dom"
+import { communityGetQnaDetail, communityEditQna } from "@/api/community"
 
-function getUserName() {
-  return ""
-}
-
-export default function QnaEdit({ detail }) {
+export default function QnaEdit() {
   const navigate = useNavigate()
-  const { id } = useParams()
-  const location = useLocation()
-  const isEdit = location.pathname.endsWith("/edit")
-  const userName = getUserName()
-  const [loading, setLoading] = useState(false)
+  const { id } = useParams() // id가 있으면 수정, 없으면 작성
+  const user = JSON.parse(localStorage.getItem("user") || "{}")
+  const isEdit = !!id
+
   const [form, setForm] = useState({
     title: "",
     content: "",
-    writer: userName,
-    date: "",
   })
+  const [loading, setLoading] = useState(false)
 
+  // 수정일 때 기존 데이터 불러오기
   useEffect(() => {
-    if (isEdit && detail) {
-      setForm({
-        title: detail.title,
-        content: detail.content,
-        writer: detail.writer,
-        date: detail.date,
-      })
+    if (isEdit) {
+      setLoading(true)
+      communityGetQnaDetail(id)
+        .then((res) => {
+          setForm({
+            title: res.data.title,
+            content: res.data.content,
+          })
+          setLoading(false)
+        })
+        .catch(() => setLoading(false))
     }
-  }, [isEdit, detail])
+  }, [id, isEdit])
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value })
+  }
+
+  const handleSubmit = () => {
     if (!form.title.trim() || !form.content.trim()) {
       alert("제목과 내용을 입력하세요.")
       return
     }
     setLoading(true)
-    const method = isEdit ? "PUT" : "POST"
-    const url = isEdit ? `/api/qna/${id}` : "/api/qna"
-    fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+    communityEditQna({
+      ...(isEdit ? { qnaCode: id } : {}),
+      title: form.title,
+      content: form.content,
+      userId: user.userId,
     })
-      .then((res) => {
-        if (res.ok) {
-          alert(isEdit ? "수정되었습니다." : "작성되었습니다.")
-          navigate("/community/qna")
-        } else {
-          alert("저장 실패")
-        }
+      .then(() => {
+        setLoading(false)
+        navigate("/community/qna")
       })
-      .catch(() => alert("저장 실패"))
-      .finally(() => setLoading(false))
+      .catch(() => setLoading(false))
   }
 
   return (
     <div style={{ padding: 40, background: "#f9f9f9", minHeight: "100vh" }}>
-      <h1 style={{ marginBottom: 24 }}>1:1 문의 {isEdit ? "수정" : "작성"}</h1>
-      <form onSubmit={handleSubmit}>
-        <dl
-          style={{
-            display: "grid",
-            gridTemplateColumns: "120px 1fr 120px 1fr",
-            rowGap: 16,
-            columnGap: 0,
-            background: "#fff",
-            borderRadius: 8,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
-            padding: 24,
-          }}
+      <h1 style={{ marginBottom: 24 }}>{isEdit ? "1:1 문의 수정" : "1:1 문의 작성"}</h1>
+      <dl
+        style={{
+          display: "grid",
+          gridTemplateColumns: "120px 1fr 120px 1fr",
+          rowGap: 16,
+          columnGap: 0,
+          background: "#fff",
+          borderRadius: 8,
+          boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
+          padding: 24,
+        }}
+      >
+        <dt css={thStyle} style={{ gridColumn: "1/2" }}>
+          구분
+        </dt>
+        <dd css={tdStyle} style={{ gridColumn: "2/3" }}>
+          답변대기
+        </dd>
+        <dt css={thStyle} style={{ gridColumn: "3/4" }}>
+          작성자
+        </dt>
+        <dd css={tdStyle} style={{ gridColumn: "4/5" }}>
+          {user.userId}
+        </dd>
+        <dt css={thStyle} style={{ gridColumn: "1/2" }}>
+          제목
+        </dt>
+        <dd css={tdStyle} style={{ gridColumn: "2/5" }}>
+          <input
+            name="title"
+            value={form.title}
+            onChange={handleChange}
+            css={inputStyle}
+            maxLength={100}
+            disabled={loading}
+            placeholder="제목을 입력하세요"
+          />
+        </dd>
+        <dt css={thStyle} style={{ gridColumn: "1/2" }}>
+          내용
+        </dt>
+        <dd css={tdStyle} style={{ gridColumn: "2/5" }}>
+          <textarea
+            name="content"
+            value={form.content}
+            onChange={handleChange}
+            css={textareaStyle}
+            maxLength={3000}
+            disabled={loading}
+            placeholder="내용을 입력하세요"
+          />
+          <div style={{ textAlign: "right", fontSize: 13, color: "#888" }}>
+            {form.content.length}/3000자
+          </div>
+        </dd>
+      </dl>
+      <div style={{ marginTop: 40, textAlign: "right" }}>
+        <button
+          css={btnStyle}
+          style={{ marginRight: 8 }}
+          onClick={() => navigate("/community/qna")}
+          disabled={loading}
         >
-          <dt css={thStyle} style={{ gridColumn: "1/2" }}>
-            구분
-          </dt>
-          <dd css={tdStyle} style={{ gridColumn: "2/3" }}>
-            답변대기
-          </dd>
-          <dt css={thStyle} style={{ gridColumn: "3/4" }}>
-            작성자
-          </dt>
-          <dd css={tdStyle} style={{ gridColumn: "4/5" }}>
-            {userName}
-          </dd>
-
-          <dt css={thStyle} style={{ gridColumn: "1/2" }}>
-            제목
-          </dt>
-          <dd css={tdStyle} style={{ gridColumn: "2/5" }}>
-            <input
-              type="text"
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-              css={inputStyle}
-              style={{ width: "90%" }}
-              maxLength={100}
-              disabled={loading}
-            />
-          </dd>
-
-          <dt css={thStyle} style={{ gridColumn: "1/2" }}>
-            작성일자
-          </dt>
-          <dd css={tdStyle} style={{ gridColumn: "2/5" }}>
-            {isEdit ? form.date : new Date().toISOString().slice(0, 16).replace("T", " ")}
-          </dd>
-
-          <dt css={thStyle} style={{ gridColumn: "1/2" }}>
-            내용
-          </dt>
-          <dd css={tdStyle} style={{ gridColumn: "2/5" }}>
-            <textarea
-              value={form.content}
-              onChange={(e) => setForm({ ...form, content: e.target.value })}
-              style={{
-                width: "100%",
-                minHeight: 160,
-                border: "1px solid #ccc",
-                borderRadius: 4,
-                padding: 8,
-                fontSize: 15,
-              }}
-              maxLength={3000}
-              disabled={loading}
-            />
-            <div style={{ textAlign: "right", fontSize: 13, color: "#888" }}>
-              {form.content.length}/3000
-            </div>
-          </dd>
-        </dl>
-        <div style={{ marginTop: 32, textAlign: "right" }}>
-          <button
-            type="button"
-            css={btnStyle}
-            onClick={() => navigate("/community/qna")}
-            disabled={loading}
-          >
-            목록
-          </button>
-          <button
-            type="button"
-            css={btnStyle}
-            style={{ marginLeft: 8 }}
-            onClick={() => navigate(-1)}
-            disabled={loading}
-          >
-            취소
-          </button>
-          <button
-            type="submit"
-            css={btnStyle}
-            style={{ background: "#0078d4", color: "#fff", marginLeft: 8 }}
-            disabled={loading}
-          >
-            {isEdit ? "수정" : "작성"}
-          </button>
-        </div>
-      </form>
+          목록
+        </button>
+        <button
+          css={btnStyle}
+          style={{ background: "#6c757d", color: "#fff", marginRight: 8 }}
+          onClick={() => navigate(-1)}
+          disabled={loading}
+        >
+          취소
+        </button>
+        <button
+          css={btnStyle}
+          style={{ background: "#0078d4", color: "#fff" }}
+          onClick={handleSubmit}
+          disabled={loading}
+        >
+          {isEdit ? "수정" : "작성"}
+        </button>
+      </div>
     </div>
   )
 }
@@ -175,11 +155,20 @@ const tdStyle = css`
   background: #fff;
 `
 const inputStyle = css`
-  margin-left: 8px;
-  padding: 6px 10px;
+  width: 100%;
+  padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  background: #fff;
+  font-size: 16px;
+`
+const textareaStyle = css`
+  width: 100%;
+  min-height: 180px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 15px;
+  resize: vertical;
 `
 const btnStyle = css`
   padding: 8px 24px;

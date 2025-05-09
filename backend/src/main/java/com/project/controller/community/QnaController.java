@@ -34,7 +34,11 @@ public class QnaController {
 
     @PostMapping("/edit")
     public ApiResponse editQna(@RequestBody QnaDto dto) {
-        qnaService.editQna(dto);
+        if (dto.getQnaCode() == null || dto.getQnaCode().isEmpty()) {
+            qnaService.insertQna(dto); // 작성
+        } else {
+            qnaService.updateQna(dto); // 수정
+        }
         return new ApiResponse(true);
     }
 

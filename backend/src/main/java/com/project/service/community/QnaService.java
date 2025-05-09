@@ -24,7 +24,21 @@ public class QnaService {
         qnaMapper.updateReply(qnaCode, reply);
     }
 
-    public void editQna(QnaDto dto) {
+    public void insertQna(QnaDto dto) {
+        // QNA_CODE가 없으면 8자리 랜덤 영숫자 생성 (표준 자바만 사용)
+        if (dto.getQnaCode() == null || dto.getQnaCode().isEmpty()) {
+            String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            StringBuilder code = new StringBuilder();
+            java.util.Random rnd = new java.util.Random();
+            for (int i = 0; i < 8; i++) {
+                code.append(chars.charAt(rnd.nextInt(chars.length())));
+            }
+            dto.setQnaCode(code.toString());
+        }
+        qnaMapper.insertQna(dto);
+    }
+
+    public void updateQna(QnaDto dto) {
         qnaMapper.updateQna(dto);
     }
 

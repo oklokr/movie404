@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom"
 import { communityGetQnaList } from "@/api/community"
 
 const FIXED_USER = {
-  userId: "admin",
+  userId: "user",
   userName: "관리자",
-  isAdmin: true,
+  isAdmin: false,
 }
 
 export default function QnaList() {
@@ -22,6 +22,9 @@ export default function QnaList() {
   useEffect(() => {
     localStorage.setItem("user", JSON.stringify(FIXED_USER))
   }, [])
+
+  const user = JSON.parse(localStorage.getItem("user") || "{}")
+  const isAdmin = user.isAdmin
 
   useEffect(() => {
     setLoading(true)
@@ -80,9 +83,11 @@ export default function QnaList() {
         </button>
       </div>
       <div style={{ textAlign: "right", marginBottom: 10 }}>
-        <button onClick={() => navigate("/community/qna/write")} css={btnWrite}>
-          작성
-        </button>
+        {!isAdmin && (
+          <button onClick={() => navigate("/community/qna/write")} css={btnWrite}>
+            작성
+          </button>
+        )}
       </div>
       {loading ? (
         <div style={{ padding: 40 }}>로딩중...</div>
