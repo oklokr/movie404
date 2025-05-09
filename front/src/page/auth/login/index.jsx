@@ -1,16 +1,14 @@
 import { mypageLoginInfo } from "@/api/sample"
-import { Password, Visibility, VisibilityOff } from "@mui/icons-material"
+import { Visibility, VisibilityOff } from "@mui/icons-material"
 import { css } from "@emotion/react"
 import {
-  Box,
   Button,
-  FilledInput,
-  FormControl,
   FormHelperText,
   IconButton,
   InputAdornment,
   InputLabel,
   OutlinedInput,
+  TextField,
 } from "@mui/material"
 import { useEffect, useState } from "react"
 import logoImg from "@/assets/images/logo/logo.png"
@@ -42,10 +40,9 @@ const loginBoxStyle = css`
 `
 
 function Login() {
-  const defaultPostForm = {
-    id: "",
-    password: "",
-  }
+  const defaultPostForm = { id: "", password: "" }
+  const defaultMessage = { id: "", password: "", error: "" }
+  const [message, setMessage] = useState(defaultMessage)
   const [showPassword, setShowPassword] = useState(false)
   const [postForm, setPostForm] = useState(defaultPostForm)
   const handleClickShowPassword = () => setShowPassword((show) => !show)
@@ -55,6 +52,10 @@ function Login() {
     }).then((res) => {
       console.log(res)
     })
+  }
+  const handleChange = (value, key, msg) => {
+    setPostForm({ ...postForm, [key]: value })
+    setMessage({ ...message, [key]: value.length < 1 ? msg : "" })
   }
 
   useEffect(() => {
@@ -70,21 +71,22 @@ function Login() {
         <h2>로그인</h2>
         <div className="input-form input-form--row">
           <InputLabel htmlFor="id">아이디</InputLabel>
-          <OutlinedInput
+          <TextField
             id="id"
-            label="id"
             value={postForm.id}
-            onChange={(e) => setPostForm({ ...postForm, id: e.target.value })}
+            error={message.id.length > 0}
+            onChange={(e) => handleChange(e.target.value, "id", "아이디를 입력해주세요.")}
           />
+          <FormHelperText error={message.id.length > 0}>{message.id}</FormHelperText>
         </div>
         <div>
           <InputLabel htmlFor="password">패스워드</InputLabel>
           <OutlinedInput
             id="password"
-            label="Password"
             type={showPassword ? "text" : "password"}
             value={postForm.password}
-            onChange={(e) => setPostForm({ ...postForm, password: e.target.value })}
+            onChange={(e) => handleChange(e.target.value, "password", "비밀번호를 입력해주세요.")}
+            error={message.password.length > 0}
             endAdornment={
               <InputAdornment position="end">
                 <IconButton
@@ -97,6 +99,7 @@ function Login() {
               </InputAdornment>
             }
           />
+          <FormHelperText error={message.password.length > 0}>{message.password}</FormHelperText>
         </div>
         <Button variant="contained" onClick={handleLogin}>
           로그인
