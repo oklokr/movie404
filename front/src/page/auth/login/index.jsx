@@ -7,28 +7,49 @@ import {
   FormControl,
   FormHelperText,
   IconButton,
-  Input,
   InputAdornment,
   InputLabel,
   OutlinedInput,
-  TextField,
 } from "@mui/material"
 import { useState } from "react"
+import logoImg from "@/assets/images/logo/logo.png"
 
-const test = css`
-  color: red;
+const loginWrapStyle = css`
+  width: 600px;
+  margin: 0 auto;
+`
+const logoStyle = css`
+  width: 176px;
+  height: 176px;
+  margin: 0 auto;
+  background: url(${logoImg}) no-repeat center;
+  background-size: 100%;
+  a {
+    color: transparent;
+  }
+`
+const loginBoxStyle = css`
+  padding: 30px 40px;
+  border: 1px solid #000;
+  border-radius: 12px;
+
+  h2 {
+    font-size: 40px;
+    margin: 0 auto;
+    text-align: center;
+  }
 `
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false)
-
   const handleClickShowPassword = () => setShowPassword((show) => !show)
-
-  // mypageLoginInfo({
-  //   text: "false",
-  // }).then((res) => {
-  //   console.log(res)
-  // })
+  const handleLogin = () => {
+    mypageLoginInfo({
+      text: "false",
+    }).then((res) => {
+      console.log(res)
+    })
+  }
 
   return (
     <div>
