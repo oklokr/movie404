@@ -7,11 +7,31 @@
   <select id="selectQnaList" resultType="com.project.model.community.QnaDto">
     SELECT QNA_CODE as qnaCode, TITLE as title, CONTENT as content, USER_ID as userId, WRITE_DATE as writeDate, REPLY as reply
     FROM QNA
-        <where>
-            <if test="isAdmin == false">
-            USER_ID = #{userId}
-            </if>
-        </where>
+    <where>
+      <if test="isAdmin == false">
+        USER_ID = #{userId}
+      </if>
+    </where>
     ORDER BY WRITE_DATE DESC
-    </select>
+  </select>
+
+  <select id="selectQnaDetail" resultType="com.project.model.community.QnaDto">
+    SELECT QNA_CODE as qnaCode, TITLE as title, CONTENT as content, USER_ID as userId, WRITE_DATE as writeDate, REPLY as reply
+    FROM QNA
+    WHERE QNA_CODE = #{qnaCode}
+  </select>
+
+  <update id="updateReply">
+    UPDATE QNA SET REPLY = #{reply} WHERE QNA_CODE = #{qnaCode}
+  </update>
+
+  <update id="updateQna" parameterType="com.project.model.community.QnaDto">
+    UPDATE QNA
+    SET TITLE = #{title}, CONTENT = #{content}
+    WHERE QNA_CODE = #{qnaCode}
+  </update>
+
+  <delete id="deleteQna">
+    DELETE FROM QNA WHERE QNA_CODE = #{qnaCode}
+  </delete>
 </mapper>

@@ -1,18 +1,53 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { css } from "@emotion/react"
+import { communityGetQnaDetail, communityReplyQna, communityDeleteQna } from "@/api/community"
 
-export default function QnaDetail({
-  detail,
-  answer,
-  setAnswer,
-  loading,
-  handleSaveAnswer,
-  handleDelete,
-  isAdmin,
-}) {
+export default function QnaDetail() {
   const navigate = useNavigate()
   const { id } = useParams()
+  const [detail, setDetail] = useState(null)
+  const [answer, setAnswer] = useState("")
+  const [loading, setLoading] = useState(false)
+  const user = JSON.parse(localStorage.getItem("user") || "{}")
+  const isAdmin = user.isAdmin
+  const isWriter = detail && user.userId === detail.userId
+
+  useEffect(() => {
+    setLoading(true)
+    communityGetQnaDetail(id)
+      .then((res) => {
+        setDetail(res.data)
+        setAnswer(res.data?.reply || "")
+        setLoading(false)
+      })
+      .catch(() => {
+        setDetail(null)
+        setLoading(false)
+      })
+  }, [id])
+
+  const handleSaveAnswer = () => {
+    setLoading(true)
+    communityReplyQna({ qnaCode: id, reply: answer })
+      .then(() => {
+        setDetail({ ...detail, reply: answer })
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
+  }
+
+  const handleDelete = () => {
+    if (window.confirm("정말 삭제하시겠습니까?")) {
+      setLoading(true)
+      communityDeleteQna({ qnaCode: id })
+        .then(() => {
+          setLoading(false)
+          navigate("/community/qna")
+        })
+        .catch(() => setLoading(false))
+    }
+  }
 
   if (loading) return <div style={{ padding: 40 }}>로딩중...</div>
   if (!detail) return <div style={{ padding: 40 }}>존재하지 않는 문의입니다.</div>
@@ -36,20 +71,19 @@ export default function QnaDetail({
           구분
         </dt>
         <dd css={tdStyle} style={{ gridColumn: "2/3" }}>
-          {detail.status}
+          {detail.reply ? "답변완료" : "답변대기"}
         </dd>
         <dt css={thStyle} style={{ gridColumn: "3/4" }}>
           작성자
         </dt>
         <dd css={tdStyle} style={{ gridColumn: "4/5" }}>
-          {detail.writer}
+          {detail.userId}
         </dd>
-
         <dt css={thStyle} style={{ gridColumn: "1/2" }}>
           작성일자
         </dt>
         <dd css={tdStyle} style={{ gridColumn: "2/3" }}>
-          {detail.date}
+          {detail.writeDate}
         </dd>
         <dt css={thStyle} style={{ gridColumn: "3/4" }}>
           제목
@@ -57,7 +91,6 @@ export default function QnaDetail({
         <dd css={tdStyle} style={{ gridColumn: "4/5" }}>
           {detail.title}
         </dd>
-
         <dt css={thStyle} style={{ gridColumn: "1/2" }}>
           내용
         </dt>
@@ -103,7 +136,7 @@ export default function QnaDetail({
               minHeight: 60,
             }}
           >
-            {detail.answer || "아직 답변이 등록되지 않았습니다."}
+            {detail.reply || "아직 답변이 등록되지 않았습니다."}
           </div>
         )}
       </div>
@@ -111,7 +144,7 @@ export default function QnaDetail({
         <button onClick={() => navigate("/community/qna")} css={btnStyle} disabled={loading}>
           목록
         </button>
-        {isAdmin && (
+        {(isAdmin || isWriter) && (
           <>
             <button
               css={btnStyle}
