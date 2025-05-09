@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom"
 import { communityGetQnaList } from "@/api/community"
 
 const FIXED_USER = {
-  userId: "user",
+  userId: "admin",
   userName: "관리자",
-  isAdmin: false,
+  isAdmin: true,
 }
 
 export default function QnaList() {
@@ -22,9 +22,6 @@ export default function QnaList() {
   useEffect(() => {
     localStorage.setItem("user", JSON.stringify(FIXED_USER))
   }, [])
-
-  const user = JSON.parse(localStorage.getItem("user") || "{}")
-  const isAdmin = user.isAdmin
 
   useEffect(() => {
     setLoading(true)
@@ -83,11 +80,9 @@ export default function QnaList() {
         </button>
       </div>
       <div style={{ textAlign: "right", marginBottom: 10 }}>
-        {!isAdmin && (
-          <button onClick={() => navigate("/community/qna/write")} css={btnWrite}>
-            작성
-          </button>
-        )}
+        <button onClick={() => navigate("/community/qna/write")} css={btnWrite}>
+          작성
+        </button>
       </div>
       {loading ? (
         <div style={{ padding: 40 }}>로딩중...</div>
@@ -108,8 +103,8 @@ export default function QnaList() {
                   <td css={tdStyle}>{item.reply ? "답변완료" : "답변대기"}</td>
                   <td css={tdStyle}>{item.userId || item.writer}</td>
                   <td
+                    css={tdStyle}
                     style={{
-                      ...tdStyle,
                       color: "#0078d4",
                       cursor: "pointer",
                       textDecoration: "underline",

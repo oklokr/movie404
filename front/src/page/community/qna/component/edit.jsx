@@ -156,6 +156,7 @@ const tdStyle = css`
 `
 const inputStyle = css`
   width: 100%;
+  box-sizing: border-box;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -163,6 +164,7 @@ const inputStyle = css`
 `
 const textareaStyle = css`
   width: 100%;
+  box-sizing: border-box;
   min-height: 180px;
   padding: 10px;
   border: 1px solid #ccc;
