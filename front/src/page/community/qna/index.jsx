@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, useLocation } from "react-router-dom"
 
 // 관리자 여부 예시 (실제 서비스에서는 로그인 정보에서 받아와야 함)
 function getIsAdmin() {
-  // 예시: localStorage, context, API 등에서 가져올 수 있음
   // return localStorage.getItem("role") === "admin"
   return true // 테스트용
 }
-
+// 현재 로그인 사용자명 예시
+function getUserName() {
+  // return localStorage.getItem("username") || "홍길동"
+  return "홍길동"
+}
 /** @type {import("react").CSSProperties} */
 const thStyle = {
   border: "1px solid #e0e0e0",
@@ -65,7 +68,13 @@ const btnStyle = {
 export default function Qna() {
   const navigate = useNavigate()
   const { id } = useParams()
+  const location = useLocation()
   const isAdmin = getIsAdmin()
+  const userName = getUserName()
+
+  // 작성/수정 모드 판별
+  const isWrite = location.pathname.endsWith("/qna/write")
+  const isEdit = location.pathname.endsWith("/edit")
 
   // 목록 상태
   const [search, setSearch] = useState({ title: "", writer: "" })
@@ -74,16 +83,24 @@ export default function Qna() {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
 
-  // 상세 상태
+  // 상세/작성/수정 상태
   const [detail, setDetail] = useState(null)
   const [answer, setAnswer] = useState("")
   const [loading, setLoading] = useState(false)
 
+  // 작성/수정 입력 상태
+  const [form, setForm] = useState({
+    title: "",
+    content: "",
+    writer: userName,
+    date: "",
+  })
+
   // 목록 데이터 불러오기
   useEffect(() => {
-    if (!id) {
+    if (!id && !isWrite && !isEdit) {
       setLoading(true)
-      fetch("/api/qna") // 실제 API 주소로 교체
+      fetch("/api/qna")
         .then((res) => res.json())
         .then((data) => {
           setList(data)
@@ -91,8 +108,8 @@ export default function Qna() {
           setLoading(false)
         })
         .catch(() => {
-          // 에러 시 더미 데이터 사용
-          setList([
+          // 더미
+          const dummy = [
             {
               id: 1,
               status: "답변대기",
@@ -111,37 +128,19 @@ export default function Qna() {
               content: "문의 내용2",
               answer: "답변 내용2",
             },
-          ])
-          setFiltered([
-            {
-              id: 1,
-              status: "답변대기",
-              writer: "작성자1",
-              title: "질문1",
-              date: "2025-05-01",
-              content: "문의 내용1",
-              answer: "",
-            },
-            {
-              id: 2,
-              status: "답변완료",
-              writer: "작성자2",
-              title: "질문2",
-              date: "2025-05-02",
-              content: "문의 내용2",
-              answer: "답변 내용2",
-            },
-          ])
+          ]
+          setList(dummy)
+          setFiltered(dummy)
           setLoading(false)
         })
     }
-  }, [id])
+  }, [id, isWrite, isEdit])
 
   // 상세 데이터 불러오기
   useEffect(() => {
-    if (id) {
+    if (id && !isEdit) {
       setLoading(true)
-      fetch(`/api/qna/${id}`) // 실제 API 주소로 교체
+      fetch(`/api/qna/${id}`)
         .then((res) => res.json())
         .then((data) => {
           setDetail(data)
@@ -149,7 +148,6 @@ export default function Qna() {
           setLoading(false)
         })
         .catch(() => {
-          // 에러 시 더미 데이터 사용
           const dummy = [
             {
               id: 1,
@@ -176,12 +174,24 @@ export default function Qna() {
           setLoading(false)
         })
     }
-  }, [id])
+  }, [id, isEdit])
 
-  // 상세/목록 전환 시 스크롤 초기화
+  // 수정 모드일 때 기존 데이터 세팅
+  useEffect(() => {
+    if (id && isEdit && detail) {
+      setForm({
+        title: detail.title,
+        content: detail.content,
+        writer: detail.writer,
+        date: detail.date,
+      })
+    }
+  }, [id, isEdit, detail])
+
+  // 상세/목록/작성/수정 전환 시 스크롤 초기화
   useEffect(() => {
     window.scrollTo(0, 0)
-  }, [id])
+  }, [id, isWrite, isEdit])
 
   // 검색
   const handleSearch = () => {
@@ -219,7 +229,123 @@ export default function Qna() {
       })
   }
 
-  // 상세 화면
+  // 작성/수정 저장
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (!form.title.trim() || !form.content.trim()) {
+      alert("제목과 내용을 입력하세요.")
+      return
+    }
+    setLoading(true)
+    const method = isEdit ? "PUT" : "POST"
+    const url = isEdit ? `/api/qna/${id}` : "/api/qna"
+    fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...form,
+        writer: userName,
+        date: isEdit ? form.date : new Date().toISOString().slice(0, 16).replace("T", " "),
+      }),
+    })
+      .then((res) =>
+        res.ok ? alert(isEdit ? "수정되었습니다." : "등록되었습니다.") : alert("저장 실패"),
+      )
+      .catch(() => alert("저장 실패(더미)"))
+      .finally(() => {
+        setLoading(false)
+        navigate("/community/qna")
+      })
+  }
+
+  // --- 작성/수정 화면 ---
+  if (isWrite || isEdit) {
+    return (
+      <div style={{ padding: 40, background: "#f9f9f9", minHeight: "100vh" }}>
+        <h1 style={{ marginBottom: 24 }}>1:1 문의 {isEdit ? "수정" : "작성"}</h1>
+        <form onSubmit={handleSubmit}>
+          <table style={tableStyle}>
+            <tbody>
+              <tr>
+                <th style={thStyle}>구분</th>
+                <td style={tdStyle}>답변대기</td>
+                <th style={thStyle}>작성자</th>
+                <td style={tdStyle}>{userName}</td>
+              </tr>
+              <tr>
+                <th style={thStyle}>제목</th>
+                <td colSpan={3} style={tdStyle}>
+                  <input
+                    type="text"
+                    value={form.title}
+                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                    style={{ ...inputStyle, width: "90%" }}
+                    maxLength={100}
+                    disabled={loading}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th style={thStyle}>작성일자</th>
+                <td colSpan={3} style={tdStyle}>
+                  {isEdit ? form.date : new Date().toISOString().slice(0, 16).replace("T", " ")}
+                </td>
+              </tr>
+              <tr>
+                <th style={thStyle}>내용</th>
+                <td colSpan={3} style={tdStyle}>
+                  <textarea
+                    value={form.content}
+                    onChange={(e) => setForm({ ...form, content: e.target.value })}
+                    style={{
+                      width: "100%",
+                      minHeight: 160,
+                      border: "1px solid #ccc",
+                      borderRadius: 4,
+                      padding: 8,
+                      fontSize: 15,
+                    }}
+                    maxLength={3000}
+                    disabled={loading}
+                  />
+                  <div style={{ textAlign: "right", fontSize: 13, color: "#888" }}>
+                    {form.content.length}/3000
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div style={{ marginTop: 32, textAlign: "right" }}>
+            <button
+              type="button"
+              style={btnStyle}
+              onClick={() => navigate("/community/qna")}
+              disabled={loading}
+            >
+              목록
+            </button>
+            <button
+              type="button"
+              style={{ ...btnStyle, marginLeft: 8 }}
+              onClick={() => navigate(-1)}
+              disabled={loading}
+            >
+              취소
+            </button>
+            <button
+              type="submit"
+              style={{ ...btnStyle, background: "#0078d4", color: "#fff", marginLeft: 8 }}
+              disabled={loading}
+            >
+              {isEdit ? "수정" : "작성"}
+            </button>
+          </div>
+        </form>
+      </div>
+    )
+  }
+
+  // --- 상세 화면 ---
   if (id) {
     if (loading) return <div style={{ padding: 40 }}>로딩중...</div>
     if (!detail) return <div style={{ padding: 40 }}>존재하지 않는 문의입니다.</div>
@@ -297,7 +423,7 @@ export default function Qna() {
             <>
               <button
                 style={{ ...btnStyle, background: "#6c757d", color: "#fff", marginLeft: 8 }}
-                onClick={() => alert("수정 기능은 실제 구현 필요")}
+                onClick={() => navigate(`/community/qna/${id}/edit`)}
                 disabled={loading}
               >
                 수정
@@ -316,7 +442,7 @@ export default function Qna() {
     )
   }
 
-  // 목록 화면
+  // --- 목록 화면 ---
   const totalPages = Math.ceil(filtered.length / itemsPerPage)
   const paged = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
@@ -347,7 +473,7 @@ export default function Qna() {
         </button>
       </div>
       <div style={{ textAlign: "right", marginBottom: 10 }}>
-        <button onClick={() => navigate("/community/qna")} style={btnWrite}>
+        <button onClick={() => navigate("/community/qna/write")} style={btnWrite}>
           작성
         </button>
       </div>
@@ -377,7 +503,6 @@ export default function Qna() {
                       textDecoration: "underline",
                     }}
                     onClick={() => {
-                      // 상세 이동 시 상태 초기화
                       setDetail(null)
                       setAnswer("")
                       navigate(`/community/qna/${item.id}`)

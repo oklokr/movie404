@@ -12,7 +12,9 @@ const community = [
       { path: "", Component: Notice },
       { path: "notice", Component: Notice },
       { path: "qna", Component: Qna },
-      { path: "qna/:id", Component: Qna }, // ← detail 도 Qna로 처리
+      { path: "qna/write", Component: Qna },
+      { path: "qna/:id", Component: Qna },
+      { path: "qna/:id/edit", Component: Qna },
       { path: "faq", Component: Faq },
     ],
   },
