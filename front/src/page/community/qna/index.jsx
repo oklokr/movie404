@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react"
 import { useParams, useNavigate, useLocation } from "react-router-dom"
 
-// 관리자 여부 예시 (실제 서비스에서는 로그인 정보에서 받아와야 함)
+// 실제 서비스에서는 아래 함수들을 로그인/세션/Context 등에서 받아와야 함
 function getIsAdmin() {
-  // return localStorage.getItem("role") === "admin"
-  return true // 테스트용
+  // 예: return session?.userType === 'admin'
+  return false // 임시 하드코딩 제거, 실제 구현 필요
 }
-// 현재 로그인 사용자명 예시
 function getUserName() {
-  // return localStorage.getItem("username") || "홍길동"
-  return "홍길동"
+  // 예: return session?.userName
+  return ""
 }
+
 /** @type {import("react").CSSProperties} */
 const thStyle = {
   border: "1px solid #e0e0e0",
@@ -108,29 +108,8 @@ export default function Qna() {
           setLoading(false)
         })
         .catch(() => {
-          // 더미
-          const dummy = [
-            {
-              id: 1,
-              status: "답변대기",
-              writer: "작성자1",
-              title: "질문1",
-              date: "2025-05-01",
-              content: "문의 내용1",
-              answer: "",
-            },
-            {
-              id: 2,
-              status: "답변완료",
-              writer: "작성자2",
-              title: "질문2",
-              date: "2025-05-02",
-              content: "문의 내용2",
-              answer: "답변 내용2",
-            },
-          ]
-          setList(dummy)
-          setFiltered(dummy)
+          setList([])
+          setFiltered([])
           setLoading(false)
         })
     }
@@ -148,29 +127,8 @@ export default function Qna() {
           setLoading(false)
         })
         .catch(() => {
-          const dummy = [
-            {
-              id: 1,
-              status: "답변대기",
-              writer: "작성자1",
-              title: "질문1",
-              date: "2025-05-01",
-              content: "문의 내용1",
-              answer: "",
-            },
-            {
-              id: 2,
-              status: "답변완료",
-              writer: "작성자2",
-              title: "질문2",
-              date: "2025-05-02",
-              content: "문의 내용2",
-              answer: "답변 내용2",
-            },
-          ]
-          const q = dummy.find((item) => String(item.id) === String(id))
-          setDetail(q || null)
-          setAnswer(q?.answer || "")
+          setDetail(null)
+          setAnswer("")
           setLoading(false)
         })
     }
@@ -212,7 +170,7 @@ export default function Qna() {
       body: JSON.stringify({ answer }),
     })
       .then((res) => (res.ok ? alert("답변이 저장되었습니다.") : alert("저장 실패")))
-      .catch(() => alert("저장 실패(더미)"))
+      .catch(() => alert("저장 실패"))
       .finally(() => setLoading(false))
   }
 
@@ -222,7 +180,7 @@ export default function Qna() {
     setLoading(true)
     fetch(`/api/qna/${id}`, { method: "DELETE" })
       .then((res) => (res.ok ? alert("삭제되었습니다.") : alert("삭제 실패")))
-      .catch(() => alert("삭제되었습니다.(더미)"))
+      .catch(() => alert("삭제 실패"))
       .finally(() => {
         setLoading(false)
         navigate("/community/qna")
@@ -251,7 +209,7 @@ export default function Qna() {
       .then((res) =>
         res.ok ? alert(isEdit ? "수정되었습니다." : "등록되었습니다.") : alert("저장 실패"),
       )
-      .catch(() => alert("저장 실패(더미)"))
+      .catch(() => alert("저장 실패"))
       .finally(() => {
         setLoading(false)
         navigate("/community/qna")
