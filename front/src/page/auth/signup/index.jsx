@@ -15,12 +15,17 @@ function signup() {
   const [commentId, setCommentId] = useState("아이디를 입력해주세요")
   const [commentPW, setCommentPW] = useState("비밀번호를 입력해주세요")
   const [commentRPW, setCommentRPW] = useState("비밀번호 재확인을 입력해주세요")
-  const [commentEmail, setCommentEmail] = useState("s")
+  const [commentEmail, setCommentEmail] = useState("이메일을 입력해주세요")
+  const [Tel, setTel] = useState("")
   const [showPassword, setShowPassword] = useState(false)
 
   const [PW, setPW] = useState("")
 
   const handleClickShowPassword = () => setShowPassword((show) => !show)
+
+  const formA = {
+    width: "15cm",
+  }
 
   function handleChangeID(e) {
     const val = e.target.value
@@ -30,6 +35,8 @@ function signup() {
   }
   function handleChangePW(e) {
     const val = e.target.value
+    setPW(val)
+    console.log(PW)
     if (val === "") setCommentPW("비밀번호를 입력해주세요")
     else if (/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(val)) setCommentPW("한글 포함 불가")
     else if (!/[!@#$%^&*]/.test(val)) setCommentPW("특수문자를 포함해주세요")
@@ -38,7 +45,7 @@ function signup() {
   }
   function handleChangeRPW(e) {
     const val = e.target.value
-    if (val === "") setCommentRPW("비밀번호 재확인을 입력해주세요")
+    if (val == "") setCommentRPW("비밀번호 재확인을 입력해주세요")
     else if (/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(val)) setCommentRPW("한글 포함 불가")
     else if (!/[!@#$%^&*]/.test(val)) setCommentRPW("특수문자를 포함해주세요")
     //else if
@@ -48,12 +55,32 @@ function signup() {
   function handleChangeRPW(e) {
     const val = e.target.value
     if (val === "") setCommentRPW("비밀번호 재확인을 입력해주세요")
+    else if (PW != val) setCommentRPW("비밀번호가 일치하지 않습니다")
     else if (/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(val)) setCommentRPW("한글 포함 불가")
     else if (!/[!@#$%^&*]/.test(val)) setCommentRPW("특수문자를 포함해주세요")
     //else if
     else setCommentRPW("비밀번호 입력 완료!")
     //else setC
   }
+  const mailformat = [
+    {
+      value: "naver",
+      label: "@naver.com",
+    },
+    {
+      value: "google",
+      label: "@gmail.com",
+    },
+    {
+      value: "daum",
+      label: "@daum.com",
+    },
+    {
+      value: "nate",
+      label: "@nate.com",
+    },
+  ]
+
   return (
     <>
       <h1> 정보 입력 </h1>
@@ -75,9 +102,7 @@ function signup() {
           required
           id="signup_pwd"
           type={showPassword ? "text" : "password"}
-          onChange={() => {
-            handleChangePW
-          }}
+          onChange={handleChangePW}
           endAdornment={
             <InputAdornment position="end">
               <IconButton
@@ -126,17 +151,33 @@ function signup() {
           required
           // onChange={handleChangeEmail}
         />
-        <></>
         <FormHelperText>{commentEmail}</FormHelperText>
-        <select>
-          <option value="google">구글</option>
-          <option value="naver">네이버</option>
-          <option value="daum">다음</option>
-        </select>
+
+        <TextField
+          id="outlined-select-currency-native"
+          select
+          slotProps={{
+            select: {
+              native: true,
+            },
+          }}
+        >
+          {mailformat.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </TextField>
       </div>
+
       <div>
         <InputLabel>전화번호 </InputLabel>
-        <OutlinedInput id="signup_tel" aria-describedby="outlined-weight-helper-text" required />
+        <OutlinedInput
+          id="signup_tel"
+          aria-describedby="outlined-weight-helper-text"
+          required
+          //onChange={}
+        />
       </div>
 
       <Stack spacing={2} direction="row">
