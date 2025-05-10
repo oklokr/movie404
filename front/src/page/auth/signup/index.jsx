@@ -10,6 +10,7 @@ import InputLabel from "@mui/material/InputLabel"
 import InputAdornment from "@mui/material/InputAdornment"
 import IconButton from "@mui/material/IconButton"
 import { FormHelperText } from "@mui/material"
+import { useEffect } from "react"
 
 function signup() {
   const [commentId, setCommentId] = useState("아이디를 입력해주세요")
@@ -20,12 +21,30 @@ function signup() {
   const [showPassword, setShowPassword] = useState(false)
 
   const [PW, setPW] = useState("")
+  const [RPW, setRPW] = useState("")
 
   const handleClickShowPassword = () => setShowPassword((show) => !show)
 
   const formA = {
     width: "15cm",
   }
+  const formLabel = {
+    display: "flex",
+  }
+  useEffect(() => {
+    console.log(PW)
+    console.log(RPW)
+    if (PW != "" && RPW != "") {
+      if (PW != RPW) {
+        setCommentRPW("비밀번호가 일치하지 않습니다.")
+      } else setCommentRPW("비밀번호가 일치합니다.")
+    }
+  }, [PW, RPW])
+
+  useEffect(() => {
+    console.log(Tel)
+    //if (Tel.substring(0, 3) == "010") setTel(Tel + "-")
+  }, [Tel])
 
   function handleChangeID(e) {
     const val = e.target.value
@@ -36,31 +55,42 @@ function signup() {
   function handleChangePW(e) {
     const val = e.target.value
     setPW(val)
-    console.log(PW)
+
     if (val === "") setCommentPW("비밀번호를 입력해주세요")
     else if (/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(val)) setCommentPW("한글 포함 불가")
     else if (!/[!@#$%^&*]/.test(val)) setCommentPW("특수문자를 포함해주세요")
     else setCommentPW("비밀번호 입력 완료!")
-    //else setC
   }
   function handleChangeRPW(e) {
     const val = e.target.value
-    if (val == "") setCommentRPW("비밀번호 재확인을 입력해주세요")
-    else if (/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(val)) setCommentRPW("한글 포함 불가")
-    else if (!/[!@#$%^&*]/.test(val)) setCommentRPW("특수문자를 포함해주세요")
-    //else if
-    else setCommentRPW("비밀번호 입력 완료!")
-    //else setC
-  }
-  function handleChangeRPW(e) {
-    const val = e.target.value
+    setRPW(val)
+
     if (val === "") setCommentRPW("비밀번호 재확인을 입력해주세요")
     else if (PW != val) setCommentRPW("비밀번호가 일치하지 않습니다")
-    else if (/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(val)) setCommentRPW("한글 포함 불가")
-    else if (!/[!@#$%^&*]/.test(val)) setCommentRPW("특수문자를 포함해주세요")
-    //else if
     else setCommentRPW("비밀번호 입력 완료!")
-    //else setC
+  }
+  function handleChangeTel(e) {
+    var val = e.target.value
+    var length = val.length
+
+    if (/^010-([0-9]{4})-([0-9]{4})$/.test(val)) {
+      console.log("오둥이")
+    } else if (length == 9 && /^010-([0-9]{4})/.test(val) && val.indexOf("-", 7) != 8) {
+      val = val.substring(0, 8) + "-" + val.substring(8, length)
+      e.target.value = val
+    } else if (length == 4 && /^010/.test(val) && val.indexOf("-") != 3) {
+      val = val.substring(0, 3) + "-" + val.substring(3, length)
+      e.target.value = val
+    }
+    /*var val = e.target.value
+    var length = val.length
+    console.log("length : " + length + "    val : " + val)
+    console.log("e.target.value : " + e.target.value)
+
+    if (length == 4 && val.substring(0, 3) == "010" && val.indexOf("-") != 3) {
+      val = val.substring(0, 3) + "-" + val.substring(3, length)
+      e.target.value = val
+    }*/
   }
   const mailformat = [
     {
@@ -124,7 +154,7 @@ function signup() {
         <OutlinedInput
           aria-describedby="outlined-weight-helper-text"
           required
-          id="signup_pwd"
+          id="signup_Rpwd"
           type={showPassword ? "text" : "password"}
           onChange={handleChangeRPW}
           endAdornment={
@@ -168,6 +198,7 @@ function signup() {
             </option>
           ))}
         </TextField>
+        <Button variant="contained">이메일 인증하기</Button>
       </div>
 
       <div>
@@ -176,7 +207,7 @@ function signup() {
           id="signup_tel"
           aria-describedby="outlined-weight-helper-text"
           required
-          //onChange={}
+          onChange={handleChangeTel}
         />
       </div>
 
