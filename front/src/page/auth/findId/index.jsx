@@ -1,3 +1,5 @@
+import OutlinedInput from "@mui/material/OutlinedInput"
+import { FormHelperText } from "@mui/material"
 import { Button, InputLabel, TextField } from "@mui/material"
 import * as React from "react"
 import Radio from "@mui/material/Radio"
@@ -6,11 +8,41 @@ import FormControlLabel from "@mui/material/FormControlLabel"
 import FormControl from "@mui/material/FormControl"
 import FormLabel from "@mui/material/FormLabel"
 import { useState } from "react"
-
+const mailformat = [
+  {
+    value: "naver",
+    label: "@naver.com",
+  },
+  {
+    value: "google",
+    label: "@gmail.com",
+  },
+  {
+    value: "daum",
+    label: "@daum.com",
+  },
+  {
+    value: "nate",
+    label: "@nate.com",
+  },
+]
 function findId() {
   const [radio, setRadio] = useState("email")
   const [active, setActive] = useState(0)
   const [commentTel, setCommentTel] = useState("휴대폰 번호를 입력해주세요.")
+  const [commentEmail, setCommentEmail] = useState("이메일을 입력해주세요")
+
+  function handleChangeEmail(e) {
+    const val = e.target.value
+
+    if (val === "") setCommentEmail("이메일을 입력해주세요")
+    else if (/[!#$%^&*/|ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(val)) setCommentEmail("특수문자/한글 포함 불가")
+    else if (!/^[a-z|A-Z|0-9|_\-.]+@[a-z|A-Z|0-9]+\.[a-z|A-Z]{2,}$/.test(val))
+      setCommentEmail("이메일 형식을 바르게 입력해주세요")
+    else {
+      setCommentEmail("인증해주세요")
+    }
+  }
 
   function handleChange(e) {
     setRadio(e.target.value)
@@ -18,6 +50,7 @@ function findId() {
   function handleChangeTel(e) {
     var val = e.target.value
     var length = val.length
+
     setActive(0)
     if (length == 14) {
       val = val.substring(0, length - 1)
@@ -52,15 +85,16 @@ function findId() {
       <div>
         {radio === "email" ? (
           <>
-            <InputLabel className="input-form">이메일 인증 </InputLabel>
-            <TextField
-              id="signup_id"
+            <InputLabel>이메일 </InputLabel>
+            <OutlinedInput
+              id="signup_email"
               aria-describedby="outlined-weight-helper-text"
               required
-              //  helperText={}
-              // onChange={}
+              onChange={handleChangeEmail}
             />
-            <Button variant="contained">인증요청</Button>
+
+            <Button variant="contained">이메일 인증하기</Button>
+            <FormHelperText>{commentEmail}</FormHelperText>
           </>
         ) : (
           <>
