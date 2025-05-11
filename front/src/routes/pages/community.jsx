@@ -15,7 +15,7 @@ const community = [
       { path: "notice", Component: Notice },
       { path: "qna", Component: QnaList },
       { path: "qna/write", Component: QnaEdit },
-      { path: "qna/:id", Component: QnaDetail },
+      { path: "qna/:id", Component: QnaDetail }, // 상세에 바로 QnaDetail 연결
       { path: "qna/:id/edit", Component: QnaEdit },
       { path: "faq", Component: Faq },
     ],
