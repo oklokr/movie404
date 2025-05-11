@@ -19,11 +19,13 @@ function signup() {
   const [commentEmail, setCommentEmail] = useState("이메일을 입력해주세요")
   const [Tel, setTel] = useState("")
   const [showPassword, setShowPassword] = useState(false)
+  const [showRePassword, setShowRePassword] = useState(false)
 
   const [PW, setPW] = useState("")
   const [RPW, setRPW] = useState("")
 
   const handleClickShowPassword = () => setShowPassword((show) => !show)
+  const handleClickShowRePassword = () => setShowRePassword((show) => !show)
 
   const formA = {
     width: "15cm",
@@ -35,7 +37,9 @@ function signup() {
     console.log(PW)
     console.log(RPW)
     if (PW != "" && RPW != "") {
-      if (PW != RPW) {
+      if (/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(RPW)) setCommentRPW("한글 포함 불가")
+      else if (!/[!@#$%^&*]/.test(RPW)) setCommentRPW("특수문자를 포함해주세요")
+      else if (PW != RPW) {
         setCommentRPW("비밀번호가 일치하지 않습니다.")
       } else setCommentRPW("비밀번호가 일치합니다.")
     }
@@ -66,35 +70,8 @@ function signup() {
     setRPW(val)
 
     if (val === "") setCommentRPW("비밀번호 재확인을 입력해주세요")
-    else if (PW != val) setCommentRPW("비밀번호가 일치하지 않습니다")
-    else setCommentRPW("비밀번호 입력 완료!")
   }
-  function handleChangeTel(e) {
-    var val = e.target.value
-    var length = val.length
-    if (length == 14) {
-      val = val.substring(0, length - 1)
-      e.target.value = val
-    }
-    if (/^010-([0-9]{4})-([0-9]{4})$/.test(val)) {
-      console.log("오둥이")
-    } else if (length == 9 && /^010-([0-9]{4})/.test(val) && val.indexOf("-", 7) != 8) {
-      val = val.substring(0, 8) + "-" + val.substring(8, length)
-      e.target.value = val
-    } else if (length == 4 && /^010/.test(val) && val.indexOf("-") != 3) {
-      val = val.substring(0, 3) + "-" + val.substring(3, length)
-      e.target.value = val
-    }
-    /*var val = e.target.value
-    var length = val.length
-    console.log("length : " + length + "    val : " + val)
-    console.log("e.target.value : " + e.target.value)
 
-    if (length == 4 && val.substring(0, 3) == "010" && val.indexOf("-") != 3) {
-      val = val.substring(0, 3) + "-" + val.substring(3, length)
-      e.target.value = val
-    }*/
-  }
   const mailformat = [
     {
       value: "naver",
@@ -158,15 +135,15 @@ function signup() {
           aria-describedby="outlined-weight-helper-text"
           required
           id="signup_Rpwd"
-          type={showPassword ? "text" : "password"}
+          type={showRePassword ? "text" : "password"}
           onChange={handleChangeRPW}
           endAdornment={
             <InputAdornment position="end">
               <IconButton
-                aria-label={showPassword ? "hide the password" : "display the password"}
-                onClick={handleClickShowPassword}
+                aria-label={showRePassword ? "hide the password" : "display the password"}
+                onClick={handleClickShowRePassword}
               >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
+                {showRePassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>
           }
@@ -184,7 +161,6 @@ function signup() {
           required
           // onChange={handleChangeEmail}
         />
-        <FormHelperText>{commentEmail}</FormHelperText>
 
         <TextField
           id="outlined-select-currency-native"
@@ -202,17 +178,7 @@ function signup() {
           ))}
         </TextField>
         <Button variant="contained">이메일 인증하기</Button>
-      </div>
-
-      <div>
-        <InputLabel>전화번호 </InputLabel>
-        <OutlinedInput
-          id="signup_tel"
-          aria-describedby="outlined-weight-helper-text"
-          required
-          onChange={handleChangeTel}
-        />
-        <Button variant="contained">본인인증하기</Button>
+        <FormHelperText>{commentEmail}</FormHelperText>
       </div>
 
       <Stack spacing={2} direction="row">
