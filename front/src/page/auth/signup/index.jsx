@@ -72,7 +72,10 @@ function signup() {
   function handleChangeTel(e) {
     var val = e.target.value
     var length = val.length
-
+    if (length == 14) {
+      val = val.substring(0, length - 1)
+      e.target.value = val
+    }
     if (/^010-([0-9]{4})-([0-9]{4})$/.test(val)) {
       console.log("오둥이")
     } else if (length == 9 && /^010-([0-9]{4})/.test(val) && val.indexOf("-", 7) != 8) {
@@ -209,6 +212,7 @@ function signup() {
           required
           onChange={handleChangeTel}
         />
+        <Button variant="contained">본인인증하기</Button>
       </div>
 
       <Stack spacing={2} direction="row">
