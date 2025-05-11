@@ -28,19 +28,21 @@ const mailformat = [
 ]
 function findId() {
   const [radio, setRadio] = useState("email")
-  const [active, setActive] = useState(0)
+  const [TelButtonActive, setTelButtonActive] = useState(0)
+  const [EmailButtonActive, setEmailButtonActive] = useState(0)
   const [commentTel, setCommentTel] = useState("휴대폰 번호를 입력해주세요.")
   const [commentEmail, setCommentEmail] = useState("이메일을 입력해주세요")
 
   function handleChangeEmail(e) {
     const val = e.target.value
-
+    setEmailButtonActive(0)
     if (val === "") setCommentEmail("이메일을 입력해주세요")
     else if (/[!#$%^&*/|ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(val)) setCommentEmail("특수문자/한글 포함 불가")
     else if (!/^[a-z|A-Z|0-9|_\-.]+@[a-z|A-Z|0-9]+\.[a-z|A-Z]{2,}$/.test(val))
       setCommentEmail("이메일 형식을 바르게 입력해주세요")
     else {
       setCommentEmail("인증해주세요")
+      setEmailButtonActive(1)
     }
   }
 
@@ -51,13 +53,13 @@ function findId() {
     var val = e.target.value
     var length = val.length
 
-    setActive(0)
+    setTelButtonActive(0)
     if (length == 14) {
       val = val.substring(0, length - 1)
       e.target.value = val
     }
     if (/^010-([0-9]{4})-([0-9]{4})$/.test(val)) {
-      setActive(1)
+      setTelButtonActive(1)
     } else if (length == 9 && /^010-([0-9]{4})/.test(val) && val.indexOf("-", 7) != 8) {
       val = val.substring(0, 8) + "-" + val.substring(8, length)
       e.target.value = val
@@ -93,7 +95,13 @@ function findId() {
               onChange={handleChangeEmail}
             />
 
-            <Button variant="contained">이메일 인증하기</Button>
+            {EmailButtonActive == 0 ? (
+              <Button variant="contained" disabled>
+                인증요청
+              </Button>
+            ) : (
+              <Button variant="contained">인증요청</Button>
+            )}
             <FormHelperText>{commentEmail}</FormHelperText>
           </>
         ) : (
@@ -106,7 +114,7 @@ function findId() {
               helperText={commentTel}
               onChange={handleChangeTel}
             />
-            {active == 0 ? (
+            {TelButtonActive == 0 ? (
               <Button variant="contained" disabled>
                 인증요청
               </Button>
