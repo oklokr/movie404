@@ -12,11 +12,6 @@ export default function RootLayout() {
 
   useEffect(() => {
     const token = document.cookie.split("; ").find((row) => row.startsWith("authToken="))
-    console.log(!token && !isDefault)
-
-    console.log(token)
-    console.log(!token)
-    console.log(!isDefault)
     if (!token && !isDefault) navigate("/login")
     window.scrollTo(0, 0)
   }, [location])

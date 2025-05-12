@@ -14,36 +14,11 @@ import { useEffect, useState } from "react"
 import logoImg from "@/assets/images/logo/logo.png"
 import { useDispatch, useSelector } from "react-redux"
 import { setUserInfo } from "@/store/slices/user"
-import { selectUser } from "@/store/selectors"
-
-const loginWrapStyle = css`
-  width: 600px;
-  margin: 0 auto;
-`
-const logoStyle = css`
-  width: 176px;
-  height: 176px;
-  margin: 0 auto;
-  background: url(${logoImg}) no-repeat center;
-  background-size: 100%;
-  a {
-    color: transparent;
-  }
-`
-const loginBoxStyle = css`
-  padding: 30px 40px;
-  border: 1px solid #000;
-  border-radius: 12px;
-
-  h2 {
-    font-size: 40px;
-    margin: 0 auto;
-    text-align: center;
-  }
-`
+import { useNavigate } from "react-router"
 
 function Login() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const defaultPostForm = { id: "", passwd: "" }
   const defaultMessage = { id: "", passwd: "", error: "" }
   const [message, setMessage] = useState(defaultMessage)
@@ -58,6 +33,7 @@ function Login() {
       const expiryDate = new Date(data.tokenValidityStr)
       document.cookie = `authToken=${data.token}; expires=${expiryDate}; path=/; Secure; SameSite=Strict`
       dispatch(setUserInfo(data))
+      navigate("/main")
     })
   }
 
@@ -112,5 +88,31 @@ function Login() {
     </div>
   )
 }
+
+const loginWrapStyle = css`
+  width: 600px;
+  margin: 0 auto;
+`
+const logoStyle = css`
+  width: 176px;
+  height: 176px;
+  margin: 0 auto;
+  background: url(${logoImg}) no-repeat center;
+  background-size: 100%;
+  a {
+    color: transparent;
+  }
+`
+const loginBoxStyle = css`
+  padding: 30px 40px;
+  border: 1px solid #000;
+  border-radius: 12px;
+
+  h2 {
+    font-size: 40px;
+    margin: 0 auto;
+    text-align: center;
+  }
+`
 
 export default Login
