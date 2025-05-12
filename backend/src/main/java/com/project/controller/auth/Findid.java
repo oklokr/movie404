@@ -22,9 +22,18 @@ public class Findid {
         String text = (String) requestBody.get("email");
 
         String id = userService.selectIdbyEmail(text);
+
         if(id!=""){
+            int length = id.length();
+
+            if(length<5)
+               id = id.substring(0,length-2) +"**";
+            else
+               id = id.substring(0,length-3)+"***" ;
+
         return new ApiResponse(id);
         }
+
         return new ApiResponse(404,"fail",null);
     }
 }
