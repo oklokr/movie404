@@ -20,14 +20,25 @@ public class Signup {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/signup")
-    public ApiResponse signup(@RequestBody Map<String, Object> requestBody) {
-        String text = (String) requestBody.get("ID");
+    @PostMapping("/checkId")
+    public ApiResponse checkId(@RequestBody Map<String, Object> requestBody) {
+        String text = (String) requestBody.get("id");
       
         int check = userService.checkId(text);
         if(check==0){
         return new ApiResponse(text);
         }
-        return new ApiResponse(444,"d",null);
+        return new ApiResponse(404,"fail",null);
+    }
+
+    @PostMapping("/checkEmail")
+    public ApiResponse checkEmail(@RequestBody Map<String, Object> requestBody) {
+        String text = (String) requestBody.get("email");
+      
+        int check = userService.checkEmail(text);
+        if(check==0){
+        return new ApiResponse(text);
+        }
+        return new ApiResponse(404,"fail",null);
 }
 }

@@ -8,4 +8,5 @@ import com.project.model.UserDto;
 public interface UserMapper {
     UserDto getUser();
     int checkId(String id);
+    int checkEmail(String email);
 }

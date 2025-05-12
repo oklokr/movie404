@@ -2,7 +2,15 @@ import request from "@/utils/request"
 
 export function signupCheckId(data) {
   return request({
-    url: "/api/signup",
+    url: "/api/checkId",
+    method: "post",
+    data,
+  })
+}
+
+export function signupCheckEmail(data) {
+  return request({
+    url: "api/checkEmail",
     method: "post",
     data,
   })

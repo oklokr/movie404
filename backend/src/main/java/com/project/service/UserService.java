@@ -18,4 +18,8 @@ public class UserService {
     public int checkId(String id){
         return userMapper.checkId(id);
     } 
+
+    public int checkEmail(String email){
+        return userMapper.checkEmail(email);
+    } 
 }

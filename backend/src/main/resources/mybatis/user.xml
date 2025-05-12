@@ -10,4 +10,7 @@
     <select id="checkId" resultType="int">
         SELECT COUNT(*) FROM MEMBERS WHERE USER_ID=#{id}
     </select>
+      <select id="checkEmail" resultType="int">
+        SELECT COUNT(*) FROM MEMBERS WHERE EMAIL=#{email}
+    </select>
 </mapper>
