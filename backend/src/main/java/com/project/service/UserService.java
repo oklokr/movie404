@@ -14,4 +14,8 @@ public class UserService {
     public UserDto getUser() {
         return userMapper.getUser();
     }
+
+    public int checkId(String ID){
+        return userMapper.checkId(ID);
+    } 
 }
