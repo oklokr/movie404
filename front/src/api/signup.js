@@ -23,3 +23,11 @@ export function sendAuthEmail(data) {
     data,
   })
 }
+
+export function insertUser(data) {
+  return request({
+    url: "api/signup",
+    method: "post",
+    data,
+  })
+}

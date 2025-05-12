@@ -43,4 +43,9 @@ public class UserService {
     public int checkEmail(String email){
         return userMapper.checkEmail(email);
     } 
+
+    public int insertUser(UserDto newUser){
+
+        return userMapper.insertUser(newUser);
+    }
 }

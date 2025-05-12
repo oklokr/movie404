@@ -3,6 +3,7 @@ package com.project.controller.auth;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.model.ApiResponse;
+import com.project.model.UserDto;
 import com.project.service.UserService;
 
 
@@ -81,4 +82,20 @@ public class Signup {
         
        // return new ApiResponse(404,"fail",null);
     }
+
+    @PostMapping("/signup")
+    public ApiResponse signup(@RequestBody Map<String, Object> requestBody) {
+        UserDto userdto = new UserDto();
+         userdto.setUserId((String) requestBody.get("id"));
+         userdto.setPasswd((String) requestBody.get("pwd"));
+         userdto.setEmail((String) requestBody.get("email"));
+
+
+        int check = userService.insertUser(userdto);
+        if(check==0){
+        return new ApiResponse(userdto);
+        }
+        return new ApiResponse(404,"fail",null);
+    }
+
 }

@@ -122,7 +122,7 @@ function signup() {
       alert("가입중!")
     }
   }
-
+  const insertUser = () => {}
   const checkId = () => {
     signupCheckId({
       id: ID,

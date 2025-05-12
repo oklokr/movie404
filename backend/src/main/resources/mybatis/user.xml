@@ -73,8 +73,15 @@
     <select id="checkId" resultType="int">
         SELECT COUNT(*) FROM MEMBERS WHERE USER_ID=#{id}
     </select>
-      <select id="checkEmail" resultType="int">
+    <select id="checkEmail" resultType="int">
         SELECT COUNT(*) FROM MEMBERS WHERE EMAIL=#{email}
     </select>
-    
+    <select id="insertUser" parameterType="com.project.model.UserDto" resultType="int">
+        INSERT MEMBERS 
+        (USER_ID, PASSWD, USER_NAME, EMAIL, TEL, AGE, LANG_TPCD, DATE_TPCD, VIEW_ADULT, SAVE_HISTORY, TERMS, USER_TPCD)
+        VALUES
+        (#{userId}, #{passwd}, #{userName}, #{email}, #{tel}, #{age}, #{signupDate}, #{signupDateStr}, #{token}, 
+        #{tokenValidity}, #{tokenValidityStr}, #{viewAdult}, #{saveHistory}, #{terms}, #{langTpcd}, #{langTpcdName}, 
+        #{dateTpcd}, #{dateTpcdName}, #{userTpcd}, #{userTpcdName})
+    </select>
 </mapper>
