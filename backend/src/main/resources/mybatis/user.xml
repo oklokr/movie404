@@ -140,5 +140,9 @@
         (#{userId}, #{passwd}, #{userName}, #{email}, "01088889999", DATE_FORMAT(now(), '%Y-%m-%d'), 
         '2','1','N','Y',"111",'1')
     </select>
+    <select id="selectIdbyEmail" resultType="String">
+        SELECT USER_ID FROM MEMBERS WHERE EMAIL=#{email}
+    </select>
+    
 
 </mapper>

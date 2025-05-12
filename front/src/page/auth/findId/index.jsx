@@ -9,31 +9,23 @@ import FormControl from "@mui/material/FormControl"
 import FormLabel from "@mui/material/FormLabel"
 import { useState } from "react"
 import { sendAuthEmail, signupCheckEmail } from "@/api/signup"
-const mailformat = [
-  {
-    value: "naver",
-    label: "@naver.com",
-  },
-  {
-    value: "google",
-    label: "@gmail.com",
-  },
-  {
-    value: "daum",
-    label: "@daum.com",
-  },
-  {
-    value: "nate",
-    label: "@nate.com",
-  },
-]
+import { selectIdbyEmail } from "@/api/findid"
+
+const findid_info = {
+  id: "",
+  pwd: "",
+  email: "",
+  authcode: "",
+}
 function findId() {
   const [radio, setRadio] = useState("email")
   const [TelButtonActive, setTelButtonActive] = useState(0)
   const [EmailButtonActive, setEmailButtonActive] = useState(0)
+  const [AuthButtonActive, setAuthButtonActive] = useState(0)
   const [commentTel, setCommentTel] = useState("휴대폰 번호를 입력해주세요.")
   const [commentEmail, setCommentEmail] = useState("이메일을 입력해주세요")
   const [Email, setEmail] = useState("")
+  const [InputCode, setInputCode] = useState("")
 
   function handleChangeEmail(e) {
     const val = e.target.value
@@ -77,7 +69,9 @@ function findId() {
     }).then((res) => {
       if (res.code === 200) {
         alert("인증메일을 전송했습니다!")
-        setEmailButtonActive(1)
+        findid_info.authcode = res.data
+        findid_info.email = Email
+        setAuthButtonActive(1)
       }
     })
   }
@@ -99,6 +93,27 @@ function findId() {
   function sendEailEventHandler(e) {
     checkEmail()
   }
+  function authEmailCheck(e) {
+    if (InputCode == findid_info.authcode) {
+      alert("인증번호가 일치합니다!")
+      showId()
+    } else alert("인증번호가 일치하지 않습니다!")
+  }
+
+  function handleChangeAuth(e) {
+    const val = e.target.value
+    setInputCode(val)
+  }
+
+  const showId = () => {
+    selectIdbyEmail({
+      email: findid_info.email,
+    }).then((res) => {
+      if (res.code === 200) {
+        alert("아이디 : " + res.data)
+      }
+    })
+  }
   return (
     <>
       <h1> 아이디 찾기 </h1>
@@ -115,48 +130,69 @@ function findId() {
           <FormControlLabel value="tel" control={<Radio />} label="휴대폰번호 인증" />
         </RadioGroup>
       </FormControl>
-      <div>
-        {radio === "email" ? (
-          <>
+
+      {radio === "email" ? (
+        <>
+          <div className="input-form">
             <InputLabel>이메일 </InputLabel>
+            <div>
+              <OutlinedInput
+                id="signup_email"
+                aria-describedby="outlined-weight-helper-text"
+                required
+                onChange={handleChangeEmail}
+              />
+
+              <FormHelperText>{commentEmail}</FormHelperText>
+            </div>
+            {EmailButtonActive == 0 ? (
+              <Button variant="contained" disabled>
+                이메일 인증
+              </Button>
+            ) : (
+              <Button variant="contained" onClick={sendEailEventHandler}>
+                이메일 인증
+              </Button>
+            )}
+          </div>
+          <div className="input-form">
+            <InputLabel>인증번호 </InputLabel>
             <OutlinedInput
               id="signup_email"
               aria-describedby="outlined-weight-helper-text"
               required
-              onChange={handleChangeEmail}
+              onChange={handleChangeAuth}
             />
-
-            {EmailButtonActive == 0 ? (
+            {AuthButtonActive == 0 ? (
               <Button variant="contained" disabled>
                 인증요청
               </Button>
             ) : (
-              <Button variant="contained" onClick={sendEailEventHandler}>
+              <Button variant="contained" onClick={authEmailCheck}>
                 인증요청
               </Button>
             )}
-            <FormHelperText>{commentEmail}</FormHelperText>
-          </>
-        ) : (
-          <>
-            <InputLabel className="input-form">휴대폰 인증 </InputLabel>
-            <TextField
-              id="signup_id"
-              aria-describedby="outlined-weight-helper-text"
-              required
-              helperText={commentTel}
-              onChange={handleChangeTel}
-            />
-            {TelButtonActive == 0 ? (
-              <Button variant="contained" disabled>
-                인증요청
-              </Button>
-            ) : (
-              <Button variant="contained">인증요청</Button>
-            )}
-          </>
-        )}
-      </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <InputLabel className="input-form">휴대폰 인증 </InputLabel>
+          <TextField
+            id="signup_id"
+            aria-describedby="outlined-weight-helper-text"
+            required
+            helperText={commentTel}
+            onChange={handleChangeTel}
+          />
+          {TelButtonActive == 0 ? (
+            <Button variant="contained" disabled>
+              휴대폰 인증
+            </Button>
+          ) : (
+            <Button variant="contained">휴대폰 인증</Button>
+          )}
+        </>
+      )}
     </>
   )
 }

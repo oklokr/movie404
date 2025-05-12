@@ -83,4 +83,8 @@ public class UserService {
 
         return userMapper.insertUser(newUser);
     }
+    public String selectIdbyEmail(String email){
+
+        return userMapper.selectIdbyEmail(email);
+    }
 }
