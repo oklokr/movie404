@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { css } from "@emotion/react"
 
 const users = [
@@ -47,15 +48,13 @@ const users = [
 const PAGE_SIZE = 5
 
 export default function AdminUser() {
-  // 입력값 상태
   const [inputSearch, setInputSearch] = useState("")
   const [inputType, setInputType] = useState("전체")
-  // 실제 조회에 사용되는 상태
   const [search, setSearch] = useState("")
   const [type, setType] = useState("전체")
   const [page, setPage] = useState(1)
+  const navigate = useNavigate()
 
-  // 필터링
   const filtered = users.filter((u) => {
     const matchType = type === "전체" || u.type === type
     const matchName = u.name.includes(search)
@@ -65,14 +64,12 @@ export default function AdminUser() {
   const totalPage = Math.ceil(filtered.length / PAGE_SIZE)
   const pagedUsers = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
-  // 검색 버튼 클릭 시만 실제 검색/구분 반영
   const handleSearch = (e) => {
     e.preventDefault()
     setSearch(inputSearch)
     setType(inputType)
     setPage(1)
   }
-  // 입력값만 변경
   const handleInputTypeChange = (e) => {
     setInputType(e.target.value)
   }
@@ -125,8 +122,12 @@ export default function AdminUser() {
           {pagedUsers.map((u, i) => (
             <dl css={listRow} key={i}>
               <div>{u.type}</div>
-              <div>{u.name}</div>
-              <div>{u.id}</div>
+              <div css={clickableCell} onClick={() => navigate(`/admin/user/${u.id}`)}>
+                {u.name}
+              </div>
+              <div css={clickableCell} onClick={() => navigate(`/admin/user/${u.id}`)}>
+                {u.id}
+              </div>
               <div>{u.email}</div>
               <div>{u.tel}</div>
               <div>{u.date}</div>
@@ -253,6 +254,14 @@ const listRow = css`
   }
   &:last-of-type {
     border-radius: 0 0 6px 6px;
+  }
+`
+const clickableCell = css`
+  cursor: pointer;
+  color: #0078d4;
+  text-decoration: underline;
+  &:hover {
+    color: #ff9800;
   }
 `
 const paginationStyle = css`
