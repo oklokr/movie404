@@ -11,7 +11,7 @@ import InputAdornment from "@mui/material/InputAdornment"
 import IconButton from "@mui/material/IconButton"
 import { FormHelperText } from "@mui/material"
 import { useEffect } from "react"
-import { sendAuthEmail, signupCheckEmail, signupCheckId } from "@/api/signup"
+import { insertUser, sendAuthEmail, signupCheckEmail, signupCheckId } from "@/api/signup"
 
 const user_info = {
   id: "",
@@ -120,9 +120,20 @@ function signup() {
       alert("이메일 인증을 완료해주세요")
     } else {
       alert("가입중!")
+      newUser()
     }
   }
-  const insertUser = () => {}
+  const newUser = () => {
+    insertUser({
+      id: user_info.id,
+      pwd: user_info.pwd,
+      email: user_info.email,
+    }).then((res) => {
+      if (res.code === 200) {
+        alert("가입성공!")
+      }
+    })
+  }
   const checkId = () => {
     signupCheckId({
       id: ID,

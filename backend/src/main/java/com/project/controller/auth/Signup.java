@@ -83,19 +83,24 @@ public class Signup {
        // return new ApiResponse(404,"fail",null);
     }
 
-    @PostMapping("/signup")
-    public ApiResponse signup(@RequestBody Map<String, Object> requestBody) {
+    @PostMapping("/insertUser")
+    public ApiResponse signupinsertUser(@RequestBody Map<String, Object> requestBody) {
         UserDto userdto = new UserDto();
-         userdto.setUserId((String) requestBody.get("id"));
-         userdto.setPasswd((String) requestBody.get("pwd"));
-         userdto.setEmail((String) requestBody.get("email"));
+        System.out.println("회원가입 들어옴");
+        userdto.setUserId((String) requestBody.get("id"));
+        userdto.setPasswd((String) requestBody.get("pwd"));
+        userdto.setUserName((String) requestBody.get("id"));
+        userdto.setEmail((String) requestBody.get("email"));
 
 
-        int check = userService.insertUser(userdto);
-        if(check==0){
-        return new ApiResponse(userdto);
+        int result = userService.insertUser(userdto);
+       
+        if(result==1){
+            return new ApiResponse(200,"success",null);
+        }else{
+            return new ApiResponse(404,"fail",null);
+
         }
-        return new ApiResponse(404,"fail",null);
     }
 
 }

@@ -78,10 +78,10 @@
     </select>
     <select id="insertUser" parameterType="com.project.model.UserDto" resultType="int">
         INSERT MEMBERS 
-        (USER_ID, PASSWD, USER_NAME, EMAIL, TEL, AGE, LANG_TPCD, DATE_TPCD, VIEW_ADULT, SAVE_HISTORY, TERMS, USER_TPCD)
+        (USER_ID, PASSWD, USER_NAME, EMAIL, TEL, SIGNUP_DATE, 
+        LANG_TPCD, DATE_TPCD, VIEW_ADULT, SAVE_HISTORY, TERMS, USER_TPCD)
         VALUES
-        (#{userId}, #{passwd}, #{userName}, #{email}, #{tel}, #{age}, #{signupDate}, #{signupDateStr}, #{token}, 
-        #{tokenValidity}, #{tokenValidityStr}, #{viewAdult}, #{saveHistory}, #{terms}, #{langTpcd}, #{langTpcdName}, 
-        #{dateTpcd}, #{dateTpcdName}, #{userTpcd}, #{userTpcdName})
+        (#{userId}, #{passwd}, #{userName}, #{email}, NULL, sysdate(), 
+        2,1,'N','Y','111',1)
     </select>
 </mapper>

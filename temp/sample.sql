@@ -94,3 +94,4 @@ VALUES
 INSERT INTO QNA (QNA_CODE, TITLE, CONTENT, USER_ID, WRITE_DATE, REPLY)
 VALUES
 ('Q001', '로그인 오류', '로그인이 안됩니다.', 'user', '2024-04-01', '확인 후 연락드리겠습니다.');
+

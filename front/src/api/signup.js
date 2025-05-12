@@ -26,7 +26,7 @@ export function sendAuthEmail(data) {
 
 export function insertUser(data) {
   return request({
-    url: "api/signup",
+    url: "api/insertUser",
     method: "post",
     data,
   })
