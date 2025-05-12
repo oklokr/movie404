@@ -15,8 +15,10 @@ public class UserDto {
     private String tel;
     private int age;
     private Date signupDate;
+    private String signupDateStr;
     private String token;
     private Date tokenValidity;
+    private String tokenValidityStr;
     private String viewAdult;
     private String saveHistory;
     private String terms;

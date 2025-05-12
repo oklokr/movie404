@@ -21,7 +21,12 @@ public class Login {
     
     @PostMapping("/login")
     public ApiResponse login(@RequestBody Map<String, Object> requestBody) {
-        List<Map<String, Object>> userList = userService.getUserList();
-        return new ApiResponse(userList);
+        String id = (String) requestBody.get("id");
+        String passwd = (String) requestBody.get("passwd");
+        UserDto userInfo = userService.getUserToLogin(id, passwd);
+        if (userInfo == null) {
+            return new ApiResponse(500, "일치하는 회원정보가 없습니다.", null);
+        }
+        return new ApiResponse(userInfo);
     }
 }

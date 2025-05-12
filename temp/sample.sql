@@ -5,7 +5,7 @@ INSERT INTO COMMON (COMMON_CODE) VALUES
 INSERT INTO COMMON_CODE (COMMON_ID, COMMON_CODE, COMMON_NAME, COMMON_VALUE) VALUES
 (1, 'LANG_TPCD', '영어', '1'),
 (1, 'LANG_TPCD', '한국어', '2'),
-(2, 'DATE_TPCD', 'YYYY-MM-DD', '1'),
+(2, 'DATE_TPCD', 'yyyy-MM-dd', '1'),
 (3, 'USER_TPCD', 'user', '1'),
 (3, 'USER_TPCD', 'admin', '2'),
 (4, 'RATING_TPCD', '전체관람가', '1'),
