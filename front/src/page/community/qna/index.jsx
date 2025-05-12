@@ -1,6 +1,6 @@
 import { css } from "@emotion/react"
 import React, { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router"
 import { communityGetQnaList } from "@/api/community"
 
 export default function QnaList() {

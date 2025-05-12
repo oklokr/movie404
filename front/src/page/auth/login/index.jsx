@@ -12,6 +12,9 @@ import {
 } from "@mui/material"
 import { useEffect, useState } from "react"
 import logoImg from "@/assets/images/logo/logo.png"
+import { useDispatch, useSelector } from "react-redux"
+import { setUserInfo } from "@/store/slices/user"
+import { selectUser } from "@/store/selectors"
 
 const loginWrapStyle = css`
   width: 600px;
@@ -40,27 +43,28 @@ const loginBoxStyle = css`
 `
 
 function Login() {
-  const defaultPostForm = { id: "", password: "" }
-  const defaultMessage = { id: "", password: "", error: "" }
+  const dispatch = useDispatch()
+  const defaultPostForm = { id: "", passwd: "" }
+  const defaultMessage = { id: "", passwd: "", error: "" }
   const [message, setMessage] = useState(defaultMessage)
   const [showPassword, setShowPassword] = useState(false)
   const [postForm, setPostForm] = useState(defaultPostForm)
   const handleClickShowPassword = () => setShowPassword((show) => !show)
+
   const handleLogin = () => {
-    mypageLoginInfo({
-      text: "false",
-    }).then((res) => {
-      console.log(res)
+    mypageLoginInfo(postForm).then((res) => {
+      const { code, data } = res
+      if (code !== 200) return alert(res.msg)
+      const expiryDate = new Date(data.tokenValidityStr)
+      document.cookie = `authToken=${data.token}; expires=${expiryDate}; path=/; Secure; SameSite=Strict`
+      dispatch(setUserInfo(data))
     })
   }
+
   const handleChange = (value, key, msg) => {
     setPostForm({ ...postForm, [key]: value })
     setMessage({ ...message, [key]: value.length < 1 ? msg : "" })
   }
-
-  useEffect(() => {
-    console.log("폼 변경됨:", postForm)
-  }, [postForm])
 
   return (
     <div css={loginWrapStyle}>
@@ -84,9 +88,9 @@ function Login() {
           <OutlinedInput
             id="password"
             type={showPassword ? "text" : "password"}
-            value={postForm.password}
-            onChange={(e) => handleChange(e.target.value, "password", "비밀번호를 입력해주세요.")}
-            error={message.password.length > 0}
+            value={postForm.passwd}
+            onChange={(e) => handleChange(e.target.value, "passwd", "비밀번호를 입력해주세요.")}
+            error={message.passwd.length > 0}
             endAdornment={
               <InputAdornment position="end">
                 <IconButton
@@ -99,7 +103,7 @@ function Login() {
               </InputAdornment>
             }
           />
-          <FormHelperText error={message.password.length > 0}>{message.password}</FormHelperText>
+          <FormHelperText error={message.passwd.length > 0}>{message.passwd}</FormHelperText>
         </div>
         <Button variant="contained" onClick={handleLogin}>
           로그인

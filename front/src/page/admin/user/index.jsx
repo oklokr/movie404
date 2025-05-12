@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router"
 import { css } from "@emotion/react"
 // import { fetchUserList } from "@/api/admin" // 실제 API 연동 시 사용
 

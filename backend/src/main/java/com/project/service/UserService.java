@@ -1,6 +1,10 @@
 package com.project.service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,13 +18,21 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    public UserDto getUserToLogin(String userId, String passwd) {
-        UserDto user = userMapper.getUserToLogin(userId, passwd);
+    public UserDto getUser(String userId, String passwd) {
+        UserDto user = userMapper.getUser(userId, passwd, null);
         if(user != null) {
+            UUID uuid = UUID.randomUUID();
+            LocalDateTime validity = LocalDateTime.now().plusHours(1);
+            userMapper.updateToken(uuid.toString(), validity, userId);
+
             String signupDateConvert = DateFormatUtil.formatDate(user.getSignupDate(), user.getDateTpcdName());
-            String toeknDateConvert = DateFormatUtil.formatDate(user.getTokenValidity(), user.getDateTpcdName());
+
+            Date validityDate = Date.from(validity.atZone(ZoneId.systemDefault()).toInstant());
+            String toeknDateConvert = DateFormatUtil.formatDate(validityDate, user.getDateTpcdName() + " HH:mm:ss");
             user.setSignupDateStr(signupDateConvert);
+            user.setTokenValidity(validityDate);
             user.setTokenValidityStr(toeknDateConvert);
+            user.setToken(uuid.toString());
         }
         return user;
     }
@@ -34,5 +46,9 @@ public class UserService {
             user.setTokenValidityStr(toeknDateConvert);
         }
         return userList;
+    }
+
+    public void updateToken(String token, LocalDateTime tokenValidity, String userId) {
+        userMapper.updateToken(token, tokenValidity, userId);
     }
 }
