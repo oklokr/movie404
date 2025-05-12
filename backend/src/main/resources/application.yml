@@ -27,6 +27,19 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: socialquizwebsite@gmail.com
+    password: tabpuahsodkebxqk
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
+
 server:
   port: ${SERVER_PORT}
 

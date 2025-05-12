@@ -15,3 +15,11 @@ export function signupCheckEmail(data) {
     data,
   })
 }
+
+export function sendAuthEmail(data) {
+  return request({
+    url: "api/authEmail",
+    method: "post",
+    data,
+  })
+}

@@ -11,7 +11,7 @@ import InputAdornment from "@mui/material/InputAdornment"
 import IconButton from "@mui/material/IconButton"
 import { FormHelperText } from "@mui/material"
 import { useEffect } from "react"
-import { signupCheckEmail, signupCheckId } from "@/api/signup"
+import { sendAuthEmail, signupCheckEmail, signupCheckId } from "@/api/signup"
 
 const user_info = {
   id: "",
@@ -32,7 +32,8 @@ function signup() {
   const [RPW, setRPW] = useState("")
   const [Email, setEmail] = useState("")
   const [EmailFormat, setEmailFormat] = useState("@naver.com")
-
+  const [InputCode, setInputCode] = useState("")
+  const [SendMail, setSendMail] = useState(0)
   const handleClickShowPassword = () => setShowPassword((show) => !show)
   const handleClickShowRePassword = () => setShowRePassword((show) => !show)
 
@@ -115,6 +116,10 @@ function signup() {
       alert("아이디 중복확인을 해주세요")
     } else if (RPW == "" || user_info.pwd == "") {
       alert("비밀번호를 입력해주세요")
+    } else if (Email == "" || user_info.authcode != "인증완료") {
+      alert("이메일 인증을 완료해주세요")
+    } else {
+      alert("가입중!")
     }
   }
 
@@ -141,9 +146,23 @@ function signup() {
       if (res.code === 200) {
         user_info.email = Email + EmailFormat
         alert("사용 가능한 이메일 입니다.")
+        //메일전송
+        sendEmail()
       } else {
         user_info.id = ""
         alert("이미 등록된 이메일 입니다.")
+      }
+    })
+  }
+
+  const sendEmail = () => {
+    sendAuthEmail({
+      email: user_info.email,
+    }).then((res) => {
+      if (res.code === 200) {
+        alert("인증메일을 전송했습니다!")
+        user_info.authcode = res.data
+        setSendMail(1)
       }
     })
   }
@@ -170,6 +189,17 @@ function signup() {
   }
   function handleSelectEmail(e) {
     setEmailFormat(e.target.value)
+  }
+
+  function authEmailCheck(e) {
+    if (InputCode == user_info.authcode) {
+      alert("인증번호가 일치합니다!")
+      user_info.authcode = "인증완료"
+    } else alert("인증번호가 일치하지 않습니다!")
+  }
+
+  function userInputEvent(e) {
+    setInputCode(e.target.value)
   }
   return (
     <>
@@ -268,10 +298,23 @@ function signup() {
           </TextField>
         </div>
         <Button variant="contained" onClick={checkEmailEvent}>
-          이메일 인증하기
+          인증메일 받기
         </Button>
       </div>
-
+      <div>
+        <TextField id="outlined-select-currency-native" onChange={userInputEvent}></TextField>
+        {SendMail == 0 ? (
+          <Button variant="contained" disabled>
+            {" "}
+            인증요청{" "}
+          </Button>
+        ) : (
+          <Button variant="contained" onClick={authEmailCheck}>
+            {" "}
+            인증요청{" "}
+          </Button>
+        )}
+      </div>
       <Stack spacing={2} direction="row">
         <Button variant="outlined">이전</Button>
         <Button variant="contained" onClick={SignUpEvent}>

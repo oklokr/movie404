@@ -79,4 +79,5 @@
       <select id="checkEmail" resultType="int">
         SELECT COUNT(*) FROM MEMBERS WHERE EMAIL=#{email}
     </select>
+    
 </mapper>
