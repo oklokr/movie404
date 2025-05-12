@@ -35,4 +35,15 @@ public class UserService {
         }
         return userList;
     }
+
+    public UserDto getUserDetail(String userId) {
+        UserDto user = userMapper.getUserDetail(userId);
+        if(user != null) {
+            String signupDateConvert = DateFormatUtil.formatDate(user.getSignupDate(), user.getDateTpcdName());
+            String tokenDateConvert = DateFormatUtil.formatDate(user.getTokenValidity(), user.getDateTpcdName());
+            user.setSignupDateStr(signupDateConvert);
+            user.setTokenValidityStr(tokenDateConvert);
+        }
+        return user;
+    }
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { css } from "@emotion/react"
-// import { fetchUserDetail } from "@/api/admin" // 실제 API 연동 시 사용
+import { fetchUserDetail } from "@/api/admin" // 실제 API 연동
 
 const userTypeList = ["일반회원", "VIP회원", "탈퇴회원", "관리자"]
 
@@ -14,29 +14,48 @@ export default function AdminUserDetail() {
   const [showConfirm, setShowConfirm] = useState(false)
   const [notFound, setNotFound] = useState(false)
 
-  // 실제 서비스에서는 API로 유저 상세정보를 받아옵니다.
   useEffect(() => {
     setUser(null)
     setPassword("")
     setType("")
     setNotFound(false)
-    // fetchUserDetail(id)
-    //   .then((data) => {
-    //     if (!data) {
-    //       setNotFound(true)
-    //     } else {
-    //       setUser(data)
-    //       setPassword(data.password)
-    //       setType(data.type)
-    //     }
-    //   })
-    //   .catch(() => {
-    //     setNotFound(true)
-    //   })
-    // 백엔드 미구현 시 아래처럼 처리 (임시)
-    setTimeout(() => {
-      setNotFound(true)
-    }, 300)
+    fetchUserDetail(id)
+      .then((data) => {
+        // res → data로 변수명 변경
+        console.log("API 응답:", data)
+        // @ts-ignore
+        if (!data || !data.userId) {
+          setNotFound(true)
+        } else {
+          setUser({
+            // @ts-ignore
+            id: data.userId,
+            // @ts-ignore
+            name: data.userName,
+            // @ts-ignore
+            email: data.email,
+            // @ts-ignore
+            tel: data.tel,
+            // @ts-ignore
+            joinDate: data.signupDateStr || data.signupDate,
+            // @ts-ignore
+            totalPay: data.totalPay ?? 0,
+            // @ts-ignore
+            buyCount: data.buyCount ?? 0,
+            // @ts-ignore
+            reserveCount: data.reserveCount ?? 0,
+            // @ts-ignore
+            type: data.userTpcdName || "",
+          })
+          setPassword("********")
+          // @ts-ignore
+          setType(data.userTpcdName || "")
+        }
+      })
+      .catch((e) => {
+        console.error("API 에러:", e)
+        setNotFound(true)
+      })
   }, [id])
 
   if (notFound) return <div css={notFoundStyle}>존재하지 않는 사용자입니다.</div>

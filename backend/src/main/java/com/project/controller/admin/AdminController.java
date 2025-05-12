@@ -19,4 +19,9 @@ public class AdminController {
     public List<UserDto> getUserList() {
         return userService.getUserList();
     }
+
+    @GetMapping("/user/{id}")
+    public UserDto getUserDetail(@PathVariable("id") String id) {
+        return userService.getUserDetail(id);
+    }
 }

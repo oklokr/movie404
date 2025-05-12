@@ -10,4 +10,5 @@ import com.project.model.UserDto;
 public interface UserMapper {
     List<UserDto> getUserList();
     UserDto getUserToLogin(String userId, String passwd);
+    UserDto getUserDetail(String userId);
 }
