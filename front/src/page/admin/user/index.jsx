@@ -1,5 +1,281 @@
-function user() {
-  return <div>admin user</div>
+import { useState } from "react"
+import { css } from "@emotion/react"
+
+const users = [
+  {
+    type: "일반회원",
+    name: "회원명",
+    id: "user",
+    email: "test@naver.com",
+    tel: "010-0000-0000",
+    date: "0000-00-00 00:00:00",
+  },
+  {
+    type: "VIP회원",
+    name: "회원명",
+    id: "user1",
+    email: "test@naver.com",
+    tel: "010-0000-0000",
+    date: "0000-00-00 00:00:00",
+  },
+  {
+    type: "탈퇴회원",
+    name: "회원명",
+    id: "user2",
+    email: "test@naver.com",
+    tel: "010-0000-0000",
+    date: "0000-00-00 00:00:00",
+  },
+  {
+    type: "관리자",
+    name: "회원명",
+    id: "admin",
+    email: "test@naver.com",
+    tel: "010-0000-0000",
+    date: "0000-00-00 00:00:00",
+  },
+  {
+    type: "관리자",
+    name: "회원명",
+    id: "admin2",
+    email: "test@naver.com",
+    tel: "010-0000-0000",
+    date: "0000-00-00 00:00:00",
+  },
+]
+
+const PAGE_SIZE = 5
+
+export default function AdminUser() {
+  // 입력값 상태
+  const [inputSearch, setInputSearch] = useState("")
+  const [inputType, setInputType] = useState("전체")
+  // 실제 조회에 사용되는 상태
+  const [search, setSearch] = useState("")
+  const [type, setType] = useState("전체")
+  const [page, setPage] = useState(1)
+
+  // 필터링
+  const filtered = users.filter((u) => {
+    const matchType = type === "전체" || u.type === type
+    const matchName = u.name.includes(search)
+    return matchType && matchName
+  })
+
+  const totalPage = Math.ceil(filtered.length / PAGE_SIZE)
+  const pagedUsers = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
+  // 검색 버튼 클릭 시만 실제 검색/구분 반영
+  const handleSearch = (e) => {
+    e.preventDefault()
+    setSearch(inputSearch)
+    setType(inputType)
+    setPage(1)
+  }
+  // 입력값만 변경
+  const handleInputTypeChange = (e) => {
+    setInputType(e.target.value)
+  }
+  const handleInputSearchChange = (e) => {
+    setInputSearch(e.target.value)
+  }
+
+  return (
+    <div css={outerWrap}>
+      <div css={mainBox}>
+        <form css={filterBox} onSubmit={handleSearch}>
+          <div css={filterRow}>
+            <label css={filterLabel}>
+              회원명
+              <input
+                type="text"
+                placeholder="회원명"
+                css={inputStyle}
+                value={inputSearch}
+                onChange={handleInputSearchChange}
+              />
+            </label>
+            <label css={filterLabel}>
+              구분
+              <select css={selectStyle} value={inputType} onChange={handleInputTypeChange}>
+                <option>전체</option>
+                <option>일반회원</option>
+                <option>VIP회원</option>
+                <option>탈퇴회원</option>
+                <option>관리자</option>
+              </select>
+            </label>
+            <button css={btnStyle} type="submit">
+              검색
+            </button>
+          </div>
+        </form>
+        <div css={countText}>
+          총 <b>{filtered.length}</b> 개
+        </div>
+        <div css={listWrap}>
+          <dl css={listHeader}>
+            <div>구분</div>
+            <div>회원명</div>
+            <div>회원 ID</div>
+            <div>이메일</div>
+            <div>전화번호</div>
+            <div>가입일자</div>
+          </dl>
+          {pagedUsers.map((u, i) => (
+            <dl css={listRow} key={i}>
+              <div>{u.type}</div>
+              <div>{u.name}</div>
+              <div>{u.id}</div>
+              <div>{u.email}</div>
+              <div>{u.tel}</div>
+              <div>{u.date}</div>
+            </dl>
+          ))}
+        </div>
+        <div css={paginationStyle}>
+          {[...Array(totalPage)].map((_, idx) => (
+            <button
+              key={idx}
+              className={page === idx + 1 ? "active" : ""}
+              onClick={() => setPage(idx + 1)}
+            >
+              {idx + 1}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
 }
 
-export default user
+const outerWrap = css`
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 600px;
+  background: none;
+`
+const mainBox = css`
+  width: 100%;
+  max-width: 1100px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #eee;
+  padding: 32px 32px 40px 32px;
+  margin-top: 8px;
+  border: 1.5px solid #e0e0e0;
+`
+const filterBox = css`
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fafbfc;
+  padding: 24px 24px 16px 24px;
+  margin-bottom: 18px;
+`
+const filterRow = css`
+  display: flex;
+  gap: 24px;
+  align-items: center;
+`
+const filterLabel = css`
+  font-weight: 500;
+  font-size: 15px;
+  color: #222;
+`
+const inputStyle = css`
+  margin-left: 8px;
+  padding: 7px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 15px;
+`
+const selectStyle = css`
+  margin-left: 8px;
+  padding: 7px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 15px;
+`
+const btnStyle = css`
+  padding: 8px 24px;
+  border: none;
+  border-radius: 4px;
+  background: #222;
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  margin-left: 12px;
+  transition: background 0.2s;
+  &:hover {
+    background: #ff9800;
+    color: #fff;
+  }
+`
+const countText = css`
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: #444;
+  b {
+    color: #ff9800;
+    font-weight: 700;
+  }
+`
+const listWrap = css`
+  margin-top: 10px;
+`
+const listHeader = css`
+  display: flex;
+  background: #f5f5f5;
+  font-weight: 600;
+  border-radius: 6px 6px 0 0;
+  border: 1.5px solid #ddd;
+  border-bottom: none;
+  > div {
+    flex: 1;
+    padding: 14px 8px;
+    text-align: center;
+    font-size: 15px;
+  }
+`
+const listRow = css`
+  display: flex;
+  border: 1.5px solid #ddd;
+  border-top: none;
+  font-size: 15px;
+  > div {
+    flex: 1;
+    padding: 13px 8px;
+    text-align: center;
+  }
+  &:last-of-type {
+    border-radius: 0 0 6px 6px;
+  }
+`
+const paginationStyle = css`
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 28px;
+  button {
+    border: none;
+    background: #f5f5f5;
+    color: #222;
+    padding: 7px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 15px;
+    &.active {
+      background: #ff9800;
+      color: #fff;
+      font-weight: 700;
+    }
+    &:hover:not(.active) {
+      background: #ffe0b2;
+    }
+  }
+`

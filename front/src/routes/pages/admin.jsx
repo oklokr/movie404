@@ -1,21 +1,21 @@
 import { lazy } from "react"
-const Content = lazy(() => import("@/layout/content"))
-const Admin = lazy(() => import("@/page/admin"))
+const AdminLayout = lazy(() => import("@/page/admin")) // index.jsx가 기본 export
 const Movie = lazy(() => import("@/page/admin/movie"))
 const User = lazy(() => import("@/page/admin/user"))
+const Play = lazy(() => import("@/page/admin/play"))
 
 const admin = [
   {
     path: "/admin",
-    Component: Content,
+    Component: AdminLayout, // Content → AdminLayout으로 변경
     children: [
-      {
-        path: "",
-        Component: Admin,
-      },
       {
         path: "movie",
         Component: Movie,
+      },
+      {
+        path: "play",
+        Component: Play,
       },
       {
         path: "user",
