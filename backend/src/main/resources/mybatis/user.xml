@@ -68,9 +68,6 @@
         LEFT JOIN COMMON_CODE c2
             ON m.LANG_TPCD = c2.COMMON_VALUE AND c2.COMMON_CODE = 'LANG_TPCD'
         LEFT JOIN COMMON_CODE c3
-            ON m.DATE_TPCD = c3.COMMON_VALUE AND c3.COMMON_CODE = 'DATE_TPCD';
-        <if test="userId != null">
-            WHERE m.USER_ID = #{userId}
-        </if>
+            ON m.DATE_TPCD = c3.COMMON_VALUE AND c3.COMMON_CODE = 'DATE_TPCD'
     </select>
 </mapper>
