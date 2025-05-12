@@ -16,5 +16,5 @@ public interface UserMapper {
     UserDto getUser();
     int checkId(String id);
     int checkEmail(String email);
-    int insertUser(UserDto newUser);
+    String insertUser(UserDto newUser);
 }

@@ -93,14 +93,9 @@ public class Signup {
         userdto.setEmail((String) requestBody.get("email"));
 
 
-        int result = userService.insertUser(userdto);
-       
-        if(result==1){
+        userService.insertUser(userdto);
             return new ApiResponse(200,"success",null);
-        }else{
-            return new ApiResponse(404,"fail",null);
-
-        }
+        
     }
 
 }

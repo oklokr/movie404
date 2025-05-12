@@ -63,7 +63,7 @@ public class UserService {
         return userMapper.checkEmail(email);
     } 
 
-    public int insertUser(UserDto newUser){
+    public String insertUser(UserDto newUser){
 
         return userMapper.insertUser(newUser);
     }
