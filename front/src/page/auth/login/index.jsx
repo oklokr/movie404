@@ -12,6 +12,82 @@ import {
 } from "@mui/material"
 import { useEffect, useState } from "react"
 import logoImg from "@/assets/images/logo/logo.png"
+import { useDispatch, useSelector } from "react-redux"
+import { setUserInfo } from "@/store/slices/user"
+import { useNavigate } from "react-router"
+
+function Login() {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const defaultPostForm = { id: "", passwd: "" }
+  const defaultMessage = { id: "", passwd: "", error: "" }
+  const [message, setMessage] = useState(defaultMessage)
+  const [showPassword, setShowPassword] = useState(false)
+  const [postForm, setPostForm] = useState(defaultPostForm)
+  const handleClickShowPassword = () => setShowPassword((show) => !show)
+
+  const handleLogin = () => {
+    mypageLoginInfo(postForm).then((res) => {
+      const { code, data } = res
+      if (code !== 200) return alert(res.msg)
+      const expiryDate = new Date(data.tokenValidityStr)
+      document.cookie = `authToken=${data.token}; expires=${expiryDate}; path=/; Secure; SameSite=Strict`
+      dispatch(setUserInfo(data))
+      navigate("/main")
+    })
+  }
+
+  const handleChange = (value, key, msg) => {
+    setPostForm({ ...postForm, [key]: value })
+    setMessage({ ...message, [key]: value.length < 1 ? msg : "" })
+  }
+
+  return (
+    <div css={loginWrapStyle}>
+      <h1 css={logoStyle}>
+        <a href="/">Not404 Cinema</a>
+      </h1>
+      <div css={loginBoxStyle}>
+        <h2>로그인</h2>
+        <div className="input-form input-form--row">
+          <InputLabel htmlFor="id">아이디</InputLabel>
+          <TextField
+            id="id"
+            value={postForm.id}
+            error={message.id.length > 0}
+            onChange={(e) => handleChange(e.target.value, "id", "아이디를 입력해주세요.")}
+          />
+          <FormHelperText error={message.id.length > 0}>{message.id}</FormHelperText>
+        </div>
+        <div>
+          <InputLabel htmlFor="password">패스워드</InputLabel>
+          <OutlinedInput
+            id="password"
+            type={showPassword ? "text" : "password"}
+            value={postForm.passwd}
+            onChange={(e) => handleChange(e.target.value, "passwd", "비밀번호를 입력해주세요.")}
+            error={message.passwd.length > 0}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label={showPassword ? "hide the password" : "display the password"}
+                  onClick={handleClickShowPassword}
+                  edge="end"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+          <FormHelperText error={message.passwd.length > 0}>{message.passwd}</FormHelperText>
+        </div>
+        <Button variant="contained" onClick={handleLogin}>
+          로그인
+        </Button>
+      </div>
+    </div>
+  )
+}
 
 const loginWrapStyle = css`
   width: 600px;
@@ -38,75 +114,5 @@ const loginBoxStyle = css`
     text-align: center;
   }
 `
-
-function Login() {
-  const defaultPostForm = { id: "", password: "" }
-  const defaultMessage = { id: "", password: "", error: "" }
-  const [message, setMessage] = useState(defaultMessage)
-  const [showPassword, setShowPassword] = useState(false)
-  const [postForm, setPostForm] = useState(defaultPostForm)
-  const handleClickShowPassword = () => setShowPassword((show) => !show)
-  const handleLogin = () => {
-    mypageLoginInfo({
-      text: "false",
-    }).then((res) => {
-      console.log(res)
-    })
-  }
-  const handleChange = (value, key, msg) => {
-    setPostForm({ ...postForm, [key]: value })
-    setMessage({ ...message, [key]: value.length < 1 ? msg : "" })
-  }
-
-  useEffect(() => {
-    console.log("폼 변경됨:", postForm)
-  }, [postForm])
-
-  return (
-    <div css={loginWrapStyle}>
-      <h1 css={logoStyle}>
-        <a href="/">Not404 Cinema</a>
-      </h1>
-      <div css={loginBoxStyle}>
-        <h2>로그인</h2>
-        <div className="input-form input-form--row">
-          <InputLabel htmlFor="id">아이디</InputLabel>
-          <TextField
-            id="id"
-            value={postForm.id}
-            error={message.id.length > 0}
-            onChange={(e) => handleChange(e.target.value, "id", "아이디를 입력해주세요.")}
-          />
-          <FormHelperText error={message.id.length > 0}>{message.id}</FormHelperText>
-        </div>
-        <div>
-          <InputLabel htmlFor="password">패스워드</InputLabel>
-          <OutlinedInput
-            id="password"
-            type={showPassword ? "text" : "password"}
-            value={postForm.password}
-            onChange={(e) => handleChange(e.target.value, "password", "비밀번호를 입력해주세요.")}
-            error={message.password.length > 0}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label={showPassword ? "hide the password" : "display the password"}
-                  onClick={handleClickShowPassword}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
-          />
-          <FormHelperText error={message.password.length > 0}>{message.password}</FormHelperText>
-        </div>
-        <Button variant="contained" onClick={handleLogin}>
-          로그인
-        </Button>
-      </div>
-    </div>
-  )
-}
 
 export default Login

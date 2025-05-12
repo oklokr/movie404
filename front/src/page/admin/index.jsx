@@ -1,4 +1,4 @@
-import { Outlet, NavLink, useLocation } from "react-router-dom"
+import { Outlet, NavLink, useLocation } from "react-router"
 import { css } from "@emotion/react"
 
 const tabList = [

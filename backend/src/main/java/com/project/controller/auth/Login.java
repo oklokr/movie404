@@ -6,7 +6,6 @@ import com.project.model.ApiResponse;
 import com.project.model.UserDto;
 import com.project.service.UserService;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +22,9 @@ public class Login {
     public ApiResponse login(@RequestBody Map<String, Object> requestBody) {
         String id = (String) requestBody.get("id");
         String passwd = (String) requestBody.get("passwd");
-        UserDto userInfo = userService.getUserToLogin(id, passwd);
+        UserDto userInfo = userService.getUser(id, passwd);
         if (userInfo == null) {
-            return new ApiResponse(500, "일치하는 회원정보가 없습니다.", null);
+            return new ApiResponse(401, "일치하는 회원정보가 없습니다.", null);
         }
         return new ApiResponse(userInfo);
     }

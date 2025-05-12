@@ -1,19 +1,41 @@
 package com.project.config;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import com.project.interceptor.AuthInterceptor;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    @Autowired
+    private AuthInterceptor authInterceptor;
+
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        // 모든 경로에 대해 CORS 허용
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:9090")  // 허용할 도메인
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")  // 허용할 HTTP 메서드
-                .allowedHeaders("*")  // 모든 헤더 허용
-                .allowCredentials(true);  // 자격 증명 허용
-    }   
+    public void addInterceptors(@NonNull InterceptorRegistry registry) {
+        registry.addInterceptor(authInterceptor)
+            .addPathPatterns("/api/**")
+            .excludePathPatterns("/api/login", "/api/signup"); // 수정: 실제 URL 기준
+    }
+
+    // CORS 처리를 Interceptor보다 앞 단계에서 적용되도록 Filter 등록
+    @Bean
+    public CorsFilter corsFilter() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:9090");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
 }

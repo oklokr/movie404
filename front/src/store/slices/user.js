@@ -5,16 +5,13 @@ const initialState = {
   language: "en",
 }
 
-export const fetchUserInfo = createAsyncThunk(
-  "user/fetchUserInfo",
-  async () => {
-    // 더미 데이터
-    return {
-      info: { username: "JohnDoe", userTpcd: 0, shopUseFlag: "1" },
-      language: "en",
-    }
-  },
-)
+export const fetchUserInfo = createAsyncThunk("user/fetchUserInfo", async () => {
+  // 더미 데이터
+  return {
+    info: { username: "JohnDoe", userTpcd: 0, shopUseFlag: "1" },
+    language: "en",
+  }
+})
 
 const userSlice = createSlice({
   name: "user",
@@ -22,6 +19,12 @@ const userSlice = createSlice({
   reducers: {
     setLanguage(state, action) {
       state.language = action.payload
+    },
+    setUserInfo(state, action) {
+      return { ...state.info, ...action.payload }
+    },
+    resetUserInfo(state) {
+      state.info = null
     },
   },
   extraReducers: (builder) => {
@@ -32,5 +35,5 @@ const userSlice = createSlice({
   },
 })
 
-export const { setLanguage } = userSlice.actions
+export const { setLanguage, setUserInfo, resetUserInfo } = userSlice.actions
 export default userSlice.reducer

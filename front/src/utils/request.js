@@ -46,9 +46,14 @@ const setInterceptors = (service) => {
       pendingRequests[config.url] = cancelTokenSource
 
       if (!config.test) {
-        // if (getToken() !== null && getApikey() !== null) {
-        //   config.headers["authorization"] = `Bearer ${getToken()}`
-        // }
+        const token = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith("authToken="))
+          ?.split("=")[1]
+        if (token !== null) {
+          console.log(token)
+          config.headers["authorization"] = token
+        }
         if (config.longTime) {
           config.timeout = 60000 * 10
         }
