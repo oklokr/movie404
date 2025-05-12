@@ -11,11 +11,13 @@ import InputAdornment from "@mui/material/InputAdornment"
 import IconButton from "@mui/material/IconButton"
 import { FormHelperText } from "@mui/material"
 import { useEffect } from "react"
+import { signupCheckEmail, signupCheckId } from "@/api/signup"
 
 const user_info = {
   id: "",
   pwd: "",
   email: "",
+  authcode: "",
 }
 function signup() {
   const [commentId, setCommentId] = useState("아이디를 입력해주세요")
@@ -28,6 +30,8 @@ function signup() {
   const [ID, setID] = useState("")
   const [PW, setPW] = useState("")
   const [RPW, setRPW] = useState("")
+  const [Email, setEmail] = useState("")
+  const [EmailFormat, setEmailFormat] = useState("@naver.com")
 
   const handleClickShowPassword = () => setShowPassword((show) => !show)
   const handleClickShowRePassword = () => setShowRePassword((show) => !show)
@@ -78,9 +82,12 @@ function signup() {
   }
   function handleChangeEmail(e) {
     const val = e.target.value
-
+    setEmail("")
     if (val === "") setCommentEmail("이메일을 입력해주세요")
-    if (/[!@#$%^&*|ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(val)) setCommentEmail("특수문자/한글 포함 불가")
+    else if (/[!@#$%^&*|ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(val)) setCommentEmail("특수문자/한글 포함 불가")
+    else {
+      setEmail(val)
+    }
   }
   const mailformat = [
     {
@@ -111,20 +118,64 @@ function signup() {
     }
   }
 
+  const checkId = () => {
+    signupCheckId({
+      id: ID,
+    }).then((res) => {
+      console.log(res)
+      if (res.code === 200) {
+        user_info.id = ID
+        alert("사용 가능한 아이디 입니다.")
+      } else {
+        user_info.id = ""
+        alert("사용불가한 아이디 입니다.")
+      }
+    })
+  }
+
+  const checkEmail = () => {
+    signupCheckEmail({
+      email: Email + EmailFormat,
+    }).then((res) => {
+      console.log(res)
+      if (res.code === 200) {
+        user_info.email = Email + EmailFormat
+        alert("사용 가능한 이메일 입니다.")
+      } else {
+        user_info.id = ""
+        alert("이미 등록된 이메일 입니다.")
+      }
+    })
+  }
+
   function CheckIdEvent(e) {
     if (ID == "") {
       alert("아이디를 입력해주세요")
     } else if (/[!@#$%^&*|ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(ID)) {
       alert("특수문자/한글 포함 불가")
     } else {
+      alert(ID)
+      checkId()
       //DB에 중복확인
     }
+  }
+
+  function checkEmailEvent(e) {
+    if (Email == "") {
+      alert("이메일을 입력해주세요")
+    } else {
+      alert(Email + EmailFormat)
+      checkEmail()
+    }
+  }
+  function handleSelectEmail(e) {
+    setEmailFormat(e.target.value)
   }
   return (
     <>
       <h1> 정보 입력 </h1>
-      <div>
-        <InputLabel className="input-form">아이디 </InputLabel>
+      <div className="input-form">
+        <InputLabel>아이디 </InputLabel>
         <TextField
           id="signup_id"
           aria-describedby="outlined-weight-helper-text"
@@ -136,80 +187,89 @@ function signup() {
           중복확인
         </Button>
       </div>
-      <div>
+      <div className="input-form">
         <InputLabel>비밀번호 </InputLabel>
-        <OutlinedInput
-          aria-describedby="outlined-weight-helper-text"
-          required
-          id="signup_pwd"
-          type={showPassword ? "text" : "password"}
-          onChange={handleChangePW}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                aria-label={showPassword ? "hide the password" : "display the password"}
-                onClick={handleClickShowPassword}
-              >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          }
-          //helperText={}
-          //onChange={}
-        />
-        <FormHelperText>{commentPW}</FormHelperText>
+
+        <div>
+          <OutlinedInput
+            aria-describedby="outlined-weight-helper-text"
+            required
+            id="signup_pwd"
+            type={showPassword ? "text" : "password"}
+            onChange={handleChangePW}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label={showPassword ? "hide the password" : "display the password"}
+                  onClick={handleClickShowPassword}
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+            //helperText={}
+            //onChange={}
+          />
+          <FormHelperText>{commentPW}</FormHelperText>
+        </div>
       </div>
 
-      <div>
+      <div className="input-form">
         <InputLabel>비밀번호 재확인 </InputLabel>
-        <OutlinedInput
-          aria-describedby="outlined-weight-helper-text"
-          required
-          id="signup_Rpwd"
-          type={showRePassword ? "text" : "password"}
-          onChange={handleChangeRPW}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                aria-label={showRePassword ? "hide the password" : "display the password"}
-                onClick={handleClickShowRePassword}
-              >
-                {showRePassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          }
-          //helperText={}
-          //onChange={}
-        />
-        <FormHelperText>{commentRPW}</FormHelperText>
+        <div>
+          <OutlinedInput
+            aria-describedby="outlined-weight-helper-text"
+            required
+            id="signup_Rpwd"
+            type={showRePassword ? "text" : "password"}
+            onChange={handleChangeRPW}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label={showRePassword ? "hide the password" : "display the password"}
+                  onClick={handleClickShowRePassword}
+                >
+                  {showRePassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+          <FormHelperText>{commentRPW}</FormHelperText>
+        </div>
       </div>
 
-      <div>
+      <div className="input-form">
         <InputLabel>이메일 </InputLabel>
-        <OutlinedInput
-          id="signup_email"
-          aria-describedby="outlined-weight-helper-text"
-          required
-          onChange={handleChangeEmail}
-        />
-
-        <TextField
-          id="outlined-select-currency-native"
-          select
-          slotProps={{
-            select: {
-              native: true,
-            },
-          }}
-        >
-          {mailformat.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </TextField>
-        <Button variant="contained">이메일 인증하기</Button>
-        <FormHelperText>{commentEmail}</FormHelperText>
+        <div>
+          <OutlinedInput
+            id="signup_email"
+            aria-describedby="outlined-weight-helper-text"
+            required
+            onChange={handleChangeEmail}
+          />
+          <FormHelperText>{commentEmail}</FormHelperText>
+        </div>
+        <div>
+          <TextField
+            id="outlined-select-currency-native"
+            onChange={handleSelectEmail}
+            select
+            slotProps={{
+              select: {
+                native: true,
+              },
+            }}
+          >
+            {mailformat.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </TextField>
+        </div>
+        <Button variant="contained" onClick={checkEmailEvent}>
+          이메일 인증하기
+        </Button>
       </div>
 
       <Stack spacing={2} direction="row">
