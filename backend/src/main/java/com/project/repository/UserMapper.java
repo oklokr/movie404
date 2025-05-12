@@ -17,4 +17,13 @@ public interface UserMapper {
     void invalidateToken(String userId);
     // 회원정보 리스트 조회
     List<UserDto> getUserList();
+
+    UserDto getUserToLogin(String userId, String passwd);
+    UserDto getUserDetail(String userId);
+    int resetUserPassword(String userId, String password);
+    int updateUserType(String userId, String type);
+    UserDto getUser();
+    int checkId(String id);
+    int checkEmail(String email);
+    int insertUser(UserDto newUser);
 }

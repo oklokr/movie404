@@ -8,6 +8,8 @@ INSERT INTO COMMON_CODE (COMMON_ID, COMMON_CODE, COMMON_NAME, COMMON_VALUE) VALU
 (2, 'DATE_TPCD', 'yyyy-MM-dd', '1'),
 (3, 'USER_TPCD', 'user', '1'),
 (3, 'USER_TPCD', 'admin', '2'),
+(3, 'USER_TPCD', 'vip', '3'),
+(3, 'USER_TPCD', 'delete', '4'),
 (4, 'RATING_TPCD', '전체관람가', '1'),
 (5, 'TERMS_TPCD', '서비스이용약관 ', '1'),
 (5, 'TERMS_TPCD', '개인정보처리방침 ', '2'),
@@ -17,7 +19,13 @@ INSERT INTO COMMON_CODE (COMMON_ID, COMMON_CODE, COMMON_NAME, COMMON_VALUE) VALU
 -- MEMBERS
 INSERT INTO MEMBERS (USER_ID, PASSWD, USER_NAME, EMAIL, TEL, AGE, LANG_TPCD, DATE_TPCD, VIEW_ADULT, SAVE_HISTORY, TERMS, USER_TPCD)
 VALUES
-('user', '1234', '홍길동', 'user1@example.com', '01012345678', 25, '1', '1', 'N', 'Y', 'Y', '1');
+('user', '1234', '홍길동', 'user1@example.com', '01012345678', 25, '1', '1', 'N', 'Y', 'Y', '1'),
+('vip', '1234', '이순신', 'vip@example.com', '01012341234', 25, '1', '1', 'N', 'Y', 'Y', '3'),
+('admin', '1234', '관리자', 'admin@example.com', '01043211234', 25, '1', '1', 'N', 'Y', 'Y', '2'),
+('delete', '1234', '김유신', 'delete@example.com', '01056781234', 25, '1', '1', 'N', 'Y', 'Y', '4'),
+('user2', '1234', '강감찬', 'user2@example.com', '01087654321', 25, '1', '1', 'N', 'Y', 'Y', '1'),
+('user3', '1234', '대조영', 'user3@example.com', '01043214321', 25, '1', '1', 'N', 'Y', 'Y', '1');
+
 
 -- GENRE
 INSERT INTO GENRE (GENRE_CODE, GENRE_NAME) VALUES
@@ -86,3 +94,4 @@ VALUES
 INSERT INTO QNA (QNA_CODE, TITLE, CONTENT, USER_ID, WRITE_DATE, REPLY)
 VALUES
 ('Q001', '로그인 오류', '로그인이 안됩니다.', 'user', '2024-04-01', '확인 후 연락드리겠습니다.');
+

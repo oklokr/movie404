@@ -51,4 +51,36 @@ public class UserService {
     public void updateToken(String token, LocalDateTime tokenValidity, String userId) {
         userMapper.updateToken(token, tokenValidity, userId);
     }
+    
+    public UserDto getUserDetail(String userId) {
+        UserDto user = userMapper.getUserDetail(userId);
+        if(user != null) {
+            String signupDateConvert = DateFormatUtil.formatDate(user.getSignupDate(), user.getDateTpcdName());
+            String tokenDateConvert = DateFormatUtil.formatDate(user.getTokenValidity(), user.getDateTpcdName());
+            user.setSignupDateStr(signupDateConvert);
+            user.setTokenValidityStr(tokenDateConvert);
+        }
+        return user;
+    }
+
+    public int resetUserPassword(String userId, String password) {
+        return userMapper.resetUserPassword(userId, password);
+    }
+
+    public int updateUserType(String userId, String type) {
+        return userMapper.updateUserType(userId, type);
+    }
+
+    public int checkId(String id){
+        return userMapper.checkId(id);
+    } 
+
+    public int checkEmail(String email){
+        return userMapper.checkEmail(email);
+    } 
+
+    public int insertUser(UserDto newUser){
+
+        return userMapper.insertUser(newUser);
+    }
 }
