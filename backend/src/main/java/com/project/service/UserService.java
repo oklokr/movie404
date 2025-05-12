@@ -15,7 +15,7 @@ public class UserService {
         return userMapper.getUser();
     }
 
-    public int checkId(String ID){
-        return userMapper.checkId(ID);
+    public int checkId(String id){
+        return userMapper.checkId(id);
     } 
 }

@@ -7,5 +7,5 @@ import com.project.model.UserDto;
 @Mapper
 public interface UserMapper {
     UserDto getUser();
-    int checkId(String ID);
+    int checkId(String id);
 }
