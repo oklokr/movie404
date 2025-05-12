@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { css } from "@emotion/react"
-// import { fetchUserList } from "@/api/admin" // 실제 API 연동 시 사용
+import { fetchUserList } from "@/api/admin"
 
 const PAGE_SIZE = 5
 
@@ -14,10 +14,44 @@ export default function AdminUser() {
   const [page, setPage] = useState(1)
   const navigate = useNavigate()
 
-  // 실제 서비스에서는 API로 회원 목록을 받아옵니다.
   useEffect(() => {
-    // fetchUserList().then(setUsers)
-    setUsers([]) // 샘플: 빈 배열 (API 연동 전)
+    fetchUserList()
+      .then((data) => {
+        // API에서 받은 데이터가 배열이 아닐 경우 예외 처리
+        if (!Array.isArray(data)) {
+          setUsers([])
+          return
+        }
+        // UserDto → 프론트 데이터 변환 (type 변환 추가)
+        setUsers(
+          data.map((u) => ({
+            id: u.userId,
+            name: u.userName,
+            email: u.email,
+            tel: u.tel,
+            date: u.signupDateStr || u.signupDate,
+            type: (() => {
+              switch (u.userTpcd) {
+                case 1:
+                case "1":
+                  return "일반회원"
+                case 2:
+                case "2":
+                  return "관리자"
+                case 3:
+                case "3":
+                  return "VIP회원"
+                case 4:
+                case "4":
+                  return "탈퇴회원"
+                default:
+                  return "일반회원"
+              }
+            })(),
+          })),
+        )
+      })
+      .catch(() => setUsers([]))
   }, [])
 
   const filtered = users.filter((u) => {
