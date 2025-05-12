@@ -12,19 +12,34 @@ export default function AdminUserDetail() {
   const [password, setPassword] = useState("")
   const [type, setType] = useState("")
   const [showConfirm, setShowConfirm] = useState(false)
+  const [notFound, setNotFound] = useState(false)
 
   // 실제 서비스에서는 API로 유저 상세정보를 받아옵니다.
   useEffect(() => {
-    // fetchUserDetail(id).then((data) => {
-    //   setUser(data)
-    //   setPassword(data.password)
-    //   setType(data.type)
-    // })
     setUser(null)
     setPassword("")
     setType("")
+    setNotFound(false)
+    // fetchUserDetail(id)
+    //   .then((data) => {
+    //     if (!data) {
+    //       setNotFound(true)
+    //     } else {
+    //       setUser(data)
+    //       setPassword(data.password)
+    //       setType(data.type)
+    //     }
+    //   })
+    //   .catch(() => {
+    //     setNotFound(true)
+    //   })
+    // 백엔드 미구현 시 아래처럼 처리 (임시)
+    setTimeout(() => {
+      setNotFound(true)
+    }, 300)
   }, [id])
 
+  if (notFound) return <div css={notFoundStyle}>존재하지 않는 사용자입니다.</div>
   if (!user) return <div>로딩중...</div>
 
   // 비밀번호 초기화 버튼 클릭 시 확인 모달 표시
@@ -152,6 +167,14 @@ export default function AdminUserDetail() {
     </div>
   )
 }
+
+const notFoundStyle = css`
+  padding: 80px 0;
+  text-align: center;
+  color: #ff3d00;
+  font-size: 20px;
+  font-weight: 600;
+`
 
 // 이하 CSS 동일
 const detailWrap = css`
