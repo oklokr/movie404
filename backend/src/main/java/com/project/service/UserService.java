@@ -36,6 +36,25 @@ public class UserService {
         return userList;
     }
 
+    public UserDto getUserDetail(String userId) {
+        UserDto user = userMapper.getUserDetail(userId);
+        if(user != null) {
+            String signupDateConvert = DateFormatUtil.formatDate(user.getSignupDate(), user.getDateTpcdName());
+            String tokenDateConvert = DateFormatUtil.formatDate(user.getTokenValidity(), user.getDateTpcdName());
+            user.setSignupDateStr(signupDateConvert);
+            user.setTokenValidityStr(tokenDateConvert);
+        }
+        return user;
+    }
+
+    public boolean resetUserPassword(String userId, String password) {
+        return userMapper.resetUserPassword(userId, password) > 0;
+    }
+
+    public boolean updateUserType(String userId, String type) {
+        return userMapper.updateUserType(userId, type) > 0;
+    }
+
     public int checkId(String id){
         return userMapper.checkId(id);
     } 
