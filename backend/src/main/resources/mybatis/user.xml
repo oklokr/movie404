@@ -100,6 +100,14 @@
             ON m.DATE_TPCD = c3.COMMON_VALUE AND c3.COMMON_CODE = 'DATE_TPCD'
         WHERE m.USER_ID = #{userId}
     </select>
+
+    <update id="resetUserPassword">
+        UPDATE MEMBERS SET PASSWD = #{password} WHERE USER_ID = #{userId}
+    </update>
+
+    <update id="updateUserType">
+        UPDATE MEMBERS SET USER_TPCD = #{type} WHERE USER_ID = #{userId}
+    </update>
     <select id="checkId" resultType="int">
         SELECT COUNT(*) FROM MEMBERS WHERE USER_ID=#{id}
     </select>

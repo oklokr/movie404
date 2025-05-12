@@ -11,6 +11,8 @@ public interface UserMapper {
     List<UserDto> getUserList();
     UserDto getUserToLogin(String userId, String passwd);
     UserDto getUserDetail(String userId);
+    int resetUserPassword(String userId, String password);
+    int updateUserType(String userId, String type);
     UserDto getUser();
     int checkId(String id);
     int checkEmail(String email);

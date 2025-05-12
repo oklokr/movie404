@@ -47,6 +47,14 @@ public class UserService {
         return user;
     }
 
+    public boolean resetUserPassword(String userId, String password) {
+        return userMapper.resetUserPassword(userId, password) > 0;
+    }
+
+    public boolean updateUserType(String userId, String type) {
+        return userMapper.updateUserType(userId, type) > 0;
+    }
+
     public int checkId(String id){
         return userMapper.checkId(id);
     } 
