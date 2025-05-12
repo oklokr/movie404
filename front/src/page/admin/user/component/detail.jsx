@@ -1,59 +1,31 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { css } from "@emotion/react"
-
-// 샘플 유저 데이터 (실제 서비스에서는 API로 받아오세요)
-const users = [
-  {
-    id: "user",
-    name: "홍길동",
-    password: "********",
-    email: "user1@example.com",
-    tel: "010-1234-5678",
-    joinDate: "2024-01-01 10:00",
-    totalPay: "1,200,000",
-    buyCount: "10 번",
-    reserveCount: "5 번",
-    type: "일반회원",
-  },
-  {
-    id: "user1",
-    name: "김철수",
-    password: "********",
-    email: "user2@example.com",
-    tel: "010-2222-3333",
-    joinDate: "2024-02-10 09:30",
-    totalPay: "2,000,000",
-    buyCount: "20 번",
-    reserveCount: "15 번",
-    type: "VIP회원",
-  },
-  {
-    id: "admin",
-    name: "관리자",
-    password: "********",
-    email: "admin@example.com",
-    tel: "010-9999-8888",
-    joinDate: "2023-12-01 08:00",
-    totalPay: "0",
-    buyCount: "0 번",
-    reserveCount: "0 번",
-    type: "관리자",
-  },
-  // ... 필요시 추가
-]
+// import { fetchUserDetail } from "@/api/admin" // 실제 API 연동 시 사용
 
 const userTypeList = ["일반회원", "VIP회원", "탈퇴회원", "관리자"]
 
 export default function AdminUserDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  // id로 해당 유저 찾기
-  const userData = users.find((u) => u.id === id) || users[0]
-  const [user, setUser] = useState(userData)
-  const [password, setPassword] = useState(user.password)
-  const [type, setType] = useState(user.type)
+  const [user, setUser] = useState(null)
+  const [password, setPassword] = useState("")
+  const [type, setType] = useState("")
   const [showConfirm, setShowConfirm] = useState(false)
+
+  // 실제 서비스에서는 API로 유저 상세정보를 받아옵니다.
+  useEffect(() => {
+    // fetchUserDetail(id).then((data) => {
+    //   setUser(data)
+    //   setPassword(data.password)
+    //   setType(data.type)
+    // })
+    setUser(null)
+    setPassword("")
+    setType("")
+  }, [id])
+
+  if (!user) return <div>로딩중...</div>
 
   // 비밀번호 초기화 버튼 클릭 시 확인 모달 표시
   const handleResetPassword = () => {

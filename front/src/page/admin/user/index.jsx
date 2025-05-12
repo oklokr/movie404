@@ -1,59 +1,24 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { css } from "@emotion/react"
-
-const users = [
-  {
-    type: "일반회원",
-    name: "회원명",
-    id: "user",
-    email: "test@naver.com",
-    tel: "010-0000-0000",
-    date: "0000-00-00 00:00:00",
-  },
-  {
-    type: "VIP회원",
-    name: "회원명",
-    id: "user1",
-    email: "test@naver.com",
-    tel: "010-0000-0000",
-    date: "0000-00-00 00:00:00",
-  },
-  {
-    type: "탈퇴회원",
-    name: "회원명",
-    id: "user2",
-    email: "test@naver.com",
-    tel: "010-0000-0000",
-    date: "0000-00-00 00:00:00",
-  },
-  {
-    type: "관리자",
-    name: "회원명",
-    id: "admin",
-    email: "test@naver.com",
-    tel: "010-0000-0000",
-    date: "0000-00-00 00:00:00",
-  },
-  {
-    type: "관리자",
-    name: "회원명",
-    id: "admin2",
-    email: "test@naver.com",
-    tel: "010-0000-0000",
-    date: "0000-00-00 00:00:00",
-  },
-]
+// import { fetchUserList } from "@/api/admin" // 실제 API 연동 시 사용
 
 const PAGE_SIZE = 5
 
 export default function AdminUser() {
+  const [users, setUsers] = useState([])
   const [inputSearch, setInputSearch] = useState("")
   const [inputType, setInputType] = useState("전체")
   const [search, setSearch] = useState("")
   const [type, setType] = useState("전체")
   const [page, setPage] = useState(1)
   const navigate = useNavigate()
+
+  // 실제 서비스에서는 API로 회원 목록을 받아옵니다.
+  useEffect(() => {
+    // fetchUserList().then(setUsers)
+    setUsers([]) // 샘플: 빈 배열 (API 연동 전)
+  }, [])
 
   const filtered = users.filter((u) => {
     const matchType = type === "전체" || u.type === type
@@ -119,20 +84,24 @@ export default function AdminUser() {
             <div>전화번호</div>
             <div>가입일자</div>
           </dl>
-          {pagedUsers.map((u, i) => (
-            <dl css={listRow} key={i}>
-              <div>{u.type}</div>
-              <div css={clickableCell} onClick={() => navigate(`/admin/user/${u.id}`)}>
-                {u.name}
-              </div>
-              <div css={clickableCell} onClick={() => navigate(`/admin/user/${u.id}`)}>
-                {u.id}
-              </div>
-              <div>{u.email}</div>
-              <div>{u.tel}</div>
-              <div>{u.date}</div>
-            </dl>
-          ))}
+          {pagedUsers.length === 0 ? (
+            <div css={emptyRow}>회원 정보가 없습니다.</div>
+          ) : (
+            pagedUsers.map((u, i) => (
+              <dl css={listRow} key={i}>
+                <div>{u.type}</div>
+                <div css={clickableCell} onClick={() => navigate(`/admin/user/${u.id}`)}>
+                  {u.name}
+                </div>
+                <div css={clickableCell} onClick={() => navigate(`/admin/user/${u.id}`)}>
+                  {u.id}
+                </div>
+                <div>{u.email}</div>
+                <div>{u.tel}</div>
+                <div>{u.date}</div>
+              </dl>
+            ))
+          )}
         </div>
         <div css={paginationStyle}>
           {[...Array(totalPage)].map((_, idx) => (
@@ -263,6 +232,15 @@ const clickableCell = css`
   &:hover {
     color: #ff9800;
   }
+`
+const emptyRow = css`
+  padding: 40px 0;
+  text-align: center;
+  color: #888;
+  font-size: 16px;
+  border: 1.5px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
 `
 const paginationStyle = css`
   display: flex;
