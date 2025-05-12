@@ -8,6 +8,7 @@ import FormControlLabel from "@mui/material/FormControlLabel"
 import FormControl from "@mui/material/FormControl"
 import FormLabel from "@mui/material/FormLabel"
 import { useState } from "react"
+import { sendAuthEmail, signupCheckEmail } from "@/api/signup"
 const mailformat = [
   {
     value: "naver",
@@ -32,6 +33,7 @@ function findId() {
   const [EmailButtonActive, setEmailButtonActive] = useState(0)
   const [commentTel, setCommentTel] = useState("휴대폰 번호를 입력해주세요.")
   const [commentEmail, setCommentEmail] = useState("이메일을 입력해주세요")
+  const [Email, setEmail] = useState("")
 
   function handleChangeEmail(e) {
     const val = e.target.value
@@ -41,6 +43,7 @@ function findId() {
     else if (!/^[a-z|A-Z|0-9|_\-.]+@[a-z|A-Z|0-9]+\.[a-z|A-Z]{2,}$/.test(val))
       setCommentEmail("이메일 형식을 바르게 입력해주세요")
     else {
+      setEmail(val)
       setCommentEmail("인증해주세요")
       setEmailButtonActive(1)
     }
@@ -67,6 +70,34 @@ function findId() {
       val = val.substring(0, 3) + "-" + val.substring(3, length)
       e.target.value = val
     }
+  }
+  const sendEmail = () => {
+    sendAuthEmail({
+      email: Email,
+    }).then((res) => {
+      if (res.code === 200) {
+        alert("인증메일을 전송했습니다!")
+        setEmailButtonActive(1)
+      }
+    })
+  }
+  const checkEmail = () => {
+    signupCheckEmail({
+      email: Email,
+    }).then((res) => {
+      console.log(res)
+      if (res.code === 200) {
+        alert("등록되지 않은 이메일 입니다.")
+        //메일전송
+      } else {
+        alert("인증번호 전송 중")
+        sendEmail()
+      }
+    })
+  }
+
+  function sendEailEventHandler(e) {
+    checkEmail()
   }
   return (
     <>
@@ -100,7 +131,9 @@ function findId() {
                 인증요청
               </Button>
             ) : (
-              <Button variant="contained">인증요청</Button>
+              <Button variant="contained" onClick={sendEailEventHandler}>
+                인증요청
+              </Button>
             )}
             <FormHelperText>{commentEmail}</FormHelperText>
           </>

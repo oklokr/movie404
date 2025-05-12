@@ -12,6 +12,7 @@ import IconButton from "@mui/material/IconButton"
 import { FormHelperText } from "@mui/material"
 import { useEffect } from "react"
 import { insertUser, sendAuthEmail, signupCheckEmail, signupCheckId } from "@/api/signup"
+import { useNavigate } from "react-router"
 
 const user_info = {
   id: "",
@@ -36,6 +37,8 @@ function signup() {
   const [SendMail, setSendMail] = useState(0)
   const handleClickShowPassword = () => setShowPassword((show) => !show)
   const handleClickShowRePassword = () => setShowRePassword((show) => !show)
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     console.log(PW)
@@ -131,6 +134,7 @@ function signup() {
     }).then((res) => {
       if (res.code === 200) {
         alert("가입성공!")
+        navigate("/result")
       }
     })
   }

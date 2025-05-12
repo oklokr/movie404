@@ -92,8 +92,8 @@ public class Signup {
         userdto.setUserName((String) requestBody.get("id"));
         userdto.setEmail((String) requestBody.get("email"));
 
-
-        userService.insertUser(userdto);
+        
+        userService.insertUser(userdto); //잘 들어가면 리턴타입 null임 참나ㅋㅋㅋ
             return new ApiResponse(200,"success",null);
         
     }
