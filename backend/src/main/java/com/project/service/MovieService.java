@@ -26,4 +26,8 @@ public class MovieService {
         result.put("total", total);
         return result;
     }
+
+    public MovieDto getMovieDetail(String movieCode) {
+        return movieMapper.selectMovieDetail(movieCode);
+    }
 }

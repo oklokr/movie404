@@ -52,3 +52,20 @@ export function createMovie(formData) {
     headers: { "Content-Type": "multipart/form-data" },
   }).then((res) => res)
 }
+
+// 영화 상세 조회
+export function fetchMovieDetail(movieCode) {
+  return request({
+    url: `/api/admin/movie/${movieCode}`,
+    method: "get",
+  }).then((res) => res)
+}
+
+export function updateMovie(movieCode, formData) {
+  return request({
+    url: `/api/admin/movie/${movieCode}`,
+    method: "put",
+    data: formData,
+    headers: { "Content-Type": "multipart/form-data" },
+  }).then((res) => res)
+}

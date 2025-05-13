@@ -73,7 +73,12 @@ export default function Movie() {
           <div css={emptyRow}>영화가 없습니다.</div>
         ) : (
           list.map((row) => (
-            <dl css={listRow} key={row.movieCode}>
+            <dl
+              css={listRow}
+              key={row.movieCode}
+              onClick={() => navigate(`/admin/movie/${row.movieCode}`)} // 상세로 이동
+              style={{ cursor: "pointer" }}
+            >
               <dd>{row.movieCode}</dd>
               <dd>{row.movieName}</dd>
               <dd>
