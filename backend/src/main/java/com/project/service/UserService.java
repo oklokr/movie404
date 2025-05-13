@@ -88,4 +88,7 @@ public class UserService {
 
         return userMapper.selectIdbyEmail(email);
     }
+    public int checkUserByIdEmail(String email, String id){
+        return userMapper.checkUserByIdEmail(email, id);
+    }
 }

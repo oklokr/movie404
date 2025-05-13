@@ -193,6 +193,9 @@ function findId() {
           )}
         </>
       )}
+
+      <Button variant="outlined">이전</Button>
+      <Button variant="contained">로그인</Button>
     </>
   )
 }
