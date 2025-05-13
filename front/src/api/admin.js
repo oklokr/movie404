@@ -42,3 +42,13 @@ export function fetchMovieList(params) {
     params,
   }).then((res) => res)
 }
+
+// 영화 등록 (FormData 사용)
+export function createMovie(formData) {
+  return request({
+    url: "/api/admin/movie",
+    method: "post",
+    data: formData,
+    headers: { "Content-Type": "multipart/form-data" },
+  }).then((res) => res)
+}
