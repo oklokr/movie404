@@ -3,7 +3,7 @@ import request from "@/utils/request"
 // 회원 목록 조회
 export function fetchUserList() {
   return request({
-    url: "/admin/user",
+    url: "/api/admin/user",
     method: "get",
   }).then((res) => res)
 }
@@ -11,7 +11,7 @@ export function fetchUserList() {
 // 회원 상세 조회
 export function fetchUserDetail(id) {
   return request({
-    url: `/admin/user/${id}`,
+    url: `/api/admin/user/${id}`,
     method: "get",
   }).then((res) => res)
 }
@@ -19,7 +19,7 @@ export function fetchUserDetail(id) {
 // 회원 비밀번호 초기화 (비밀번호를 1234로 변경)
 export function resetUserPassword(id) {
   return request({
-    url: `/admin/user/${id}/reset-password`,
+    url: `/api/admin/user/${id}/reset-password`,
     method: "post",
     data: { password: "1234" },
   }).then((res) => res)
@@ -28,7 +28,7 @@ export function resetUserPassword(id) {
 // 회원 유형 변경
 export function updateUserType(id, type) {
   return request({
-    url: `/admin/user/${id}/type`,
+    url: `/api/admin/user/${id}/type`,
     method: "put",
     data: { type },
   }).then((res) => res)
