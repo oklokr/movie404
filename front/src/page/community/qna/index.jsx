@@ -95,20 +95,15 @@ export default function QnaList() {
             </thead>
             <tbody>
               {paged.map((item) => (
-                <tr key={item.qnaCode || item.id}>
+                <tr
+                  key={item.qnaCode || item.id}
+                  css={rowStyle}
+                  onClick={() => navigate(`/community/qna/${item.qnaCode || item.id}`)}
+                  tabIndex={0}
+                >
                   <td css={tdStyle}>{item.reply ? "답변완료" : "답변대기"}</td>
                   <td css={tdStyle}>{item.userId || item.writer}</td>
-                  <td
-                    css={tdStyle}
-                    style={{
-                      color: "#0078d4",
-                      cursor: "pointer",
-                      textDecoration: "underline",
-                    }}
-                    onClick={() => navigate(`/community/qna/${item.qnaCode || item.id}`)}
-                  >
-                    {item.title}
-                  </td>
+                  <td css={tdStyle}>{item.title}</td>
                   <td css={tdStyle}>{item.writeDate || item.date}</td>
                 </tr>
               ))}
@@ -181,4 +176,11 @@ const tableStyle = css`
   border-collapse: collapse;
   background: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+`
+const rowStyle = css`
+  cursor: pointer;
+  transition: background 0.15s;
+  &:hover {
+    background: #fffbe7;
+  }
 `

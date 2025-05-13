@@ -262,6 +262,7 @@ const listRow = css`
   border: 1.5px solid #ddd;
   border-top: none;
   font-size: 15px;
+  transition: background 0.15s;
   > dd {
     flex: 1;
     padding: 13px 8px;
@@ -273,6 +274,10 @@ const listRow = css`
   }
   &:last-of-type {
     border-radius: 0 0 6px 6px;
+  }
+  cursor: pointer;
+  &:hover {
+    background: #fffbe7;
   }
 `
 const emptyRow = css`

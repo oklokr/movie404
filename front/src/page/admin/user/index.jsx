@@ -145,14 +145,16 @@ export default function AdminUser() {
           <div css={emptyRow}>회원 정보가 없습니다.</div>
         ) : (
           pagedUsers.map((u, i) => (
-            <dl css={listRow} key={i}>
+            <dl
+              css={listRow}
+              key={i}
+              onClick={() => goDetail(u.id)}
+              tabIndex={0}
+              style={{ cursor: "pointer" }}
+            >
               <div>{u.type}</div>
-              <div css={clickableCell} onClick={() => goDetail(u.id)}>
-                {u.name}
-              </div>
-              <div css={clickableCell} onClick={() => goDetail(u.id)}>
-                {u.id}
-              </div>
+              <div>{u.name}</div>
+              <div>{u.id}</div>
               <div>{u.email}</div>
               <div>{u.tel}</div>
               <div>{u.date}</div>
@@ -255,6 +257,7 @@ const listRow = css`
   border: 1.5px solid #ddd;
   border-top: none;
   font-size: 15px;
+  transition: background 0.15s;
   > div {
     flex: 1;
     padding: 13px 8px;
@@ -263,13 +266,9 @@ const listRow = css`
   &:last-of-type {
     border-radius: 0 0 6px 6px;
   }
-`
-const clickableCell = css`
   cursor: pointer;
-  color: #0078d4;
-  text-decoration: underline;
   &:hover {
-    color: #ff9800;
+    background: #fffbe7;
   }
 `
 const emptyRow = css`
