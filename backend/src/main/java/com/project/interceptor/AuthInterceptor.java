@@ -29,6 +29,8 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
+        System.out.println(token == null || token.isEmpty());
+
         if (token == null || token.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;

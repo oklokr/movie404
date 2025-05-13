@@ -15,6 +15,7 @@ import logoImg from "@/assets/images/logo/logo.png"
 import { useDispatch, useSelector } from "react-redux"
 import { setUserInfo } from "@/store/slices/user"
 import { useNavigate } from "react-router"
+import { selectUser } from "@/store/selectors"
 
 function Login() {
   const dispatch = useDispatch()

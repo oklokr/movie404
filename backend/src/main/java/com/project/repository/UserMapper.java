@@ -4,25 +4,24 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.project.model.UserDto;
 
 @Mapper
 public interface UserMapper {
     // 로그인 회원정보 조회
-    UserDto getUser(String userId, String passwd, String token);
+    UserDto getUser(@Param("userId") String userId, @Param("passwd") String passwd, @Param("token") String token);
     // 토큰 갱신
-    void updateToken(String token, LocalDateTime tokenValidity, String userId);
+    void updateToken(@Param("token") String token, @Param("tokenValidity") LocalDateTime tokenValidity, @Param("userId") String userId);
     // 토큰 무효화 (로그아웃 시 또는 만료된 토큰 처리)
     void invalidateToken(String userId);
     // 회원정보 리스트 조회
     List<UserDto> getUserList();
 
-    UserDto getUserToLogin(String userId, String passwd);
     UserDto getUserDetail(String userId);
     int resetUserPassword(String userId, String password);
     int updateUserType(String userId, String type);
-    UserDto getUser();
     int checkId(String id);
     int checkEmail(String email);
     String insertUser(UserDto newUser);

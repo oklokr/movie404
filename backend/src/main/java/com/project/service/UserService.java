@@ -19,7 +19,8 @@ public class UserService {
     private UserMapper userMapper;
 
     public UserDto getUser(String userId, String passwd) {
-        UserDto user = userMapper.getUser(userId, passwd, null);
+    	String token = null;
+        UserDto user = userMapper.getUser(userId, passwd, token);
         if(user != null) {
             UUID uuid = UUID.randomUUID();
             LocalDateTime validity = LocalDateTime.now().plusHours(1);
