@@ -7,10 +7,16 @@ import Radio from "@mui/material/Radio"
 import RadioGroup from "@mui/material/RadioGroup"
 import FormControlLabel from "@mui/material/FormControlLabel"
 import FormControl from "@mui/material/FormControl"
-const cssAlign = { "justify-content": "right" }
-const cssWidth = { width: "100%" }
+import { useState } from "react"
 
 function terms() {
+  const cssAlign = { "justify-content": "right" }
+  const cssWidth = { width: "100%" }
+
+  const [TermA, setTermA] = useState("")
+  const [TermB, setTermB] = useState("")
+  const [TermC, setTermC] = useState("")
+  const [TermD, setTermD] = useState("")
   return (
     <>
       <div>약관동의</div>
