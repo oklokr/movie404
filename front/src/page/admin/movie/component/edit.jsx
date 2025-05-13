@@ -1,10 +1,11 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { css } from "@emotion/react"
-import { useNavigate } from "react-router-dom"
-import { createMovie } from "@/api/admin"
+import { useNavigate, useParams } from "react-router-dom"
+import { createMovie, fetchMovieDetail, updateMovie } from "@/api/admin"
 
 export default function MovieEdit() {
   const navigate = useNavigate()
+  const { movieCode } = useParams()
   // 폼 상태
   const [poster, setPoster] = useState(null)
   const [posterFile, setPosterFile] = useState(null)
@@ -40,6 +41,24 @@ export default function MovieEdit() {
     { value: "3", name: "15세" },
     { value: "4", name: "청불" },
   ]
+
+  // 수정 모드: 기존 데이터 불러오기
+  useEffect(() => {
+    if (!movieCode) return
+    fetchMovieDetail(movieCode).then((res) => {
+      const movie = res.data ? res.data : res // res.data가 없으면 res 사용 (호환성)
+      setPoster(movie.poster)
+      setGenre(movie.genreCode || "")
+      setRating(movie.rating || "1")
+      setTitle(movie.movieName || "")
+      setDesc(movie.synopsis || "")
+      setDirectors(movie.directorCode ? [movie.directorCode] : [])
+      setCasts(movie.actorCode ? [movie.actorCode] : [])
+      setDvdPrice(movie.dvdPrice || "")
+      setReservePrice(movie.reservePrice || "")
+      // 필요시 기타 필드도 세팅
+    })
+  }, [movieCode])
 
   // 포스터 업로드
   const handlePosterChange = (e) => {
@@ -140,11 +159,16 @@ export default function MovieEdit() {
         formData.append("RESERVE_DATE_FROM", reserveDateFrom)
         formData.append("RESERVE_DATE_TO", reserveDateTo)
       }
-      await createMovie(formData)
-      alert("등록이 완료되었습니다.")
+      if (movieCode) {
+        await updateMovie(movieCode, formData)
+        alert("수정이 완료되었습니다.")
+      } else {
+        await createMovie(formData)
+        alert("등록이 완료되었습니다.")
+      }
       navigate("/admin/movie")
     } catch (err) {
-      alert("등록 실패: " + (err?.message || "알 수 없는 오류"))
+      alert((movieCode ? "수정" : "등록") + " 실패: " + (err?.message || "알 수 없는 오류"))
     } finally {
       setLoading(false)
     }
@@ -152,7 +176,7 @@ export default function MovieEdit() {
 
   return (
     <form css={wrapStyle} onSubmit={handleSubmit}>
-      <h2 css={titleStyle}>영화 등록</h2>
+      <h2 css={titleStyle}>{movieCode ? "영화 수정" : "영화 등록"}</h2>
       <div css={tableWrap}>
         {/* 포스터 */}
         <div css={trStyle}>

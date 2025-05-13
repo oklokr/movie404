@@ -1,5 +1,3 @@
-import * as React from "react"
-import Box from "@mui/material/Box"
 import TextField from "@mui/material/TextField"
 import Button from "@mui/material/Button"
 import Stack from "@mui/material/Stack"
@@ -12,12 +10,13 @@ import IconButton from "@mui/material/IconButton"
 import { FormHelperText } from "@mui/material"
 import { useEffect } from "react"
 import { insertUser, sendAuthEmail, signupCheckEmail, signupCheckId } from "@/api/signup"
-import { useNavigate } from "react-router"
+import { useNavigate, useLocation } from "react-router"
 
 const user_info = {
   id: "",
   pwd: "",
   email: "",
+  terms: "",
   authcode: "",
 }
 function signup() {
@@ -39,7 +38,7 @@ function signup() {
   const handleClickShowRePassword = () => setShowRePassword((show) => !show)
 
   const navigate = useNavigate()
-
+  const location = useLocation()
   useEffect(() => {
     console.log(PW)
     console.log(RPW)
@@ -131,6 +130,7 @@ function signup() {
       id: user_info.id,
       pwd: user_info.pwd,
       email: user_info.email,
+      terms: location.state,
     }).then((res) => {
       if (res.code === 200) {
         alert("가입성공!")
@@ -146,6 +146,7 @@ function signup() {
       if (res.code === 200) {
         user_info.id = ID
         alert("사용 가능한 아이디 입니다.")
+        //alert(user_info.terms)
       } else {
         user_info.id = ""
         alert("사용불가한 아이디 입니다.")
@@ -215,6 +216,9 @@ function signup() {
 
   function userInputEvent(e) {
     setInputCode(e.target.value)
+  }
+  function previousPage(e) {
+    navigate("/terms")
   }
   return (
     <>
@@ -331,7 +335,9 @@ function signup() {
         )}
       </div>
       <Stack spacing={2} direction="row">
-        <Button variant="outlined">이전</Button>
+        <Button variant="outlined" onClick={previousPage}>
+          이전
+        </Button>
         <Button variant="contained" onClick={SignUpEvent}>
           확인
         </Button>

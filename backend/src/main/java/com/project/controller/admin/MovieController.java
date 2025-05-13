@@ -1,5 +1,6 @@
 package com.project.controller.admin;
 
+import com.project.model.MovieDto;
 import com.project.service.MovieService;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,5 +22,10 @@ public class MovieController {
             @RequestParam(defaultValue = "10") int size
     ) {
         return movieService.getMovieList(movieName, page, size);
+    }
+
+    @GetMapping("/{movieCode}")
+    public MovieDto getMovieDetail(@PathVariable String movieCode) {
+        return movieService.getMovieDetail(movieCode);
     }
 }

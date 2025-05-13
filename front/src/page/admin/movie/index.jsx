@@ -73,7 +73,12 @@ export default function Movie() {
           <div css={emptyRow}>영화가 없습니다.</div>
         ) : (
           list.map((row) => (
-            <dl css={listRow} key={row.movieCode}>
+            <dl
+              css={listRow}
+              key={row.movieCode}
+              onClick={() => navigate(`/admin/movie/${row.movieCode}`)} // 상세로 이동
+              style={{ cursor: "pointer" }}
+            >
               <dd>{row.movieCode}</dd>
               <dd>{row.movieName}</dd>
               <dd>
@@ -257,6 +262,7 @@ const listRow = css`
   border: 1.5px solid #ddd;
   border-top: none;
   font-size: 15px;
+  transition: background 0.15s;
   > dd {
     flex: 1;
     padding: 13px 8px;
@@ -268,6 +274,10 @@ const listRow = css`
   }
   &:last-of-type {
     border-radius: 0 0 6px 6px;
+  }
+  cursor: pointer;
+  &:hover {
+    background: #fffbe7;
   }
 `
 const emptyRow = css`

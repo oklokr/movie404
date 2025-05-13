@@ -10,4 +10,5 @@ import java.util.List;
 public interface MovieMapper {
     List<MovieDto> selectMovieList(@Param("movieName") String movieName, @Param("offset") int offset, @Param("size") int size);
     int countMovieList(@Param("movieName") String movieName);
+    MovieDto selectMovieDetail(@Param("movieCode") String movieCode);
 }
