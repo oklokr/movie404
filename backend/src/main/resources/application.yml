@@ -4,8 +4,6 @@ spring:
       enabled: false
     restart:
       enabled: true
-      additional-paths:
-        - src/main/java
 
   config:
     import: optional:file:./db.env
@@ -45,5 +43,6 @@ server:
 
 mybatis:
   mapper-locations: classpath:mybatis/*.xml
+  type-aliases-package: com.project.model
   configuration:
     map-underscore-to-camel-case: true

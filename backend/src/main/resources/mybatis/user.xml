@@ -132,14 +132,14 @@
     <select id="checkEmail" resultType="int">
         SELECT COUNT(*) FROM MEMBERS WHERE EMAIL=#{email}
     </select>
-    <select id="insertUser" parameterType="com.project.model.UserDto" resultType="String">
+    <insert id="insertUser" parameterType="com.project.model.UserDto">
         INSERT MEMBERS 
         (USER_ID, PASSWD, USER_NAME, EMAIL, TEL, SIGNUP_DATE, 
         LANG_TPCD, DATE_TPCD, VIEW_ADULT, SAVE_HISTORY, TERMS, USER_TPCD)
         VALUES
         (#{userId}, #{passwd}, #{userName}, #{email}, "01088889999", DATE_FORMAT(now(), '%Y-%m-%d'), 
         '2','1','N','Y',"111",'1')
-    </select>
+    </insert>
     <select id="selectIdbyEmail" resultType="String">
         SELECT USER_ID FROM MEMBERS WHERE EMAIL=#{email}
     </select>
