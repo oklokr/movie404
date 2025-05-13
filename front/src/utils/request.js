@@ -51,7 +51,6 @@ const setInterceptors = (service) => {
           .find((row) => row.startsWith("authToken="))
           ?.split("=")[1]
         if (token !== null) {
-          console.log(token)
           config.headers["authorization"] = token
         }
         if (config.longTime) {

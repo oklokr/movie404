@@ -22,7 +22,7 @@ public class Login {
     public ApiResponse login(@RequestBody Map<String, Object> requestBody) {
         String id = (String) requestBody.get("id");
         String passwd = (String) requestBody.get("passwd");
-        UserDto userInfo = userService.getUser(id, passwd);
+        UserDto userInfo = userService.getUser(id, passwd, null, true);
         if (userInfo == null) {
             return new ApiResponse(401, "일치하는 회원정보가 없습니다.", null);
         }

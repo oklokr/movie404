@@ -21,7 +21,7 @@ const userSlice = createSlice({
       state.language = action.payload
     },
     setUserInfo(state, action) {
-      return { ...state.info, ...action.payload }
+      state.info = action.payload
     },
     resetUserInfo(state) {
       state.info = null

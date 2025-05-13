@@ -35,10 +35,10 @@
             AND m.USER_ID = #{userId}
             AND m.PASSWD = #{passwd}
         </if>
-        <if test="userId != null">
+        <if test="userId != null and (passwd == null or token == null)">
             AND m.USER_ID = #{userId}
         </if>
-        <if test="token != null">
+        <if test="token != null and (userId == null or passwd == null)">
             AND m.TOKEN = #{token}
         </if>
     </select>

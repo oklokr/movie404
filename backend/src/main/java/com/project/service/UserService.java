@@ -18,22 +18,31 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    public UserDto getUser(String userId, String passwd) {
-    	String token = null;
+    public UserDto getUser(String userId, String passwd, String token, Boolean isLogin) {
+    	userId = (userId != null && !userId.isEmpty()) ? userId : null;
+        passwd = (passwd != null && !passwd.isEmpty()) ? passwd : null;
+        token  = (token  != null && !token.isEmpty())  ? token  : null;
+        if (isLogin == null) isLogin = false;
+        
         UserDto user = userMapper.getUser(userId, passwd, token);
+
         if(user != null) {
-            UUID uuid = UUID.randomUUID();
-            LocalDateTime validity = LocalDateTime.now().plusHours(1);
-            userMapper.updateToken(uuid.toString(), validity, userId);
-
             String signupDateConvert = DateFormatUtil.formatDate(user.getSignupDate(), user.getDateTpcdName());
-
-            Date validityDate = Date.from(validity.atZone(ZoneId.systemDefault()).toInstant());
-            String toeknDateConvert = DateFormatUtil.formatDate(validityDate, user.getDateTpcdName() + " HH:mm:ss");
             user.setSignupDateStr(signupDateConvert);
-            user.setTokenValidity(validityDate);
-            user.setTokenValidityStr(toeknDateConvert);
-            user.setToken(uuid.toString());
+            
+            if(isLogin) {
+                LocalDateTime validity = LocalDateTime.now().plusHours(1);
+                UUID uuid = UUID.randomUUID();
+                Date validityDate = Date.from(validity.atZone(ZoneId.systemDefault()).toInstant());
+                String toeknDateConvert = DateFormatUtil.formatDate(validityDate, user.getDateTpcdName() + " HH:mm:ss");
+                user.setTokenValidity(validityDate);
+                user.setTokenValidityStr(toeknDateConvert);
+                userMapper.updateToken(uuid.toString(), validity, userId);
+                user.setToken(uuid.toString());
+            } else {
+                String toeknDateConvert = DateFormatUtil.formatDate(user.getTokenValidity(), user.getDateTpcdName() + " HH:mm:ss");
+                user.setTokenValidityStr(toeknDateConvert);
+            }
         }
         return user;
     }
