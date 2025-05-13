@@ -8,31 +8,31 @@ import FormControlLabel from "@mui/material/FormControlLabel"
 import FormControl from "@mui/material/FormControl"
 import FormLabel from "@mui/material/FormLabel"
 import { useState } from "react"
-const mailformat = [
-  {
-    value: "naver",
-    label: "@naver.com",
-  },
-  {
-    value: "google",
-    label: "@gmail.com",
-  },
-  {
-    value: "daum",
-    label: "@daum.com",
-  },
-  {
-    value: "nate",
-    label: "@nate.com",
-  },
-]
+import { sendAuthEmail, signupCheckEmail } from "@/api/signup"
+import { checkUserByIdEmail } from "@/api/findpw"
+
+const findid_info = {
+  id: "",
+  pwd: "",
+  email: "",
+  authcode: "",
+}
 function findPw() {
   const [radio, setRadio] = useState("email")
   const [TelButtonActive, setTelButtonActive] = useState(0)
   const [EmailButtonActive, setEmailButtonActive] = useState(0)
+  const [AuthButtonActive, setAuthButtonActive] = useState(0)
   const [commentTel, setCommentTel] = useState("휴대폰 번호를 입력해주세요.")
   const [commentEmail, setCommentEmail] = useState("이메일을 입력해주세요")
+  const [commentID, setCommentID] = useState("아이디를 입력해주세요")
+  const [Email, setEmail] = useState("")
+  const [ID, setID] = useState("")
 
+  const [InputCode, setInputCode] = useState("")
+
+  function handleChangeId(e) {
+    setID(e.target.value)
+  }
   function handleChangeEmail(e) {
     const val = e.target.value
     setEmailButtonActive(0)
@@ -41,6 +41,7 @@ function findPw() {
     else if (!/^[a-z|A-Z|0-9|_\-.]+@[a-z|A-Z|0-9]+\.[a-z|A-Z]{2,}$/.test(val))
       setCommentEmail("이메일 형식을 바르게 입력해주세요")
     else {
+      setEmail(val)
       setCommentEmail("인증해주세요")
       setEmailButtonActive(1)
     }
@@ -68,6 +69,60 @@ function findPw() {
       e.target.value = val
     }
   }
+  const sendEmail = () => {
+    sendAuthEmail({
+      email: Email,
+    }).then((res) => {
+      if (res.code === 200) {
+        alert("인증메일을 전송했습니다!")
+        findid_info.authcode = res.data
+        findid_info.email = Email
+        setAuthButtonActive(1)
+      }
+    })
+  }
+  const checkEmail = () => {
+    signupCheckEmail({
+      email: Email,
+    }).then((res) => {
+      console.log(res)
+      if (res.code === 200) {
+        alert("등록되지 않은 이메일 입니다.")
+        //메일전송
+      } else {
+        alert("인증번호 전송 중")
+        sendEmail()
+      }
+    })
+  }
+
+  function sendEailEventHandler(e) {
+    checkEmail()
+  }
+  function authEmailCheck(e) {
+    if (InputCode == findid_info.authcode) {
+      alert("인증번호가 일치합니다!")
+      showPw()
+    } else alert("인증번호가 일치하지 않습니다!")
+  }
+
+  function handleChangeAuth(e) {
+    const val = e.target.value
+    setInputCode(val)
+  }
+
+  const showPw = () => {
+    checkUserByIdEmail({
+      id: ID,
+      email: findid_info.email,
+    }).then((res) => {
+      if (res.code === 200) {
+        alert("초기화 비밀번호 : " + res.data)
+      } else {
+        alert("등록되지 않은 아이디입니다!")
+      }
+    })
+  }
   return (
     <>
       <h1> 비밀번호 찾기 </h1>
@@ -84,46 +139,84 @@ function findPw() {
           <FormControlLabel value="tel" control={<Radio />} label="휴대폰번호 인증" />
         </RadioGroup>
       </FormControl>
-      <div>
-        {radio === "email" ? (
-          <>
+      <div className="input-form">
+        <InputLabel>아이디 </InputLabel>
+        <div>
+          <OutlinedInput
+            id="signup_email"
+            aria-describedby="outlined-weight-helper-text"
+            required
+            onChange={handleChangeId}
+          />
+
+          <FormHelperText>{commentID}</FormHelperText>
+        </div>
+      </div>
+      {radio === "email" ? (
+        <>
+          <div className="input-form">
             <InputLabel>이메일 </InputLabel>
+            <div>
+              <OutlinedInput
+                id="signup_email"
+                aria-describedby="outlined-weight-helper-text"
+                required
+                onChange={handleChangeEmail}
+              />
+
+              <FormHelperText>{commentEmail}</FormHelperText>
+            </div>
+            {EmailButtonActive == 0 ? (
+              <Button variant="contained" disabled>
+                이메일 인증
+              </Button>
+            ) : (
+              <Button variant="contained" onClick={sendEailEventHandler}>
+                이메일 인증
+              </Button>
+            )}
+          </div>
+          <div className="input-form">
+            <InputLabel>인증번호 </InputLabel>
             <OutlinedInput
               id="signup_email"
               aria-describedby="outlined-weight-helper-text"
               required
-              onChange={handleChangeEmail}
+              onChange={handleChangeAuth}
             />
+            {AuthButtonActive == 0 ? (
+              <Button variant="contained" disabled>
+                인증요청
+              </Button>
+            ) : (
+              <Button variant="contained" onClick={authEmailCheck}>
+                인증요청
+              </Button>
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          <InputLabel className="input-form">휴대폰 인증 </InputLabel>
+          <TextField
+            id="signup_id"
+            aria-describedby="outlined-weight-helper-text"
+            required
+            helperText={commentTel}
+            onChange={handleChangeTel}
+          />
+          {TelButtonActive == 0 ? (
+            <Button variant="contained" disabled>
+              휴대폰 인증
+            </Button>
+          ) : (
+            <Button variant="contained">휴대폰 인증</Button>
+          )}
+        </>
+      )}
 
-            {EmailButtonActive == 0 ? (
-              <Button variant="contained" disabled>
-                인증요청
-              </Button>
-            ) : (
-              <Button variant="contained">인증요청</Button>
-            )}
-            <FormHelperText>{commentEmail}</FormHelperText>
-          </>
-        ) : (
-          <>
-            <InputLabel className="input-form">휴대폰 인증 </InputLabel>
-            <TextField
-              id="signup_id"
-              aria-describedby="outlined-weight-helper-text"
-              required
-              helperText={commentTel}
-              onChange={handleChangeTel}
-            />
-            {TelButtonActive == 0 ? (
-              <Button variant="contained" disabled>
-                인증요청
-              </Button>
-            ) : (
-              <Button variant="contained">인증요청</Button>
-            )}
-          </>
-        )}
-      </div>
+      <Button variant="outlined">이전</Button>
+      <Button variant="contained">로그인</Button>
     </>
   )
 }
