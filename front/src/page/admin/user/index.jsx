@@ -101,99 +101,80 @@ export default function AdminUser() {
   }
 
   return (
-    <div css={outerWrap}>
-      <div css={mainBox}>
-        <form css={filterBox} onSubmit={handleSearch}>
-          <div css={filterRow}>
-            <label css={filterLabel}>
-              회원명
-              <input
-                type="text"
-                placeholder="회원명"
-                css={inputStyle}
-                value={inputSearch}
-                onChange={handleInputSearchChange}
-              />
-            </label>
-            <label css={filterLabel}>
-              구분
-              <select css={selectStyle} value={inputType} onChange={handleInputTypeChange}>
-                <option>전체</option>
-                <option>일반회원</option>
-                <option>VIP회원</option>
-                <option>탈퇴회원</option>
-                <option>관리자</option>
-              </select>
-            </label>
-            <button css={btnStyle} type="submit">
-              검색
-            </button>
-          </div>
-        </form>
-        <div css={countText}>
-          총 <b>{filtered.length}</b> 개
+    <div>
+      <form css={filterBox} onSubmit={handleSearch}>
+        <div css={filterRow}>
+          <label css={filterLabel}>
+            회원명
+            <input
+              type="text"
+              placeholder="회원명"
+              css={inputStyle}
+              value={inputSearch}
+              onChange={handleInputSearchChange}
+            />
+          </label>
+          <label css={filterLabel}>
+            구분
+            <select css={selectStyle} value={inputType} onChange={handleInputTypeChange}>
+              <option>전체</option>
+              <option>일반회원</option>
+              <option>VIP회원</option>
+              <option>탈퇴회원</option>
+              <option>관리자</option>
+            </select>
+          </label>
+          <button css={btnStyle} type="submit">
+            검색
+          </button>
         </div>
-        <div css={listWrap}>
-          <dl css={listHeader}>
-            <div>구분</div>
-            <div>회원명</div>
-            <div>회원 ID</div>
-            <div>이메일</div>
-            <div>전화번호</div>
-            <div>가입일자</div>
-          </dl>
-          {pagedUsers.length === 0 ? (
-            <div css={emptyRow}>회원 정보가 없습니다.</div>
-          ) : (
-            pagedUsers.map((u, i) => (
-              <dl css={listRow} key={i}>
-                <div>{u.type}</div>
-                <div css={clickableCell} onClick={() => goDetail(u.id)}>
-                  {u.name}
-                </div>
-                <div css={clickableCell} onClick={() => goDetail(u.id)}>
-                  {u.id}
-                </div>
-                <div>{u.email}</div>
-                <div>{u.tel}</div>
-                <div>{u.date}</div>
-              </dl>
-            ))
-          )}
-        </div>
-        <div css={paginationStyle}>
-          {[...Array(totalPage)].map((_, idx) => (
-            <button
-              key={idx}
-              className={page === idx + 1 ? "active" : ""}
-              onClick={() => handlePageChange(idx + 1)}
-            >
-              {idx + 1}
-            </button>
-          ))}
-        </div>
+      </form>
+      <div css={countText}>
+        총 <b>{filtered.length}</b> 개
+      </div>
+      <div css={listWrap}>
+        <dl css={listHeader}>
+          <div>구분</div>
+          <div>회원명</div>
+          <div>회원 ID</div>
+          <div>이메일</div>
+          <div>전화번호</div>
+          <div>가입일자</div>
+        </dl>
+        {pagedUsers.length === 0 ? (
+          <div css={emptyRow}>회원 정보가 없습니다.</div>
+        ) : (
+          pagedUsers.map((u, i) => (
+            <dl css={listRow} key={i}>
+              <div>{u.type}</div>
+              <div css={clickableCell} onClick={() => goDetail(u.id)}>
+                {u.name}
+              </div>
+              <div css={clickableCell} onClick={() => goDetail(u.id)}>
+                {u.id}
+              </div>
+              <div>{u.email}</div>
+              <div>{u.tel}</div>
+              <div>{u.date}</div>
+            </dl>
+          ))
+        )}
+      </div>
+      <div css={paginationStyle}>
+        {[...Array(totalPage)].map((_, idx) => (
+          <button
+            key={idx}
+            className={page === idx + 1 ? "active" : ""}
+            onClick={() => handlePageChange(idx + 1)}
+          >
+            {idx + 1}
+          </button>
+        ))}
       </div>
     </div>
   )
 }
 
-const outerWrap = css`
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 600px;
-  background: none;
-`
-const mainBox = css`
-  width: 100%;
-  max-width: 1100px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px #eee;
-  padding: 32px 32px 40px 32px;
-  margin-top: 8px;
-  border: 1.5px solid #e0e0e0;
-`
 const filterBox = css`
   border: 1.5px solid #e0e0e0;
   border-radius: 8px;

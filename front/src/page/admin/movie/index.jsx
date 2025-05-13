@@ -131,23 +131,6 @@ export default function Movie() {
   )
 }
 
-const outerWrap = css`
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 600px;
-  background: none;
-`
-const mainBox = css`
-  width: 100%;
-  max-width: 1200px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px #eee;
-  padding: 32px 32px 40px 32px;
-  margin-top: 24px;
-  border: 1.5px solid #e0e0e0;
-`
 const titleStyle = css`
   font-size: 28px;
   font-weight: 700;
