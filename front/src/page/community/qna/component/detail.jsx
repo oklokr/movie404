@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router"
 import { css } from "@emotion/react"
+import { useSelector } from "react-redux"
+import { selectUser } from "@/store/selectors"
 import { communityGetQnaDetail, communityReplyQna, communityDeleteQna } from "@/api/community"
 
 export default function QnaDetail() {
@@ -9,9 +11,9 @@ export default function QnaDetail() {
   const [detail, setDetail] = useState(null)
   const [answer, setAnswer] = useState("")
   const [loading, setLoading] = useState(false)
-  const user = JSON.parse(localStorage.getItem("user") || "{}")
-  const isAdmin = user.isAdmin
-  const isWriter = detail && user.userId === detail.userId
+  const user = useSelector(selectUser)
+  const isAdmin = user.info?.userTpcd === "2"
+  const isWriter = detail && user.info?.userId === detail.userId
 
   useEffect(() => {
     setLoading(true)

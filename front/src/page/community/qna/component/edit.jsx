@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router"
 import { css } from "@emotion/react"
+import { useSelector, useDispatch } from "react-redux"
+import { selectUser } from "@/store/selectors"
+import { commonGetUserInfo } from "@/api/common"
+import { setUserInfo } from "@/store/slices/user"
 import { communityGetQnaDetail, communityEditQna } from "@/api/community"
 
 export default function QnaEdit() {
   const navigate = useNavigate()
-  const { id } = useParams() // id가 있으면 수정, 없으면 작성
-  const user = JSON.parse(localStorage.getItem("user") || "{}")
+  const { id } = useParams()
+  const dispatch = useDispatch()
+  const user = useSelector(selectUser)
   const isEdit = !!id
 
   const [form, setForm] = useState({
@@ -14,6 +19,22 @@ export default function QnaEdit() {
     content: "",
   })
   const [loading, setLoading] = useState(false)
+
+  // 사용자 정보가 없으면 불러오기
+  useEffect(() => {
+    if (!user.info?.userId) {
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("authToken="))
+        ?.split("=")[1]
+      if (token) {
+        commonGetUserInfo().then((res) => {
+          // res.data.code 또는 res.status 등 실제 응답 구조에 맞게 수정
+          if (res.data?.code === 200) dispatch(setUserInfo(res.data.data))
+        })
+      }
+    }
+  }, [dispatch, user.info])
 
   // 수정일 때 기존 데이터 불러오기
   useEffect(() => {
@@ -35,7 +56,6 @@ export default function QnaEdit() {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  // 목록 버튼 클릭 시 작성 중인 값이 있으면 확인 후 이동
   const handleListClick = () => {
     const hasValue = form.title.trim() || form.content.trim()
     if (hasValue) {
@@ -52,12 +72,16 @@ export default function QnaEdit() {
       alert("제목과 내용을 입력하세요.")
       return
     }
+    if (!user.info?.userId) {
+      alert("로그인 정보가 없습니다. 다시 로그인 해주세요.")
+      return
+    }
     setLoading(true)
     communityEditQna({
       ...(isEdit ? { qnaCode: id } : {}),
       title: form.title,
       content: form.content,
-      userId: user.userId,
+      userId: user.info.userId,
     })
       .then(() => {
         setLoading(false)
@@ -91,7 +115,7 @@ export default function QnaEdit() {
           작성자
         </dt>
         <dd css={tdStyle} style={{ gridColumn: "4/5" }}>
-          {user.userId}
+          {user.info?.userId || ""}
         </dd>
         <dt css={thStyle} style={{ gridColumn: "1/2" }}>
           제목

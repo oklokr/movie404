@@ -1,39 +1,45 @@
 import { css } from "@emotion/react"
 import React, { useState, useEffect } from "react"
 import { useNavigate } from "react-router"
+import { useSelector, useDispatch } from "react-redux"
+import { selectUser } from "@/store/selectors"
+import { commonGetUserInfo } from "@/api/common"
+import { setUserInfo } from "@/store/slices/user"
 import { communityGetQnaList } from "@/api/community"
 
 export default function QnaList() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const user = useSelector(selectUser)
   const [search, setSearch] = useState({ title: "", writer: "" })
   const [list, setList] = useState([])
   const [filtered, setFiltered] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
   const [loading, setLoading] = useState(false)
-  const [user, setUser] = useState({ userId: "", userName: "", isAdmin: false })
 
-  // 로그인한 사용자 정보 불러오기
+  // 사용자 정보가 없으면 불러오기
   useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem("user") || "{}")
-    setUser(userInfo)
-  }, [])
-
-  useEffect(() => {
-    if (!user.userId) return
+    if (!user.info?.userId) return
     setLoading(true)
-    communityGetQnaList({ userId: user.userId, isAdmin: user.isAdmin })
+    let params = {
+      userId: user.info.userId,
+      isAdmin: user.info.userTpcd === "2", // 가공 없이 바로 비교
+    }
+    console.log("QnA API 호출 파라미터:", params)
+    communityGetQnaList(params)
       .then((res) => {
         setList(res.data)
         setFiltered(res.data)
         setLoading(false)
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("QnA API 에러:", err)
         setList([])
         setFiltered([])
         setLoading(false)
       })
-  }, [user.userId, user.isAdmin])
+  }, [user.info?.userId, user.info?.USER_TPCD])
 
   const handleSearch = () => {
     setFiltered(
@@ -179,8 +185,14 @@ const tableStyle = css`
 `
 const rowStyle = css`
   cursor: pointer;
-  transition: background 0.15s;
+  transition:
+    background 0.15s,
+    box-shadow 0.15s;
   &:hover {
-    background: #fffbe7;
+    background: #e6f2ff;
+    box-shadow: 0 2px 8px rgba(0, 120, 212, 0.1);
+    outline: 2px solid #0078d4;
+    z-index: 1;
+    position: relative;
   }
 `
