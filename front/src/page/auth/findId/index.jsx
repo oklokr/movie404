@@ -114,6 +114,8 @@ function findId() {
       }
     })
   }
+
+  function testbutton(e) {}
   return (
     <>
       <h1> 아이디 찾기 </h1>
@@ -189,7 +191,9 @@ function findId() {
               휴대폰 인증
             </Button>
           ) : (
-            <Button variant="contained">휴대폰 인증</Button>
+            <Button variant="contained" onClick={testbutton}>
+              휴대폰 인증
+            </Button>
           )}
         </>
       )}
