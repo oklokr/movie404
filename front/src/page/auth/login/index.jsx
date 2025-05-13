@@ -14,7 +14,7 @@ import { useState } from "react"
 import logoImg from "@/assets/images/logo/logo.png"
 import { useDispatch } from "react-redux"
 import { setUserInfo } from "@/store/slices/user"
-import { useNavigate } from "react-router"
+import { Link, useNavigate } from "react-router"
 
 function Login() {
   const dispatch = useDispatch()
@@ -81,6 +81,19 @@ function Login() {
           />
           <FormHelperText error={message.passwd.length > 0}>{message.passwd}</FormHelperText>
         </div>
+
+        <ul>
+          <li>
+            <Link to="/signup">회원가입</Link>
+          </li>
+          <li>
+            <Link to="/findId">회원가입</Link>
+          </li>
+          <li>
+            <Link to="/findPw">회원가입</Link>
+          </li>
+        </ul>
+
         <Button variant="contained" onClick={handleLogin}>
           로그인
         </Button>
