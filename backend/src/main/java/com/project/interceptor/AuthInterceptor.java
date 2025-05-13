@@ -2,11 +2,9 @@ package com.project.interceptor;
 
 import com.project.model.UserDto;
 import com.project.repository.UserMapper;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -17,8 +15,11 @@ import java.time.ZoneId;
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 
-    @Autowired
-    private UserMapper userMapper;
+    private final ObjectProvider<UserMapper> userMapperProvider;
+
+    public AuthInterceptor(ObjectProvider<UserMapper> userMapperProvider) {
+        this.userMapperProvider = userMapperProvider;
+    }
 
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
@@ -34,27 +35,30 @@ public class AuthInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        // 통합 메서드로 사용자 조회
+        UserMapper userMapper = userMapperProvider.getIfAvailable();
+        if (userMapper == null) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return false;
+        }
+
         UserDto user = userMapper.getUser(null, null, token);
         if (user == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
 
-        // tokenValidity (Date) → LocalDateTime
         LocalDateTime validity = LocalDateTime.ofInstant(
             user.getTokenValidity().toInstant(), ZoneId.systemDefault()
         );
 
         LocalDateTime now = LocalDateTime.now();
         if (validity.isBefore(now)) {
-            // 토큰 만료 → 무효화
             userMapper.invalidateToken(user.getUserId());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
 
-        // 갱신: 현재 시간 기준 1시간 연장
+        // 토큰 유효 시간 갱신 (1시간 연장)
         LocalDateTime extendedValidity = now.plusHours(1);
         userMapper.updateToken(token, extendedValidity, user.getUserId());
 

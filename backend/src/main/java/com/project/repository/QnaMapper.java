@@ -1,8 +1,9 @@
-package com.project.repository.community;
+package com.project.repository;
 
-import com.project.model.community.QnaDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import com.project.model.QnaDto;
 
 import java.util.List;
 
