@@ -1,7 +1,8 @@
-package com.project.service.community;
+package com.project.service;
 
-import com.project.model.community.QnaDto;
-import com.project.repository.community.QnaMapper;
+import com.project.model.QnaDto;
+import com.project.repository.QnaMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,8 +1,9 @@
 package com.project.controller.community;
 
 import com.project.model.ApiResponse;
-import com.project.model.community.QnaDto;
-import com.project.service.community.QnaService;
+import com.project.model.QnaDto;
+import com.project.service.QnaService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
