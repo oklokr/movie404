@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Service
 public class MovieService {
-    private final MovieMapper movieMapper;
+    private MovieMapper movieMapper;
 
     public MovieService(MovieMapper movieMapper) {
         this.movieMapper = movieMapper;
