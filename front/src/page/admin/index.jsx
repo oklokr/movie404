@@ -34,7 +34,7 @@ export default function AdminLayout() {
 }
 
 const wrapStyle = css`
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;

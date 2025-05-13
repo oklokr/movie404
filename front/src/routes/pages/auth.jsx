@@ -5,6 +5,8 @@ const FindPw = lazy(() => import("@/page/auth/findPw"))
 const Signup = lazy(() => import("@/page/auth/signup"))
 const Login = lazy(() => import("@/page/auth/login"))
 const Result = lazy(() => import("@/page/auth/signup/result"))
+const Terms = lazy(() => import("@/page/auth/terms"))
+
 const auth = [
   {
     path: "/login",
@@ -53,6 +55,16 @@ const auth = [
       {
         path: "",
         Component: Result,
+      },
+    ],
+  },
+  {
+    path: "/terms",
+    Component: Content,
+    children: [
+      {
+        path: "",
+        Component: Terms,
       },
     ],
   },

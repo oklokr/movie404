@@ -35,6 +35,18 @@ export default function QnaEdit() {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
+  // 목록 버튼 클릭 시 작성 중인 값이 있으면 확인 후 이동
+  const handleListClick = () => {
+    const hasValue = form.title.trim() || form.content.trim()
+    if (hasValue) {
+      if (window.confirm("작성 중인 내용이 있습니다. 정말 목록으로 이동하시겠습니까?")) {
+        navigate("/community/qna")
+      }
+    } else {
+      navigate("/community/qna")
+    }
+  }
+
   const handleSubmit = () => {
     if (!form.title.trim() || !form.content.trim()) {
       alert("제목과 내용을 입력하세요.")
@@ -117,18 +129,10 @@ export default function QnaEdit() {
         <button
           css={btnStyle}
           style={{ marginRight: 8 }}
-          onClick={() => navigate("/community/qna")}
+          onClick={handleListClick}
           disabled={loading}
         >
           목록
-        </button>
-        <button
-          css={btnStyle}
-          style={{ background: "#6c757d", color: "#fff", marginRight: 8 }}
-          onClick={() => navigate(-1)}
-          disabled={loading}
-        >
-          취소
         </button>
         <button
           css={btnStyle}
