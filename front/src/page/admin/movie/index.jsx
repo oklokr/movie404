@@ -12,8 +12,10 @@ export default function Movie() {
 
   const getList = async (name = "", pageNum = 1) => {
     const res = await fetchMovieList({ movieName: name, page: pageNum, size: PAGE_SIZE })
-    setList(res.data.list || [])
-    setTotal(res.data.total || 0)
+    // res.data가 undefined면 res에서 바로 list, total을 꺼냄
+    const data = res.data || res
+    setList(data.list || [])
+    setTotal(data.total || 0)
   }
 
   useEffect(() => {
@@ -73,12 +75,20 @@ export default function Movie() {
                   <img
                     src={row.poster}
                     alt="포스터"
-                    style={{ width: 48, height: 64, borderRadius: 6, background: "#eee" }}
+                    style={{
+                      width: 64,
+                      height: 64,
+                      borderRadius: 6,
+                      background: "#eee",
+                      objectFit: "cover", // 추가
+                      display: "block",
+                      margin: "0 auto",
+                    }}
                   />
                 ) : (
                   <div
                     style={{
-                      width: 48,
+                      width: 64,
                       height: 64,
                       background: "#eee",
                       borderRadius: 6,
@@ -261,8 +271,11 @@ const listRow = css`
   > dd {
     flex: 1;
     padding: 13px 8px;
-    text-align: center;
     margin: 0;
+    display: flex; // 추가
+    align-items: center; // 추가 (세로 중앙 정렬)
+    justify-content: center; // 추가 (가로 중앙 정렬)
+    text-align: center;
   }
   &:last-of-type {
     border-radius: 0 0 6px 6px;
