@@ -33,3 +33,12 @@ export function updateUserType(id, type) {
     data: { type },
   }).then((res) => res)
 }
+
+// 영화 목록 조회 (검색어: movieName)
+export function fetchMovieList(params) {
+  return request({
+    url: "/api/admin/movie",
+    method: "get",
+    params,
+  }).then((res) => res)
+}
