@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router"
+import { useNavigate, useLocation } from "react-router"
 import { css } from "@emotion/react"
 import { fetchUserList } from "@/api/admin"
 
@@ -11,18 +11,37 @@ export default function AdminUser() {
   const [inputType, setInputType] = useState("전체")
   const [search, setSearch] = useState("")
   const [type, setType] = useState("전체")
-  const [page, setPage] = useState(1)
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // 쿼리스트링에서 page 읽기
+  const getPageFromQuery = () => {
+    const params = new URLSearchParams(location.search)
+    const pageParam = parseInt(params.get("page"), 10)
+    return isNaN(pageParam) || pageParam < 1 ? 1 : pageParam
+  }
+  const [page, setPage] = useState(getPageFromQuery())
+
+  // 쿼리스트링 page 변경 감지
+  useEffect(() => {
+    setPage(getPageFromQuery())
+    // eslint-disable-next-line
+  }, [location.search])
+
+  // 페이지 변경 시 쿼리스트링 반영
+  const handlePageChange = (newPage) => {
+    const params = new URLSearchParams(location.search)
+    params.set("page", String(newPage))
+    navigate({ search: params.toString() })
+  }
 
   useEffect(() => {
     fetchUserList()
       .then((data) => {
-        // API에서 받은 데이터가 배열이 아닐 경우 예외 처리
         if (!Array.isArray(data)) {
           setUsers([])
           return
         }
-        // UserDto → 프론트 데이터 변환 (type 변환 추가)
         setUsers(
           data.map((u) => ({
             id: u.userId,
@@ -67,13 +86,18 @@ export default function AdminUser() {
     e.preventDefault()
     setSearch(inputSearch)
     setType(inputType)
-    setPage(1)
+    handlePageChange(1)
   }
   const handleInputTypeChange = (e) => {
     setInputType(e.target.value)
   }
   const handleInputSearchChange = (e) => {
     setInputSearch(e.target.value)
+  }
+
+  // 상세로 이동 시 현재 페이지 쿼리스트링도 같이 전달
+  const goDetail = (id) => {
+    navigate(`/admin/user/${id}?page=${page}`)
   }
 
   return (
@@ -124,10 +148,10 @@ export default function AdminUser() {
             pagedUsers.map((u, i) => (
               <dl css={listRow} key={i}>
                 <div>{u.type}</div>
-                <div css={clickableCell} onClick={() => navigate(`/admin/user/${u.id}`)}>
+                <div css={clickableCell} onClick={() => goDetail(u.id)}>
                   {u.name}
                 </div>
-                <div css={clickableCell} onClick={() => navigate(`/admin/user/${u.id}`)}>
+                <div css={clickableCell} onClick={() => goDetail(u.id)}>
                   {u.id}
                 </div>
                 <div>{u.email}</div>
@@ -142,7 +166,7 @@ export default function AdminUser() {
             <button
               key={idx}
               className={page === idx + 1 ? "active" : ""}
-              onClick={() => setPage(idx + 1)}
+              onClick={() => handlePageChange(idx + 1)}
             >
               {idx + 1}
             </button>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useNavigate, useParams } from "react-router"
+import { useNavigate, useParams, useLocation } from "react-router" // useLocation 추가
 import { css } from "@emotion/react"
 import { fetchUserDetail, resetUserPassword, updateUserType } from "@/api/admin"
 
@@ -22,6 +22,7 @@ const codeToUserType = {
 export default function AdminUserDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation() // 추가
   const [user, setUser] = useState(null)
   const [password, setPassword] = useState("")
   const [type, setType] = useState("")
@@ -108,7 +109,11 @@ export default function AdminUserDetail() {
   }
 
   // 목록(뒤로가기) 버튼
-  const handleGoList = () => navigate("/admin/user")
+  const handleGoList = () => {
+    // 쿼리스트링 유지
+    const search = location.search
+    navigate(`/admin/user${search}`)
+  }
 
   return (
     <div css={detailWrap}>
