@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react"
 import { css } from "@emotion/react"
 import { useNavigate, useParams } from "react-router"
-import { createMovie, fetchMovieDetail, updateMovie, fetchGenreList } from "@/api/admin"
+import {
+  createMovie,
+  fetchMovieDetail,
+  updateMovie,
+  fetchGenreList,
+  fetchCreatorList,
+} from "@/api/admin"
 
 export default function MovieEdit() {
   const navigate = useNavigate()
@@ -29,11 +35,16 @@ export default function MovieEdit() {
   const [reserveDateFrom, setReserveDateFrom] = useState("")
   const [reserveDateTo, setReserveDateTo] = useState("")
   const [loading, setLoading] = useState(false)
+  const [runtime, setRuntime] = useState("")
+  const [creatorList, setCreatorList] = useState([])
 
-  // 장르 목록 불러오기 (API)
+  // 장르/크리에이터 목록 불러오기
   useEffect(() => {
     fetchGenreList().then((res) => {
       setGenreList(res.data ? res.data : res)
+    })
+    fetchCreatorList().then((res) => {
+      setCreatorList(res.data ? res.data : res)
     })
   }, [])
 
@@ -68,10 +79,18 @@ export default function MovieEdit() {
     setPosterFile(null)
   }
 
-  // 감독 추가/삭제
-  const addDirector = () => {
-    const code = directorInput.trim()
-    if (code && !directors.includes(code)) {
+  // 자동완성 필터
+  const filteredDirectorOptions = creatorList.filter(
+    (c) => c.name.includes(directorInput) && !directors.includes(c.code),
+  )
+  const filteredCastOptions = creatorList.filter(
+    (c) => c.name.includes(castInput) && !casts.includes(c.code),
+  )
+
+  // 감독 추가/삭제 (코드 기반)
+  const addDirector = (code) => {
+    if (!code) return
+    if (!directors.includes(code)) {
       setDirectors([...directors, code])
       setDirectorInput("")
     }
@@ -80,16 +99,22 @@ export default function MovieEdit() {
     setDirectors(directors.filter((d) => d !== code))
   }
 
-  // 출연진 추가/삭제
-  const addCast = () => {
-    const code = castInput.trim()
-    if (code && !casts.includes(code)) {
+  // 출연진 추가/삭제 (코드 기반)
+  const addCast = (code) => {
+    if (!code) return
+    if (!casts.includes(code)) {
       setCasts([...casts, code])
       setCastInput("")
     }
   }
   const removeCast = (code) => {
     setCasts(casts.filter((c) => c !== code))
+  }
+
+  // chip에 한글 이름 표시
+  const getCreatorName = (code) => {
+    const c = creatorList.find((c) => c.code === code)
+    return c ? c.name : code
   }
 
   // 장르 카테고리 버튼 핸들러 (단일 선택)
@@ -144,14 +169,21 @@ export default function MovieEdit() {
     try {
       const formData = new FormData()
       formData.append("GENRE_CODEA", genre)
-      formData.append("GENRE_CODEB", "")
-      formData.append("GENRE_CODEC", "")
       formData.append("RATING_TPCD", rating)
       formData.append("MOVIE_NAME", title)
       formData.append("SYNOPSIS", desc)
+      formData.append("RUNTIME", runtime)
       if (posterFile) formData.append("POSTER", posterFile)
-      directors.forEach((d, i) => formData.append(`DIRECT_CODE${String.fromCharCode(65 + i)}`, d))
-      casts.forEach((c, i) => formData.append(`ACTOR_CODE${String.fromCharCode(65 + i)}`, c))
+
+      // 감독 코드 추가 (빈 값 제외)
+      directors.forEach((d, i) => {
+        if (d) formData.append(`DIRECT_CODE${String.fromCharCode(65 + i)}`, d)
+      })
+      // 출연진 코드 추가 (빈 값 제외)
+      casts.forEach((c, i) => {
+        if (c) formData.append(`ACTOR_CODE${String.fromCharCode(65 + i)}`, c)
+      })
+
       formData.append("DVD_USE", dvdUse ? "Y" : "N")
       if (dvdUse) {
         formData.append("DVD_PRICE", dvdPrice)
@@ -252,6 +284,20 @@ export default function MovieEdit() {
             </div>
           </div>
         </div>
+        <div css={trStyle}>
+          <div css={thStyle}>상영시간(분)</div>
+          <div css={tdStyle}>
+            <input
+              css={inputStyle}
+              type="number"
+              value={runtime}
+              onChange={(e) => setRuntime(e.target.value)}
+              placeholder="예: 110"
+              min={1}
+              style={{ width: 120 }}
+            />{" "}
+          </div>
+        </div>
         {/* 제목 */}
         <div css={trStyle}>
           <div css={thStyle}>제목</div>
@@ -285,7 +331,7 @@ export default function MovieEdit() {
             <div css={chipWrap}>
               {directors.map((d, i) => (
                 <span css={chip} key={i}>
-                  {d}
+                  {getCreatorName(d)}
                   <button
                     type="button"
                     css={chipDelBtn}
@@ -297,21 +343,52 @@ export default function MovieEdit() {
                 </span>
               ))}
             </div>
-            <div css={flexRow}>
+            <div css={flexRow} style={{ position: "relative" }}>
               <input
                 css={inputStyle}
                 value={directorInput}
                 onChange={(e) => setDirectorInput(e.target.value)}
-                placeholder="감독명"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault()
-                    addDirector()
-                  }
-                }}
+                placeholder="감독명(한글)"
                 style={{ width: 200 }}
+                autoComplete="off"
               />
-              <button type="button" css={miniBtn} onClick={addDirector}>
+              {directorInput && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 36,
+                    left: 0,
+                    background: "#fff",
+                    border: "1px solid #ccc",
+                    borderRadius: 4,
+                    zIndex: 10,
+                    width: 200,
+                    maxHeight: 120,
+                    overflowY: "auto",
+                  }}
+                >
+                  {filteredDirectorOptions.length === 0 && (
+                    <div style={{ padding: 8, color: "#888" }}>검색 결과 없음</div>
+                  )}
+                  {filteredDirectorOptions.map((c) => (
+                    <div
+                      key={c.code}
+                      style={{ padding: 8, cursor: "pointer" }}
+                      onClick={() => addDirector(c.code)}
+                    >
+                      {c.name}
+                    </div>
+                  ))}
+                </div>
+              )}
+              <button
+                type="button"
+                css={miniBtn}
+                onClick={() => {
+                  const found = creatorList.find((c) => c.name === directorInput)
+                  if (found) addDirector(found.code)
+                }}
+              >
                 등록
               </button>
             </div>
@@ -324,28 +401,59 @@ export default function MovieEdit() {
             <div css={chipWrap}>
               {casts.map((c, i) => (
                 <span css={chip} key={i}>
-                  {c}
+                  {getCreatorName(c)}
                   <button type="button" css={chipDelBtn} onClick={() => removeCast(c)} title="삭제">
                     ×
                   </button>
                 </span>
               ))}
             </div>
-            <div css={flexRow}>
+            <div css={flexRow} style={{ position: "relative" }}>
               <input
                 css={inputStyle}
                 value={castInput}
                 onChange={(e) => setCastInput(e.target.value)}
-                placeholder="출연진명"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault()
-                    addCast()
-                  }
-                }}
+                placeholder="출연진명(한글)"
                 style={{ width: 200 }}
+                autoComplete="off"
               />
-              <button type="button" css={miniBtn} onClick={addCast}>
+              {castInput && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 36,
+                    left: 0,
+                    background: "#fff",
+                    border: "1px solid #ccc",
+                    borderRadius: 4,
+                    zIndex: 10,
+                    width: 200,
+                    maxHeight: 120,
+                    overflowY: "auto",
+                  }}
+                >
+                  {filteredCastOptions.length === 0 && (
+                    <div style={{ padding: 8, color: "#888" }}>검색 결과 없음</div>
+                  )}
+                  {filteredCastOptions.map((c) => (
+                    <div
+                      key={c.code}
+                      style={{ padding: 8, cursor: "pointer" }}
+                      onClick={() => addCast(c.code)}
+                    >
+                      {c.name}
+                    </div>
+                  ))}
+                </div>
+              )}
+              <button
+                type="button"
+                css={miniBtn}
+                onClick={() => {
+                  const found = creatorList.find((c) => c.name === castInput)
+                  if (found) addCast(found.code)
+                }}
+              >
                 등록
               </button>
             </div>
@@ -470,7 +578,7 @@ export default function MovieEdit() {
           목록
         </button>
         <button type="submit" css={submitBtn} disabled={loading}>
-          {loading ? "등록중..." : "등록"}
+          {loading ? (movieCode ? "수정중..." : "등록중...") : movieCode ? "수정" : "등록"}
         </button>
       </div>
     </form>
