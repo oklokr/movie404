@@ -18,15 +18,15 @@ public class MovieController {
 
     @GetMapping
     public Map<String, Object> getMovieList(
-            @RequestParam(required = false) String movieName,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(name = "movieName", required = false) String movieName,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
     ) {
         return movieService.getMovieList(movieName, page, size);
     }
 
     @GetMapping("/{movieCode}")
-    public MovieDto getMovieDetail(@PathVariable String movieCode) {
+    public MovieDto getMovieDetail(@PathVariable("movieCode") String movieCode) {
         return movieService.getMovieDetail(movieCode);
     }
 

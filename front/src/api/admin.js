@@ -76,3 +76,10 @@ export function fetchGenreList() {
     method: "get",
   }).then((res) => res)
 }
+
+export function deleteMovie(movieCode) {
+  return request({
+    url: `/api/admin/movie/${movieCode}`,
+    method: "delete",
+  }).then((res) => res)
+}
