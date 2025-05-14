@@ -52,4 +52,8 @@
     LEFT JOIN VOD v ON m.MOVIE_CODE = v.MOVIE_CODE
     WHERE m.MOVIE_CODE = #{movieCode}
   </select>
+
+  <select id="selectGenreList" resultType="map">
+    SELECT GENRE_CODE as code, GENRE_NAME as name FROM GENRE
+  </select>
 </mapper>
