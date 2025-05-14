@@ -578,7 +578,7 @@ export default function MovieEdit() {
           목록
         </button>
         <button type="submit" css={submitBtn} disabled={loading}>
-          {loading ? "등록중..." : "등록"}
+          {loading ? (movieCode ? "수정중..." : "등록중...") : movieCode ? "수정" : "등록"}
         </button>
       </div>
     </form>

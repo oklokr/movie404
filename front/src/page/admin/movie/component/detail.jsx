@@ -1,16 +1,23 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { fetchMovieDetail, deleteMovie } from "@/api/admin"
+import { fetchMovieDetail, deleteMovie, fetchGenreList, fetchCreatorList } from "@/api/admin"
 import { css } from "@emotion/react"
 
 export default function MovieDetail() {
   const { movieCode } = useParams()
   const [movie, setMovie] = useState(null)
+  const [genreList, setGenreList] = useState([])
+  const [creatorList, setCreatorList] = useState([])
   const navigate = useNavigate()
 
   useEffect(() => {
     fetchMovieDetail(movieCode).then(setMovie)
+    fetchGenreList().then((res) => setGenreList(res.data ? res.data : res))
+    fetchCreatorList().then((res) => setCreatorList(res.data ? res.data : res))
   }, [movieCode])
+
+  const getGenreName = (code) => genreList.find((g) => g.code === code)?.name || code
+  const getCreatorName = (code) => creatorList.find((c) => c.code === code)?.name || code
 
   const handleDelete = async () => {
     if (window.confirm("정말 삭제하시겠습니까?")) {
@@ -42,14 +49,41 @@ export default function MovieDetail() {
           </div>
         </DetailRow>
         <DetailRow label="영화명">{movie.movieName}</DetailRow>
-        <DetailRow label="장르">{movie.genreCode}</DetailRow>
-        <DetailRow label="감독">{movie.directorCode}</DetailRow>
-        <DetailRow label="배우">{movie.actorCode}</DetailRow>
+        <DetailRow label="장르">{getGenreName(movie.genreCodeA)}</DetailRow>
+        <DetailRow label="관람등급">
+          {movie.ratingTpcd === "1" ? "전체" : movie.ratingTpcd === "2" ? "성인" : movie.ratingTpcd}
+        </DetailRow>
         <DetailRow label="상영시간">{movie.runtime}</DetailRow>
-        <DetailRow label="등급">{movie.rating}</DetailRow>
-        <DetailRow label="개봉일">{movie.releaseDate}</DetailRow>
-        <DetailRow label="DVD 가격">{movie.dvdPrice}</DetailRow>
-        <DetailRow label="예매 가격">{movie.reservePrice}</DetailRow>
+        <DetailRow label="설명">{movie.synopsis}</DetailRow>
+        <DetailRow label="감독">
+          {[movie.directCodeA, movie.directCodeB].filter(Boolean).map(getCreatorName).join(", ")}
+        </DetailRow>
+        <DetailRow label="출연진">
+          {[
+            movie.actorCodeA,
+            movie.actorCodeB,
+            movie.actorCodeC,
+            movie.actorCodeD,
+            movie.actorCodeE,
+          ]
+            .filter(Boolean)
+            .map(getCreatorName)
+            .join(", ")}
+        </DetailRow>
+        <DetailRow label="DVD 가격">
+          {movie.dvdPrice ? `${movie.dvdPrice.toLocaleString()} 원` : ""}
+        </DetailRow>
+        <DetailRow label="DVD 판매기간">
+          {movie.dvdDateFrom && movie.dvdDateTo ? `${movie.dvdDateFrom} ~ ${movie.dvdDateTo}` : ""}
+        </DetailRow>
+        <DetailRow label="예매 가격">
+          {movie.reservePrice ? `${movie.reservePrice.toLocaleString()} 원` : ""}
+        </DetailRow>
+        <DetailRow label="예매 가능기간">
+          {movie.reserveDateFrom && movie.reserveDateTo
+            ? `${movie.reserveDateFrom} ~ ${movie.reserveDateTo}`
+            : ""}
+        </DetailRow>
       </div>
       <div css={btnRow}>
         <button css={listBtn} onClick={() => navigate(-1)}>
