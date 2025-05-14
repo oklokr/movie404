@@ -56,4 +56,28 @@
   <select id="selectGenreList" resultType="map">
     SELECT GENRE_CODE as code, GENRE_NAME as name FROM GENRE
   </select>
+
+  <delete id="deleteOrderHistoryByMovieCode">
+    DELETE FROM order_history WHERE MOVIE_CODE = #{movieCode}
+  </delete>
+
+  <delete id="deleteMovie">
+    DELETE FROM MOVIE WHERE MOVIE_CODE = #{movieCode}
+  </delete>
+
+  <delete id="deleteReservationByMovieCode">
+  DELETE FROM reservation WHERE MOVIE_CODE = #{movieCode}
+</delete>
+
+<delete id="deleteRunScheduleByMovieCode">
+  DELETE FROM run_schedule WHERE MOVIE_CODE = #{movieCode}
+</delete>
+
+<delete id="deleteWatchHistoryByMovieCode">
+  DELETE FROM watch_history WHERE MOVIE_CODE = #{movieCode}
+</delete>
+
+<delete id="deleteVodByMovieCode">
+  DELETE FROM vod WHERE MOVIE_CODE = #{movieCode}
+</delete>
 </mapper>

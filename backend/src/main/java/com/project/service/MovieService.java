@@ -34,4 +34,13 @@ public class MovieService {
     public List<Map<String, Object>> getGenreList() {
         return movieMapper.selectGenreList();
     }
+
+    public void deleteMovie(String movieCode) {
+        movieMapper.deleteOrderHistoryByMovieCode(movieCode);
+        movieMapper.deleteReservationByMovieCode(movieCode);
+        movieMapper.deleteRunScheduleByMovieCode(movieCode);
+        movieMapper.deleteWatchHistoryByMovieCode(movieCode);
+        movieMapper.deleteVodByMovieCode(movieCode);
+        movieMapper.deleteMovie(movieCode);
+    }
 }
