@@ -3,6 +3,7 @@ package com.project.controller.admin;
 import com.project.model.MovieDto;
 import com.project.service.MovieService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -38,5 +39,18 @@ public class MovieController {
     @DeleteMapping("/{movieCode}")
     public void deleteMovie(@PathVariable("movieCode") String movieCode) {
         movieService.deleteMovie(movieCode);
+    }
+
+    @PostMapping
+    public void createMovie(
+            @RequestParam Map<String, String> allParams,
+            @RequestParam(value = "POSTER", required = false) MultipartFile poster
+    ) {
+        movieService.createMovie(allParams, poster);
+    }
+
+    @GetMapping("/creator")
+    public List<Map<String, Object>> getCreatorList() {
+        return movieService.getCreatorList();
     }
 }
