@@ -13,4 +13,10 @@ public interface MovieMapper {
     int countMovieList(@Param("movieName") String movieName);
     MovieDto selectMovieDetail(@Param("movieCode") String movieCode);
     List<Map<String, Object>> selectGenreList();
+    void deleteOrderHistoryByMovieCode(@Param("movieCode") String movieCode);
+    void deleteMovie(@Param("movieCode") String movieCode);
+    void deleteReservationByMovieCode(@Param("movieCode") String movieCode);
+    void deleteRunScheduleByMovieCode(@Param("movieCode") String movieCode);
+    void deleteWatchHistoryByMovieCode(@Param("movieCode") String movieCode);
+    void deleteVodByMovieCode(@Param("movieCode") String movieCode);
 }
