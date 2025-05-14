@@ -83,3 +83,11 @@ export function deleteMovie(movieCode) {
     method: "delete",
   }).then((res) => res)
 }
+
+// 크리에이터(감독/출연진) 목록 조회
+export function fetchCreatorList() {
+  return request({
+    url: "/api/admin/movie/creator",
+    method: "get",
+  }).then((res) => res)
+}

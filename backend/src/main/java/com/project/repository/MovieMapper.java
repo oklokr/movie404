@@ -19,4 +19,10 @@ public interface MovieMapper {
     void deleteRunScheduleByMovieCode(@Param("movieCode") String movieCode);
     void deleteWatchHistoryByMovieCode(@Param("movieCode") String movieCode);
     void deleteVodByMovieCode(@Param("movieCode") String movieCode);
+    void insertMovie(MovieDto movie);
+    void insertVod(@Param("movieCode") String movieCode,
+                @Param("price") int price,
+                @Param("startDate") String startDate,
+                @Param("endDate") String endDate);
+    List<Map<String, Object>> selectCreatorList();                
 }

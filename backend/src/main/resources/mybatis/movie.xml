@@ -66,18 +66,41 @@
   </delete>
 
   <delete id="deleteReservationByMovieCode">
-  DELETE FROM reservation WHERE MOVIE_CODE = #{movieCode}
-</delete>
+    DELETE FROM reservation WHERE MOVIE_CODE = #{movieCode}
+  </delete>
 
-<delete id="deleteRunScheduleByMovieCode">
-  DELETE FROM run_schedule WHERE MOVIE_CODE = #{movieCode}
-</delete>
+  <delete id="deleteRunScheduleByMovieCode">
+    DELETE FROM run_schedule WHERE MOVIE_CODE = #{movieCode}
+  </delete>
 
-<delete id="deleteWatchHistoryByMovieCode">
-  DELETE FROM watch_history WHERE MOVIE_CODE = #{movieCode}
-</delete>
+  <delete id="deleteWatchHistoryByMovieCode">
+    DELETE FROM watch_history WHERE MOVIE_CODE = #{movieCode}
+  </delete>
 
-<delete id="deleteVodByMovieCode">
-  DELETE FROM vod WHERE MOVIE_CODE = #{movieCode}
-</delete>
+  <delete id="deleteVodByMovieCode">
+    DELETE FROM vod WHERE MOVIE_CODE = #{movieCode}
+  </delete>
+
+  <insert id="insertMovie" parameterType="com.project.model.MovieDto">
+    INSERT INTO MOVIE (
+      MOVIE_CODE, GENRE_CODEA, GENRE_CODEB, GENRE_CODEC,
+      MOVIE_NAME, DIRECT_CODEA, DIRECT_CODEB,
+      ACTOR_CODEA, ACTOR_CODEB, ACTOR_CODEC, ACTOR_CODED, ACTOR_CODEE,
+      SYNOPSIS, RUNTIME, RATING_TPCD, MOVIE_RELEASE, TEASER, POSTER, SALES
+    ) VALUES (
+      #{movieCode}, #{genreCodeA}, #{genreCodeB}, #{genreCodeC},
+      #{movieName}, #{directCodeA}, #{directCodeB},
+      #{actorCodeA}, #{actorCodeB}, #{actorCodeC}, #{actorCodeD}, #{actorCodeE},
+      #{synopsis}, #{runtime}, #{ratingTpcd}, #{movieRelease}, #{teaser}, #{poster}, #{sales}
+    )
+  </insert>
+
+  <insert id="insertVod">
+    INSERT INTO VOD (MOVIE_CODE, PRICE, START_DATE, END_DATE)
+    VALUES (#{movieCode}, #{price}, #{startDate}, #{endDate})
+  </insert>
+
+  <select id="selectCreatorList" resultType="map">
+    SELECT CREATOR_CODE as code, CREATOR_NAME as name FROM CREATOR
+  </select>
 </mapper>
