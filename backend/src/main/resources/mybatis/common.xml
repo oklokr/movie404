@@ -6,8 +6,8 @@
 <mapper namespace="com.project.repository.CommonMapper">
     <select id="selectCommonCode">
         SELECT
-            COMMON_CODE
-            COMMON_NAME
+            COMMON_CODE,
+            COMMON_NAME,
             COMMON_VALUE
         FROM COMMON_CODE
         <where>

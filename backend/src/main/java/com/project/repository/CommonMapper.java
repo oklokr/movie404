@@ -8,5 +8,5 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface CommonMapper {
-    List<Map<String, Object>> selectCommonCodeList(@Param("commonCode") String commonCode);
+    List<Map<String, Object>> selectCommonCode(@Param("commonCode") String commonCode);
 }

@@ -3,9 +3,10 @@ import Header from "@/layout/header"
 import Footer from "@/layout/footer"
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { selectUser } from "@/store/selectors"
+import { selectCommonCode, selectUser } from "@/store/selectors"
 import { commonGetUserInfo } from "@/api/common"
 import { setUserInfo } from "@/store/slices/user"
+import { setCommonCode } from "@/store/slices/common"
 
 const publicPaths = ["/login", "/signup", "/findId", "/findPw", "/404"]
 
@@ -14,13 +15,18 @@ export default function RootLayout() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const user = useSelector(selectUser)
+  const code = useSelector(selectCommonCode)
   const isPublic = publicPaths.includes(location.pathname)
   const token = document.cookie
     .split("; ")
     .find((row) => row.startsWith("authToken="))
     ?.split("=")[1]
+  const commonCode = window.localStorage.getItem("commonCode")
+    ? JSON.parse(window.localStorage.getItem("commonCode"))
+    : null
 
   useEffect(() => {
+    if (!code) dispatch(setCommonCode(commonCode))
     if (!isPublic) {
       if (!token) {
         navigate("/login", { replace: true })

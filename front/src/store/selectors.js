@@ -1,2 +1,2 @@
 export const selectUser = (state) => state.user
-export const selectLocation = (state) => state.common.location
+export const selectCommonCode = (state) => state.common.code

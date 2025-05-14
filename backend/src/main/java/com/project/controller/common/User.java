@@ -1,5 +1,6 @@
 package com.project.controller.common;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,11 @@ public class User {
     @PostMapping("/common/commonCodeList")
     public ApiResponse getCommonCodeList(@RequestBody Map<String, Object> requestBody) {
         String commonCode = requestBody.get("commonCode") != null ? requestBody.get("commonCode").toString() : null;
-        if (commonCode == null || commonCode.isEmpty()) return new ApiResponse(500, "공통코드가 없습니다.", null);
-        return new ApiResponse(CommonService.getCommonCodeList(commonCode));
+
+        List<Map<String, Object>> result = CommonService.getCommonCodeList(commonCode);
+        if (result == null || result.isEmpty()) {
+            return new ApiResponse(404, "조회된 공통 코드가 없습니다.", null);
+        }
+        return new ApiResponse(result);
     }
 }
