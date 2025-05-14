@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { css } from "@emotion/react"
-import { useNavigate, useParams } from "react-router-dom"
-import { createMovie, fetchMovieDetail, updateMovie } from "@/api/admin"
+import { useNavigate, useParams } from "react-router"
+import { createMovie, fetchMovieDetail, updateMovie, fetchGenreList } from "@/api/admin"
 
 export default function MovieEdit() {
   const navigate = useNavigate()
@@ -9,8 +9,9 @@ export default function MovieEdit() {
   // 폼 상태
   const [poster, setPoster] = useState(null)
   const [posterFile, setPosterFile] = useState(null)
-  const [genre, setGenre] = useState("")
-  const [rating, setRating] = useState("1")
+  const [genreList, setGenreList] = useState([])
+  const [genre, setGenre] = useState("") // 단일 선택
+  const [rating, setRating] = useState("") // "1" or "2" 단일 선택
   const [title, setTitle] = useState("")
   const [desc, setDesc] = useState("")
   const [directors, setDirectors] = useState([])
@@ -29,34 +30,27 @@ export default function MovieEdit() {
   const [reserveDateTo, setReserveDateTo] = useState("")
   const [loading, setLoading] = useState(false)
 
-  // DB 기준 장르/관람등급 예시 (실제 데이터는 API로 받아야 함)
-  const genreList = [
-    { code: "ACT", name: "Action" },
-    { code: "COM", name: "Comedy" },
-    { code: "DRM", name: "Drama" },
-  ]
-  const ratingList = [
-    { value: "1", name: "전체관람가" },
-    { value: "2", name: "12세" },
-    { value: "3", name: "15세" },
-    { value: "4", name: "청불" },
-  ]
+  // 장르 목록 불러오기 (API)
+  useEffect(() => {
+    fetchGenreList().then((res) => {
+      setGenreList(res.data ? res.data : res)
+    })
+  }, [])
 
   // 수정 모드: 기존 데이터 불러오기
   useEffect(() => {
     if (!movieCode) return
     fetchMovieDetail(movieCode).then((res) => {
-      const movie = res.data ? res.data : res // res.data가 없으면 res 사용 (호환성)
+      const movie = res.data ? res.data : res
       setPoster(movie.poster)
-      setGenre(movie.genreCode || "")
-      setRating(movie.rating || "1")
+      setGenre(movie.genreCodeA || "")
+      setRating(movie.ratingTpcd || "")
       setTitle(movie.movieName || "")
       setDesc(movie.synopsis || "")
       setDirectors(movie.directorCode ? [movie.directorCode] : [])
       setCasts(movie.actorCode ? [movie.actorCode] : [])
       setDvdPrice(movie.dvdPrice || "")
       setReservePrice(movie.reservePrice || "")
-      // 필요시 기타 필드도 세팅
     })
   }, [movieCode])
 
@@ -98,12 +92,22 @@ export default function MovieEdit() {
     setCasts(casts.filter((c) => c !== code))
   }
 
+  // 장르 카테고리 버튼 핸들러 (단일 선택)
+  const handleGenreSelect = (code) => {
+    setGenre(code)
+  }
+
+  // 관람등급 라디오 핸들러 (1: 전체, 2: 성인)
+  const handleRatingChange = (value) => {
+    setRating(value)
+  }
+
   // 목록 버튼 클릭 시 작성된 값이 있으면 확인 후 이동
   const handleListClick = () => {
     const hasValue =
       posterFile ||
       genre ||
-      rating !== "1" ||
+      rating ||
       title ||
       desc ||
       directors.length > 0 ||
@@ -130,6 +134,7 @@ export default function MovieEdit() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!genre) return alert("장르를 선택하세요.")
+    if (!rating) return alert("관람등급을 선택하세요.")
     if (!title) return alert("제목을 입력하세요.")
     if (!desc) return alert("설명을 입력하세요.")
     if (directors.length === 0) return alert("감독을 1명 이상 등록하세요.")
@@ -139,9 +144,11 @@ export default function MovieEdit() {
     try {
       const formData = new FormData()
       formData.append("GENRE_CODEA", genre)
+      formData.append("GENRE_CODEB", "")
+      formData.append("GENRE_CODEC", "")
+      formData.append("RATING_TPCD", rating)
       formData.append("MOVIE_NAME", title)
       formData.append("SYNOPSIS", desc)
-      formData.append("RATING_TPCD", rating)
       if (posterFile) formData.append("POSTER", posterFile)
       directors.forEach((d, i) => formData.append(`DIRECT_CODE${String.fromCharCode(65 + i)}`, d))
       casts.forEach((c, i) => formData.append(`ACTOR_CODE${String.fromCharCode(65 + i)}`, c))
@@ -207,27 +214,41 @@ export default function MovieEdit() {
         <div css={trStyle}>
           <div css={thStyle}>장르/관람등급</div>
           <div css={tdStyle}>
-            <div css={genreRow}>
-              <select value={genre} onChange={(e) => setGenre(e.target.value)} css={inputStyle}>
-                <option value="">선택</option>
-                {genreList.map((g) => (
-                  <option key={g.code} value={g.code}>
-                    {g.name}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={rating}
-                onChange={(e) => setRating(e.target.value)}
-                css={inputStyle}
-                style={{ width: 120 }}
-              >
-                {ratingList.map((r) => (
-                  <option key={r.value} value={r.value}>
-                    {r.name}
-                  </option>
-                ))}
-              </select>
+            <div css={genreRow} style={{ alignItems: "flex-start" }}>
+              {/* 장르 드롭다운(기본 select) */}
+              <div css={genreSelectWrap}>
+                <select css={genreSelect} value={genre} onChange={(e) => setGenre(e.target.value)}>
+                  <option value="">장르를 선택하세요</option>
+                  {genreList.map((g) => (
+                    <option key={g.code} value={g.code}>
+                      {g.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {/* 관람등급 라디오 */}
+              <div style={{ marginLeft: 32, marginTop: 8 }}>
+                <label style={{ marginRight: 16 }}>
+                  <input
+                    type="radio"
+                    name="rating"
+                    value="1"
+                    checked={rating === "1"}
+                    onChange={() => handleRatingChange("1")}
+                  />
+                  전체
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="rating"
+                    value="2"
+                    checked={rating === "2"}
+                    onChange={() => handleRatingChange("2")}
+                  />
+                  성인
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -828,4 +849,23 @@ const submitBtn = css`
     font-size: 15px;
     padding: 10px 0;
   }
+`
+
+const genreSelectWrap = css`
+  min-width: 200px;
+  max-width: 260px;
+  max-height: 220px;
+  overflow-y: auto;
+`
+const genreSelect = css`
+  width: 100%;
+  min-width: 180px;
+  max-width: 240px;
+  font-size: 15px;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+  padding: 8px;
+  outline: none;
+  box-sizing: border-box;
 `

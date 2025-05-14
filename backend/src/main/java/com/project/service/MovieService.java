@@ -30,4 +30,8 @@ public class MovieService {
     public MovieDto getMovieDetail(String movieCode) {
         return movieMapper.selectMovieDetail(movieCode);
     }
+
+    public List<Map<String, Object>> getGenreList() {
+        return movieMapper.selectGenreList();
+    }
 }
