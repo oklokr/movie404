@@ -1,4 +1,4 @@
-import { mypageLoginInfo } from "@/api/sample"
+import { login } from "@/api/signup"
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 import { css } from "@emotion/react"
 import {
@@ -10,12 +10,11 @@ import {
   OutlinedInput,
   TextField,
 } from "@mui/material"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import logoImg from "@/assets/images/logo/logo.png"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { setUserInfo } from "@/store/slices/user"
-import { useNavigate } from "react-router"
-import { selectUser } from "@/store/selectors"
+import { Link, useNavigate } from "react-router"
 
 function Login() {
   const dispatch = useDispatch()
@@ -28,7 +27,7 @@ function Login() {
   const handleClickShowPassword = () => setShowPassword((show) => !show)
 
   const handleLogin = () => {
-    mypageLoginInfo(postForm).then((res) => {
+    login(postForm).then((res) => {
       const { code, data } = res
       if (code !== 200) return alert(res.msg)
       const expiryDate = new Date(data.tokenValidityStr)
@@ -82,6 +81,19 @@ function Login() {
           />
           <FormHelperText error={message.passwd.length > 0}>{message.passwd}</FormHelperText>
         </div>
+
+        <ul>
+          <li>
+            <Link to="/signup">회원가입</Link>
+          </li>
+          <li>
+            <Link to="/findId">회원가입</Link>
+          </li>
+          <li>
+            <Link to="/findPw">회원가입</Link>
+          </li>
+        </ul>
+
         <Button variant="contained" onClick={handleLogin}>
           로그인
         </Button>

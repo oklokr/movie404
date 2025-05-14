@@ -35,4 +35,25 @@
     </where>
   </select>
 
+  <select id="selectMovieDetail" resultType="com.project.model.MovieDto">
+    SELECT
+      m.MOVIE_CODE as movieCode,
+      m.MOVIE_NAME as movieName,
+      m.POSTER as poster,
+      m.GENRE_CODEA as genreCode,
+      m.DIRECT_CODEA as directorCode,
+      m.ACTOR_CODEA as actorCode,
+      m.RUNTIME as runtime,
+      m.RATING_TPCD as rating,
+      m.MOVIE_RELEASE as releaseDate,
+      v.PRICE as dvdPrice,
+      v.PRICE as reservePrice
+    FROM MOVIE m
+    LEFT JOIN VOD v ON m.MOVIE_CODE = v.MOVIE_CODE
+    WHERE m.MOVIE_CODE = #{movieCode}
+  </select>
+
+  <select id="selectGenreList" resultType="map">
+    SELECT GENRE_CODE as code, GENRE_NAME as name FROM GENRE
+  </select>
 </mapper>

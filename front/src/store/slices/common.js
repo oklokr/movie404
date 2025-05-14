@@ -2,18 +2,18 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = {
-  location: [],
+  code: null,
 }
 
 const commonSlice = createSlice({
   name: "common",
   initialState,
   reducers: {
-    setLocation(state, action) {
-      state.location = action.payload
+    setCommonCode(state, action) {
+      state.code = action.payload
     },
   },
 })
 
-export const { setLocation } = commonSlice.actions
+export const { setCommonCode } = commonSlice.actions
 export default commonSlice.reducer

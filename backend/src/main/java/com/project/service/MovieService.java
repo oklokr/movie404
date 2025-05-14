@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Service
 public class MovieService {
-    private final MovieMapper movieMapper;
+    private MovieMapper movieMapper;
 
     public MovieService(MovieMapper movieMapper) {
         this.movieMapper = movieMapper;
@@ -25,5 +25,13 @@ public class MovieService {
         result.put("list", list);
         result.put("total", total);
         return result;
+    }
+
+    public MovieDto getMovieDetail(String movieCode) {
+        return movieMapper.selectMovieDetail(movieCode);
+    }
+
+    public List<Map<String, Object>> getGenreList() {
+        return movieMapper.selectGenreList();
     }
 }

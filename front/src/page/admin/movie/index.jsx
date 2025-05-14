@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { fetchMovieList } from "@/api/admin"
 import { css } from "@emotion/react"
+import { useNavigate } from "react-router-dom" // 추가
 
 const PAGE_SIZE = 10
 
@@ -9,6 +10,7 @@ export default function Movie() {
   const [movieName, setMovieName] = useState("")
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
+  const navigate = useNavigate() // 추가
 
   const getList = async (name = "", pageNum = 1) => {
     const res = await fetchMovieList({ movieName: name, page: pageNum, size: PAGE_SIZE })
@@ -49,7 +51,11 @@ export default function Movie() {
       </div>
       <div css={countText}>
         총 <b>{total.toLocaleString()}</b> 개
-        <button css={registerBtn} style={{ float: "right" }}>
+        <button
+          css={registerBtn}
+          style={{ float: "right" }}
+          onClick={() => navigate("/admin/movie/edit")} // 등록 버튼 클릭 시 이동
+        >
           등록
         </button>
       </div>
@@ -67,7 +73,12 @@ export default function Movie() {
           <div css={emptyRow}>영화가 없습니다.</div>
         ) : (
           list.map((row) => (
-            <dl css={listRow} key={row.movieCode}>
+            <dl
+              css={listRow}
+              key={row.movieCode}
+              onClick={() => navigate(`/admin/movie/${row.movieCode}`)} // 상세로 이동
+              style={{ cursor: "pointer" }}
+            >
               <dd>{row.movieCode}</dd>
               <dd>{row.movieName}</dd>
               <dd>
@@ -80,7 +91,7 @@ export default function Movie() {
                       height: 64,
                       borderRadius: 6,
                       background: "#eee",
-                      objectFit: "cover", // 추가
+                      objectFit: "cover",
                       display: "block",
                       margin: "0 auto",
                     }}
@@ -251,17 +262,22 @@ const listRow = css`
   border: 1.5px solid #ddd;
   border-top: none;
   font-size: 15px;
+  transition: background 0.15s;
   > dd {
     flex: 1;
     padding: 13px 8px;
     margin: 0;
-    display: flex; // 추가
-    align-items: center; // 추가 (세로 중앙 정렬)
-    justify-content: center; // 추가 (가로 중앙 정렬)
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
   }
   &:last-of-type {
     border-radius: 0 0 6px 6px;
+  }
+  cursor: pointer;
+  &:hover {
+    background: #fffbe7;
   }
 `
 const emptyRow = css`

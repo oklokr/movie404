@@ -42,3 +42,37 @@ export function fetchMovieList(params) {
     params,
   }).then((res) => res)
 }
+
+// 영화 등록 (FormData 사용)
+export function createMovie(formData) {
+  return request({
+    url: "/api/admin/movie",
+    method: "post",
+    data: formData,
+    headers: { "Content-Type": "multipart/form-data" },
+  }).then((res) => res)
+}
+
+// 영화 상세 조회
+export function fetchMovieDetail(movieCode) {
+  return request({
+    url: `/api/admin/movie/${movieCode}`,
+    method: "get",
+  }).then((res) => res)
+}
+
+export function updateMovie(movieCode, formData) {
+  return request({
+    url: `/api/admin/movie/${movieCode}`,
+    method: "put",
+    data: formData,
+    headers: { "Content-Type": "multipart/form-data" },
+  }).then((res) => res)
+}
+
+export function fetchGenreList() {
+  return request({
+    url: "/api/admin/movie/genres",
+    method: "get",
+  }).then((res) => res)
+}
