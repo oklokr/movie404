@@ -215,10 +215,10 @@ export default function MovieEdit() {
       }
       formData.append("RESERVE_USE", reserveUse ? "Y" : "N")
       if (reserveUse) {
-        formData.append("RESERVE_PRICE", reservePrice)
-        formData.append("RESERVE_DISCOUNT", reserveDiscount)
-        formData.append("RESERVE_DATE_FROM", reserveDateFrom)
-        formData.append("RESERVE_DATE_TO", reserveDateTo)
+        formData.append("SEAT_PRICE", reservePrice)
+        formData.append("SEAT_DISCOUNT", reserveDiscount)
+        formData.append("SEAT_DATE_FROM", reserveDateFrom)
+        formData.append("SEAT_DATE_TO", reserveDateTo)
       }
       if (movieCode) {
         await updateMovie(movieCode, formData)
