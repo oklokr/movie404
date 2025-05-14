@@ -69,3 +69,25 @@ export function updateMovie(movieCode, formData) {
     headers: { "Content-Type": "multipart/form-data" },
   }).then((res) => res)
 }
+
+export function fetchGenreList() {
+  return request({
+    url: "/api/admin/movie/genres",
+    method: "get",
+  }).then((res) => res)
+}
+
+export function deleteMovie(movieCode) {
+  return request({
+    url: `/api/admin/movie/${movieCode}`,
+    method: "delete",
+  }).then((res) => res)
+}
+
+// 크리에이터(감독/출연진) 목록 조회
+export function fetchCreatorList() {
+  return request({
+    url: "/api/admin/movie/creator",
+    method: "get",
+  }).then((res) => res)
+}

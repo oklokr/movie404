@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface MovieMapper {
@@ -16,4 +17,23 @@ public interface MovieMapper {
 
     boolean existsByMovieName(String movieName); // 중복 방지
     void insertMovie(MovieResponse movie);       // 삽입
+    
+    List<Map<String, Object>> selectGenreList();
+    void deleteOrderHistoryByMovieCode(@Param("movieCode") String movieCode);
+    void deleteMovie(@Param("movieCode") String movieCode);
+    void deleteReservationByMovieCode(@Param("movieCode") String movieCode);
+    void deleteRunScheduleByMovieCode(@Param("movieCode") String movieCode);
+    void deleteWatchHistoryByMovieCode(@Param("movieCode") String movieCode);
+    void deleteVodByMovieCode(@Param("movieCode") String movieCode);
+    void insertMovie(MovieDto movie);
+    void insertVod(@Param("movieCode") String movieCode,
+                @Param("price") int price,
+                @Param("startDate") String startDate,
+                @Param("endDate") String endDate);
+    List<Map<String, Object>> selectCreatorList();    
+    void updateMovie(MovieDto movie);
+    void updateVod(@Param("movieCode") String movieCode,
+                @Param("price") int price,
+                @Param("startDate") String startDate,
+                @Param("endDate") String endDate);            
 }

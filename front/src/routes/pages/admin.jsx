@@ -1,4 +1,6 @@
 import { lazy } from "react"
+import { useParams } from "react-router"
+
 const AdminLayout = lazy(() => import("@/page/admin"))
 const Movie = lazy(() => import("@/page/admin/movie"))
 const MovieEdit = lazy(() => import("@/page/admin/movie/component/edit"))

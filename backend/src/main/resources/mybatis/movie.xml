@@ -40,14 +40,25 @@
       m.MOVIE_CODE as movieCode,
       m.MOVIE_NAME as movieName,
       m.POSTER as poster,
-      m.GENRE_CODEA as genreCode,
-      m.DIRECT_CODEA as directorCode,
-      m.ACTOR_CODEA as actorCode,
+      m.GENRE_CODEA as genreCodeA,
+      m.DIRECT_CODEA as directCodeA,
+      m.DIRECT_CODEB as directCodeB,
+      m.ACTOR_CODEA as actorCodeA,
+      m.ACTOR_CODEB as actorCodeB,
+      m.ACTOR_CODEC as actorCodeC,
+      m.ACTOR_CODED as actorCodeD,
+      m.ACTOR_CODEE as actorCodeE,
+      m.SYNOPSIS as synopsis,
       m.RUNTIME as runtime,
-      m.RATING_TPCD as rating,
-      m.MOVIE_RELEASE as releaseDate,
+      m.RATING_TPCD as ratingTpcd,
       v.PRICE as dvdPrice,
-      v.PRICE as reservePrice
+      v.START_DATE as dvdDateFrom,
+      v.END_DATE as dvdDateTo,
+      v.DISCOUNT as dvdDiscount,
+      v.PRICE as reservePrice,
+      v.START_DATE as reserveDateFrom,
+      v.END_DATE as reserveDateTo,
+      v.DISCOUNT as reserveDiscount
     FROM MOVIE m
     LEFT JOIN VOD v ON m.MOVIE_CODE = v.MOVIE_CODE
     WHERE m.MOVIE_CODE = #{movieCode}
@@ -88,4 +99,85 @@
       0
     )
   </insert>
+
+  <select id="selectGenreList" resultType="map">
+    SELECT GENRE_CODE as code, GENRE_NAME as name FROM GENRE
+  </select>
+
+  <delete id="deleteOrderHistoryByMovieCode">
+    DELETE FROM order_history WHERE MOVIE_CODE = #{movieCode}
+  </delete>
+
+  <delete id="deleteMovie">
+    DELETE FROM MOVIE WHERE MOVIE_CODE = #{movieCode}
+  </delete>
+
+  <delete id="deleteReservationByMovieCode">
+    DELETE FROM reservation WHERE MOVIE_CODE = #{movieCode}
+  </delete>
+
+  <delete id="deleteRunScheduleByMovieCode">
+    DELETE FROM run_schedule WHERE MOVIE_CODE = #{movieCode}
+  </delete>
+
+  <delete id="deleteWatchHistoryByMovieCode">
+    DELETE FROM watch_history WHERE MOVIE_CODE = #{movieCode}
+  </delete>
+
+  <delete id="deleteVodByMovieCode">
+    DELETE FROM vod WHERE MOVIE_CODE = #{movieCode}
+  </delete>
+
+  <insert id="insertMovie" parameterType="com.project.model.MovieDto">
+    INSERT INTO MOVIE (
+      MOVIE_CODE, GENRE_CODEA, GENRE_CODEB, GENRE_CODEC,
+      MOVIE_NAME, DIRECT_CODEA, DIRECT_CODEB,
+      ACTOR_CODEA, ACTOR_CODEB, ACTOR_CODEC, ACTOR_CODED, ACTOR_CODEE,
+      SYNOPSIS, RUNTIME, RATING_TPCD, MOVIE_RELEASE, POSTER, SALES
+    ) VALUES (
+      #{movieCode}, #{genreCodeA}, #{genreCodeB}, #{genreCodeC},
+      #{movieName}, #{directCodeA}, #{directCodeB},
+      #{actorCodeA}, #{actorCodeB}, #{actorCodeC}, #{actorCodeD}, #{actorCodeE},
+      #{synopsis}, #{runtime}, #{ratingTpcd}, #{movieRelease}, #{poster}, #{sales}
+    )
+  </insert>
+
+  <insert id="insertVod">
+    INSERT INTO VOD (MOVIE_CODE, PRICE, START_DATE, END_DATE)
+    VALUES (#{movieCode}, #{price}, #{startDate}, #{endDate})
+  </insert>
+
+  <select id="selectCreatorList" resultType="map">
+    SELECT CREATOR_CODE as code, CREATOR_NAME as name FROM CREATOR
+  </select>
+
+  <update id="updateMovie" parameterType="com.project.model.MovieDto">
+    UPDATE MOVIE SET
+      GENRE_CODEA = #{genreCodeA},
+      GENRE_CODEB = #{genreCodeB},
+      GENRE_CODEC = #{genreCodeC},
+      MOVIE_NAME = #{movieName},
+      DIRECT_CODEA = #{directCodeA},
+      DIRECT_CODEB = #{directCodeB},
+      ACTOR_CODEA = #{actorCodeA},
+      ACTOR_CODEB = #{actorCodeB},
+      ACTOR_CODEC = #{actorCodeC},
+      ACTOR_CODED = #{actorCodeD},
+      ACTOR_CODEE = #{actorCodeE},
+      SYNOPSIS = #{synopsis},
+      RUNTIME = #{runtime},
+      RATING_TPCD = #{ratingTpcd},
+      MOVIE_RELEASE = #{movieRelease},
+      POSTER = #{poster},
+      SALES = #{sales}
+    WHERE MOVIE_CODE = #{movieCode}
+  </update>
+
+  <update id="updateVod">
+    UPDATE VOD SET
+      PRICE = #{price},
+      START_DATE = #{startDate},
+      END_DATE = #{endDate}
+    WHERE MOVIE_CODE = #{movieCode}
+  </update>
 </mapper>
