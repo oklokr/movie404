@@ -44,11 +44,12 @@ public class MovieController {
     }
 
     @PostMapping
-    public void createMovie(
+    public ResponseEntity<?> createMovie(
             @RequestParam Map<String, String> allParams,
             @RequestParam(value = "POSTER", required = false) MultipartFile poster
     ) {
         movieService.createMovie(allParams, poster);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/creator")

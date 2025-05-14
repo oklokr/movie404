@@ -11,16 +11,19 @@
       m.MOVIE_NAME as movieName,
       m.POSTER as poster,
       v.PRICE as dvdPrice,
-      v.PRICE as reservePrice,
-      0 as dvdDiscount,
-      0 as reserveDiscount
+      v.DISCOUNT as dvdDiscount,
+      MIN(s.PRICE) as reservePrice,
+      MIN(s.DISCOUNT_PER) as reserveDiscount
     FROM MOVIE m
     LEFT JOIN VOD v ON m.MOVIE_CODE = v.MOVIE_CODE
+    LEFT JOIN RUN_SCHEDULE rs ON rs.MOVIE_CODE = m.MOVIE_CODE
+    LEFT JOIN SEAT s ON s.THEATER_CODE = rs.THEATER_CODE
     <where>
       <if test="movieName != null and movieName != ''">
         AND m.MOVIE_NAME LIKE CONCAT('%', #{movieName}, '%')
       </if>
     </where>
+    GROUP BY m.MOVIE_CODE
     ORDER BY m.MOVIE_CODE DESC
     LIMIT #{size} OFFSET #{offset}
   </select>
@@ -55,13 +58,16 @@
       v.START_DATE as dvdDateFrom,
       v.END_DATE as dvdDateTo,
       v.DISCOUNT as dvdDiscount,
-      v.PRICE as reservePrice,
-      v.START_DATE as reserveDateFrom,
-      v.END_DATE as reserveDateTo,
-      v.DISCOUNT as reserveDiscount
+      s.PRICE as reservePrice,
+      s.DISCOUNT_PER as reserveDiscount,
+      rs.RUN_DATE as reserveDateFrom,
+      rs.RUN_DATE as reserveDateTo
     FROM MOVIE m
     LEFT JOIN VOD v ON m.MOVIE_CODE = v.MOVIE_CODE
+    LEFT JOIN RUN_SCHEDULE rs ON rs.MOVIE_CODE = m.MOVIE_CODE
+    LEFT JOIN SEAT s ON s.THEATER_CODE = rs.THEATER_CODE
     WHERE m.MOVIE_CODE = #{movieCode}
+    LIMIT 1
   </select>
 
   <select id="selectGenreList" resultType="map">
@@ -107,8 +113,8 @@
   </insert>
 
   <insert id="insertVod">
-    INSERT INTO VOD (MOVIE_CODE, PRICE, START_DATE, END_DATE)
-    VALUES (#{movieCode}, #{price}, #{startDate}, #{endDate})
+    INSERT INTO VOD (MOVIE_CODE, PRICE, START_DATE, END_DATE, DISCOUNT)
+    VALUES (#{movieCode}, #{price}, #{startDate}, #{endDate}, #{discount})
   </insert>
 
   <select id="selectCreatorList" resultType="map">
@@ -141,7 +147,16 @@
     UPDATE VOD SET
       PRICE = #{price},
       START_DATE = #{startDate},
-      END_DATE = #{endDate}
+      END_DATE = #{endDate},
+      DISCOUNT = #{discount}
     WHERE MOVIE_CODE = #{movieCode}
+  </update>
+
+  <update id="updateSeat" parameterType="map">
+    UPDATE SEAT
+    SET
+      PRICE = #{price},
+      DISCOUNT_PER = #{discount}
+    WHERE SEAT_CODE = #{seatCode}
   </update>
 </mapper>
