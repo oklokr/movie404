@@ -151,4 +151,12 @@
       DISCOUNT = #{discount}
     WHERE MOVIE_CODE = #{movieCode}
   </update>
+
+  <update id="updateSeat" parameterType="map">
+    UPDATE SEAT
+    SET
+      PRICE = #{price},
+      DISCOUNT_PER = #{discount}
+    WHERE SEAT_CODE = #{seatCode}
+  </update>
 </mapper>
