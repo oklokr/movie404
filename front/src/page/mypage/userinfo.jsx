@@ -1,3 +1,4 @@
+import { insertUser } from "@/api/signup"
 import {
   Button,
   FormHelperText,
@@ -34,6 +35,21 @@ function User() {
       label: "@nate.com",
     },
   ]
+  const userinfo = {
+    id: "",
+    pwd: "",
+  }
+
+  const getUserInfo = () => {
+    getUserInfo().then((res) => {
+      if (res.code === 200) {
+        alert("회원정보 불러오기 성공!")
+      } else {
+        alert("회원정보 불러오기 실패ㅠㅠ")
+      }
+    })
+  }
+  getUserInfo()
   return (
     <>
       <div className="input-form">
