@@ -22,7 +22,14 @@ public class MovieDto {
     private String runtime;      // "HH:mm:ss" 형식 문자열로 받음
     private String ratingTpcd;
     private String movieRelease; // "yyyy-MM-dd"
-    private String teaser;
     private String poster;
     private Long sales;
+    private String dvdDateFrom;
+    private String dvdDateTo;
+    private String reserveDateFrom;
+    private String reserveDateTo;
+    private Integer dvdPrice;
+    private Integer reservePrice;
+    private Integer dvdDiscount;
+    private Integer reserveDiscount;
 }

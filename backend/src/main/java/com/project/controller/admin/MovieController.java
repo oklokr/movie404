@@ -2,6 +2,8 @@ package com.project.controller.admin;
 
 import com.project.model.MovieDto;
 import com.project.service.MovieService;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,5 +54,15 @@ public class MovieController {
     @GetMapping("/creator")
     public List<Map<String, Object>> getCreatorList() {
         return movieService.getCreatorList();
+    }
+
+    @PutMapping("/{movieCode}")
+    public ResponseEntity<?> updateMovie(
+            @PathVariable("movieCode") String movieCode,
+            @RequestParam Map<String, String> allParams,
+            @RequestParam(value = "POSTER", required = false) MultipartFile poster
+    ) {
+        movieService.updateMovie(movieCode, allParams, poster);
+        return ResponseEntity.ok().build();
     }
 }

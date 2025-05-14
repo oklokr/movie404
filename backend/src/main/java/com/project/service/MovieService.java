@@ -67,7 +67,6 @@ public class MovieService {
         movie.setSynopsis(allParams.get("SYNOPSIS"));
         movie.setRatingTpcd(allParams.get("RATING_TPCD"));
         movie.setMovieRelease(allParams.get("MOVIE_RELEASE"));
-        movie.setTeaser(allParams.get("TEASER"));
         movie.setSales(0L);
     
         // runtime: "110" 분 → "01:50:00" 변환 예시
@@ -100,5 +99,52 @@ public class MovieService {
 
     public List<Map<String, Object>> getCreatorList() {
         return movieMapper.selectCreatorList();
+    }
+
+    public void updateMovie(String movieCode, Map<String, String> allParams, MultipartFile posterFile) {
+        MovieDto movie = new MovieDto();
+        movie.setMovieCode(movieCode);
+        movie.setGenreCodeA(allParams.get("GENRE_CODEA"));
+        movie.setGenreCodeB(allParams.get("GENRE_CODEB"));
+        movie.setGenreCodeC(allParams.get("GENRE_CODEC"));
+        movie.setMovieName(allParams.get("MOVIE_NAME"));
+        movie.setDirectCodeA(allParams.get("DIRECT_CODEA"));
+        movie.setDirectCodeB(allParams.get("DIRECT_CODEB"));
+        movie.setActorCodeA(allParams.get("ACTOR_CODEA"));
+        movie.setActorCodeB(allParams.get("ACTOR_CODEB"));
+        movie.setActorCodeC(allParams.get("ACTOR_CODEC"));
+        movie.setActorCodeD(allParams.get("ACTOR_CODED"));
+        movie.setActorCodeE(allParams.get("ACTOR_CODEE"));
+        movie.setSynopsis(allParams.get("SYNOPSIS"));
+        movie.setRatingTpcd(allParams.get("RATING_TPCD"));
+        movie.setMovieRelease(allParams.get("MOVIE_RELEASE"));
+        movie.setSales(0L);
+    
+        // runtime: "110" 분 → "01:50:00" 변환
+        String runtimeMin = allParams.get("RUNTIME");
+        if (runtimeMin != null && !runtimeMin.isEmpty()) {
+            int min = Integer.parseInt(runtimeMin);
+            LocalTime time = LocalTime.of(min / 60, min % 60);
+            movie.setRuntime(time.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+        }
+    
+        // 포스터 파일 저장 (파일명만 저장)
+        if (posterFile != null && !posterFile.isEmpty()) {
+            String fileName = UUID.randomUUID() + "_" + posterFile.getOriginalFilename();
+            // 실제 파일 저장 필요
+            movie.setPoster(fileName);
+        }
+    
+        movieMapper.updateMovie(movie);
+    
+        // VOD 테이블도 같이 update (필요시)
+        if (allParams.get("VOD_PRICE") != null) {
+            movieMapper.updateVod(
+                movieCode,
+                Integer.parseInt(allParams.get("VOD_PRICE")),
+                allParams.getOrDefault("VOD_START_DATE", "2024-01-01"),
+                allParams.getOrDefault("VOD_END_DATE", "2024-12-31")
+            );
+        }
     }
 }
