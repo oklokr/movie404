@@ -7,3 +7,11 @@ export function commonGetUserInfo(data) {
     data,
   })
 }
+
+export function commonCodeList(data) {
+  return request({
+    url: "/api/common/commonCodeList",
+    method: "post",
+    data,
+  })
+}

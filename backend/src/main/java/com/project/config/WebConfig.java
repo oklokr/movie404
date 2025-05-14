@@ -20,9 +20,15 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
+        String[] excludePaths = {
+            "/api/login",
+            "/api/signup",
+            "/api/common/commonCodeList",
+        }
+
         registry.addInterceptor(authInterceptor)
             .addPathPatterns("/api/**")
-            .excludePathPatterns("/api/login", "/api/signup"); // 수정: 실제 URL 기준
+            .excludePathPatterns(excludePaths); // 수정: 실제 URL 기준
     }
 
     // CORS 처리를 Interceptor보다 앞 단계에서 적용되도록 Filter 등록

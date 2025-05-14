@@ -11,6 +11,11 @@ import { RouterProvider } from "react-router"
 import { router } from "@/routes"
 import { Provider } from "react-redux"
 import store from "./store"
+import { commonCodeList } from "@/api/common"
+
+commonCodeList().then((res) => {
+  console.log(res)
+})
 
 createRoot(document.getElementById("root")).render(
   <Suspense fallback={<div>Loading...</div>}>
