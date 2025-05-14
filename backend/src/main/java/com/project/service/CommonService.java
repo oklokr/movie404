@@ -14,15 +14,18 @@ import com.project.repository.CommonMapper;
 public class CommonService {
     @Autowired
     private CommonMapper commonMapper;
-    public List<Map<String, Object>> getCommonCodeList(String commonCode) {
+    public Map<String, List<Map<String, Object>>> getCommonCodeList(String commonCode) {
         List<Map<String, Object>> list = commonMapper.selectCommonCode(commonCode);
-        List<Map<String, Object>> result = new ArrayList<>();
+        Map<String, List<Map<String, Object>>> result = new HashMap<>();
+
         for (Map<String, Object> map : list) {
-            Map<String, Object> resultMap = new HashMap<>();
-            resultMap.put("commonCode", map.get("COMMON_CODE"));
-            resultMap.put("commonName", map.get("COMMON_NAME"));
-            resultMap.put("commonValue", map.get("COMMON_VALUE"));
-            result.add(resultMap);
+            String groupKey = (String) map.get("COMMON_CODE");
+            Map<String, Object> codeMap = new HashMap<>();
+            codeMap.put("commonCode", map.get("COMMON_CODE"));
+            codeMap.put("commonName", map.get("COMMON_NAME"));
+            codeMap.put("commonValue", map.get("COMMON_VALUE"));
+
+            result.computeIfAbsent(groupKey, k -> new ArrayList<>()).add(codeMap);
         };
         return result;
     }

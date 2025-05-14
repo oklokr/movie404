@@ -36,7 +36,7 @@ public class User {
     public ApiResponse getCommonCodeList(@RequestBody Map<String, Object> requestBody) {
         String commonCode = requestBody.get("commonCode") != null ? requestBody.get("commonCode").toString() : null;
 
-        List<Map<String, Object>> result = CommonService.getCommonCodeList(commonCode);
+        Map<String, List<Map<String, Object>>> result = CommonService.getCommonCodeList(commonCode);
         if (result == null || result.isEmpty()) {
             return new ApiResponse(404, "조회된 공통 코드가 없습니다.", null);
         }
