@@ -46,3 +46,10 @@ mybatis:
   type-aliases-package: com.project.model
   configuration:
     map-underscore-to-camel-case: true
+
+tmdb:
+  api:
+    key: ${TMDB_API_KEY}
+
+schedule:
+  movie-fetch: "0 0 3 * * *"
