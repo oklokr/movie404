@@ -7,39 +7,52 @@ import {
   OutlinedInput,
   TextField,
 } from "@mui/material"
-import { useEffect, useState } from "react"
-var btn = 1
-//useEffect(() => {}, [btn])
-function menuClick(e) {
-  alert(e.target.id)
-  btn = 2
-  return btn
-}
-function OrderListMenu() {
+
+function OrderListMenu(props) {
+  function setSubpath_orderlist(e) {
+    if (e.target.id == "orderlist") props.setSubpath_orderlist("1")
+    else if (e.target.id == "payment") props.setSubpath_orderlist("2")
+  }
   return (
     <>
       <Button
         id="orderlist"
-        href="#basic#user"
+        href="#order#orderlist"
         size="large"
         css={Leftbtn}
-        onClick={(e) => {
-          return 0
-        }}
+        onClick={setSubpath_orderlist}
       >
         결제내역
       </Button>
-      <Button id="payment" href="#basic#user" size="large" css={Leftbtn} onClick={menuClick}>
+      <Button
+        id="payment"
+        href="#order#payment"
+        size="large"
+        css={Leftbtn}
+        onClick={setSubpath_orderlist}
+      >
         카드관리
       </Button>
     </>
   )
 }
 function OrderList() {
-  return <>{btn == 1 ? <h1>결제내역</h1> : <h1>카드관리</h1>}</>
+  return (
+    <>
+      <h1>결제내역</h1>
+    </>
+  )
+}
+
+function Payment() {
+  return (
+    <>
+      <h1>카드관리</h1>
+    </>
+  )
 }
 const Leftbtn = {
   "font-size": "1.3rem",
   align: "center",
 }
-export { OrderList, OrderListMenu }
+export { OrderList, Payment, OrderListMenu }

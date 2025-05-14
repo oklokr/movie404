@@ -14,7 +14,7 @@ import {
 
 function UserSetMenu() {
   return (
-    <Button id="basic-button" href="#basic#user" size="large" css={Leftbtn}>
+    <Button id="basic-button" href="#set#user" size="large" css={Leftbtn}>
       기본설정
     </Button>
   )

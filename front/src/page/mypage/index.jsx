@@ -11,26 +11,23 @@ import {
   TextField,
 } from "@mui/material"
 import { useState } from "react"
-import { BrowserRouter, Route, Routes } from "react-router"
 import { User, UserMenu } from "./userinfo"
 import { Dvd, DvdMenu } from "./dvd"
 import { UserSet, UserSetMenu } from "./usersetting"
-import { OrderList, OrderListMenu } from "./orderlist"
+import { OrderList, OrderListMenu, Payment } from "./orderlist"
+import { TermsA, TermsB, TermsC, TermsMenu } from "./terms"
 
-function Test() {
-  return <h1>Test</h1>
-}
 function mypage() {
-  const [page, setPage] = useState(User)
-  const [dvdpage, setdvdPage] = useState(Dvd)
-
+  const [subpath_orderlist, setSubpath_orderlist] = useState("1")
+  const [subpath_terms, setSubpath_terms] = useState("1")
   const [path, setPath] = useState("1")
-  function showUserPage(e) {}
+
   function handlePath(e) {
     if (e.target.id == "1") setPath("1")
     else if (e.target.id == "2") setPath("2")
     else if (e.target.id == "3") setPath("3")
     else if (e.target.id == "4") setPath("4")
+    else if (e.target.id == "5") setPath("5")
   }
   return (
     <>
@@ -49,12 +46,7 @@ function mypage() {
           <Button id="4" href="#order" size="large" css={Topbtn} onClick={handlePath}>
             결제
           </Button>
-          <Button
-            href="#terms"
-            size="large"
-            css={Topbtn}
-            //onClick={handleClick}
-          >
+          <Button id="5" href="#terms" size="large" css={Topbtn} onClick={handlePath}>
             약관
           </Button>
         </Grid>
@@ -66,8 +58,10 @@ function mypage() {
             <DvdMenu />
           ) : path == "3" ? (
             <UserSetMenu />
+          ) : path == "4" ? (
+            <OrderListMenu setSubpath_orderlist={setSubpath_orderlist} />
           ) : (
-            <OrderListMenu />
+            <TermsMenu setSubpath_terms={setSubpath_terms} />
           )}
         </Grid>
         <Grid size={{ xs: 6, md: 8 }} css={Rightcontainer}>
@@ -77,8 +71,18 @@ function mypage() {
             <Dvd />
           ) : path == "3" ? (
             <UserSet />
-          ) : (
+          ) : path == "4" && subpath_orderlist == "1" ? (
             <OrderList />
+          ) : path == "4" && subpath_orderlist == "2" ? (
+            <Payment />
+          ) : path == "5" && subpath_terms == "1" ? (
+            <TermsA />
+          ) : path == "5" && subpath_terms == "2" ? (
+            <TermsB />
+          ) : path == "5" && subpath_terms == "3" ? (
+            <TermsC />
+          ) : (
+            <></>
           )}
         </Grid>
       </Grid>
