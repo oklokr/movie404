@@ -34,4 +34,9 @@ public class MovieController {
     public List<Map<String, Object>> getGenreList() {
         return movieService.getGenreList();
     }
+
+    @DeleteMapping("/{movieCode}")
+    public void deleteMovie(@PathVariable("movieCode") String movieCode) {
+        movieService.deleteMovie(movieCode);
+    }
 }
