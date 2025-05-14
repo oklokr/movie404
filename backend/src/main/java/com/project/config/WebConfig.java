@@ -24,7 +24,7 @@ public class WebConfig implements WebMvcConfigurer {
             "/api/login",
             "/api/signup",
             "/api/common/commonCodeList",
-        }
+        };
 
         registry.addInterceptor(authInterceptor)
             .addPathPatterns("/api/**")
