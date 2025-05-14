@@ -58,10 +58,32 @@ export default function MovieEdit() {
       setRating(movie.ratingTpcd || "")
       setTitle(movie.movieName || "")
       setDesc(movie.synopsis || "")
-      setDirectors(movie.directorCode ? [movie.directorCode] : [])
-      setCasts(movie.actorCode ? [movie.actorCode] : [])
+      // 감독/출연진: 여러 명일 수 있으니 배열로 변환
+      setDirectors([movie.directCodeA, movie.directCodeB].filter(Boolean))
+      setCasts(
+        [
+          movie.actorCodeA,
+          movie.actorCodeB,
+          movie.actorCodeC,
+          movie.actorCodeD,
+          movie.actorCodeE,
+        ].filter(Boolean),
+      )
+      // 상영시간(분) 변환 (movie.runtime이 "HH:mm:ss"라면)
+      if (movie.runtime) {
+        const [h, m] = movie.runtime.split(":")
+        setRuntime(String(parseInt(h) * 60 + parseInt(m)))
+      } else {
+        setRuntime("")
+      }
       setDvdPrice(movie.dvdPrice || "")
       setReservePrice(movie.reservePrice || "")
+      setDvdDiscount(movie.dvdDiscount || "")
+      setDvdDateFrom(movie.dvdDateFrom || "")
+      setDvdDateTo(movie.dvdDateTo || "")
+      setReserveDiscount(movie.reserveDiscount || "")
+      setReserveDateFrom(movie.reserveDateFrom || "")
+      setReserveDateTo(movie.reserveDateTo || "")
     })
   }, [movieCode])
 
