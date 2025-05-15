@@ -76,14 +76,6 @@ export default function MovieDetail() {
         <DetailRow label="DVD 판매기간">
           {movie.dvdDateFrom && movie.dvdDateTo ? `${movie.dvdDateFrom} ~ ${movie.dvdDateTo}` : ""}
         </DetailRow>
-        <DetailRow label="예매 가격">
-          {movie.reservePrice ? `${movie.reservePrice.toLocaleString()} 원` : ""}
-        </DetailRow>
-        <DetailRow label="예매 가능기간">
-          {movie.reserveDateFrom && movie.reserveDateTo
-            ? `${movie.reserveDateFrom} ~ ${movie.reserveDateTo}`
-            : ""}
-        </DetailRow>
       </div>
       <div css={btnRow}>
         <button css={listBtn} onClick={() => navigate(-1)}>
