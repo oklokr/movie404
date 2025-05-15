@@ -1,7 +1,6 @@
 package com.project.repository;
 
 import com.project.model.MovieDto;
-import com.project.scheduler.dto.MovieResponseDto;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -14,12 +13,6 @@ public interface MovieMapper {
     List<MovieDto> selectMovieList(@Param("movieName") String movieName, @Param("offset") int offset, @Param("size") int size);
     int countMovieList(@Param("movieName") String movieName);
     MovieDto selectMovieDetail(@Param("movieCode") String movieCode);
-
-    boolean existsByMovieName(String movieName); // 중복 방지
-    boolean existsByGenreCode(String genreCode);
-    void insertMovie(MovieResponseDto movie);       // 삽입
-    // DTO 없이 코드, 이름 직접 받는 insert 메서드
-    void insertGenre(@Param("genreCode") String genreCode, @Param("genreName") String genreName);
 
     List<Map<String, Object>> selectGenreList();
     void deleteOrderHistoryByMovieCode(@Param("movieCode") String movieCode);

@@ -71,35 +71,6 @@
     )
   </select>
 
-  <insert id="insertMovie">
-    INSERT INTO MOVIE (
-      MOVIE_CODE,
-      GENRE_CODEA,
-      MOVIE_NAME,
-      DIRECT_CODEA,
-      ACTOR_CODEA,
-      SYNOPSIS,
-      RUNTIME,
-      RATING_TPCD,
-      MOVIE_RELEASE,
-      POSTER,
-      SALES
-    )
-    VALUES (
-      #{id},
-      'GENRE001', -- 더미 장르
-      #{title},
-      'DIR001', -- 더미 감독
-      'ACT001', -- 더미 배우
-      #{overview},
-      SEC_TO_TIME(#{runtime}),
-      'TP001', -- 더미 등급
-      #{releaseDate},
-      #{posterPath},
-      0
-    )
-  </insert>
-
   <select id="selectGenreList" resultType="map">
     SELECT GENRE_CODE as code, GENRE_NAME as name FROM GENRE
   </select>
