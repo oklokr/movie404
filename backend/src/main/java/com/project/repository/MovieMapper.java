@@ -16,7 +16,10 @@ public interface MovieMapper {
     MovieDto selectMovieDetail(@Param("movieCode") String movieCode);
 
     boolean existsByMovieName(String movieName); // 중복 방지
+    boolean existsByGenreCode(String genreCode);
     void insertMovie(MovieResponseDto movie);       // 삽입
+    // DTO 없이 코드, 이름 직접 받는 insert 메서드
+    void insertGenre(@Param("genreCode") String genreCode, @Param("genreName") String genreName);
 
     List<Map<String, Object>> selectGenreList();
     void deleteOrderHistoryByMovieCode(@Param("movieCode") String movieCode);
@@ -50,5 +53,4 @@ public interface MovieMapper {
                 @Param("price") int price,
                 @Param("discount") int discount,
                 @Param("seatActive") String seatActive);       
-                     
 }
