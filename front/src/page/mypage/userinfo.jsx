@@ -59,14 +59,19 @@ function User(props) {
     userinfo.tel = state.info.tel
 
     function handleChangeEmail(e) {
-      // alert(props.test)
-      if (e.target.value == userinfo.email) {
+      const val = e.target.value
+      props.setEmail("")
+      if (val === "") props.setCommentEmail("이메일을 입력해주세요")
+      if (/[!@#$%^&*|ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(val)) props.setCommentEmail("특수문자/한글 포함 불가")
+      if (val == userinfo.email) {
         props.setEmailEvent(0)
         props.setEmailAuth(0)
       } else {
         props.setEmailEvent(1)
       }
+      props.setEmail(val)
     }
+
     function handleChangeTel(e) {
       // alert(props.test)
       if (e.target.value == userinfo.tel) props.setTelEvent(0)
@@ -75,6 +80,22 @@ function User(props) {
     function handleClickEamilAuth(e) {
       props.setEmailAuth(1)
     }
+    function handleChangePW(e) {
+      const val = e.target.value
+      props.setPW(val)
+
+      if (val === "") props.setCommentPW("비밀번호를 입력해주세요")
+      else if (/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(val)) props.setCommentPW("한글 포함 불가")
+      else if (!/[!@#$%^&*]/.test(val)) props.setCommentPW("특수문자를 포함해주세요")
+      else props.setCommentPW("비밀번호 입력 완료!")
+    }
+    function handleChangeRPW(e) {
+      const val = e.target.value
+      props.setRPW(val)
+
+      if (val === "") props.setCommentRPW("비밀번호 재확인을 입력해주세요")
+    }
+
     return (
       <>
         <div className="input-form">
@@ -94,20 +115,18 @@ function User(props) {
               aria-describedby="outlined-weight-helper-text"
               required
               id="signup_pwd"
-              //type={showPassword ? "text" : "password"}
-              //onChange={handleChangePW}
+              type={props.showPassword ? "text" : "password"}
+              onChange={handleChangePW}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
-                  //  aria-label={showPassword ? "hide the password" : "display the password"}
-                  // onClick={handleClickShowPassword}
+                    aria-label={props.showPassword ? "hide the password" : "display the password"}
+                    onClick={props.handleClickShowPassword}
                   ></IconButton>
                 </InputAdornment>
               }
-              //helperText={}
-              //onChange={}
             />
-            <FormHelperText>{}</FormHelperText>
+            <FormHelperText>{props.commentPW}</FormHelperText>
           </div>
         </div>
         <div className="input-form">
@@ -117,18 +136,18 @@ function User(props) {
               aria-describedby="outlined-weight-helper-text"
               required
               id="signup_Rpwd"
-              //type={showRePassword ? "text" : "password"}
-              //onChange={handleChangeRPW}
+              type={props.showRePassword ? "text" : "password"}
+              onChange={handleChangeRPW}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
-                  //aria-label={showRePassword ? "hide the password" : "display the password"}
-                  //onClick={handleClickShowRePassword}
+                    aria-label={props.showRePassword ? "hide the password" : "display the password"}
+                    onClick={props.handleClickShowRePassword}
                   ></IconButton>
                 </InputAdornment>
               }
             />
-            <FormHelperText>{}</FormHelperText>
+            <FormHelperText>{props.commentRPW}</FormHelperText>
           </div>
         </div>
         <div className="input-form">
@@ -141,7 +160,7 @@ function User(props) {
               required
               onChange={handleChangeEmail}
             />
-            <FormHelperText>{}</FormHelperText>
+            <FormHelperText>{props.commentEmail}</FormHelperText>
           </div>
           <div>
             <TextField

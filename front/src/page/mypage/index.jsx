@@ -24,6 +24,14 @@ function mypage() {
   const [emailchange, setEmailEvent] = useState(0)
   const [telchange, setTelEvent] = useState(0)
   const [emailauth, setEmailAuth] = useState(0)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showRePassword, setShowRePassword] = useState(false)
+  const [commentPW, setCommentPW] = useState("비밀번호를 입력해주세요")
+  const [commentRPW, setCommentRPW] = useState("비밀번호 재확인을 입력해주세요")
+  const [commentEmail, setCommentEmail] = useState("이메일을 입력해주세요")
+  const [Email, setEmail] = useState("")
+  const [PW, setPW] = useState("")
+  const [RPW, setRPW] = useState("")
 
   function handlePath(e) {
     if (e.target.id == "1") setPath("1")
@@ -76,6 +84,22 @@ function mypage() {
               setTelEvent={setTelEvent}
               emailauth={emailauth}
               setEmailAuth={setEmailAuth}
+              showPassword={showPassword}
+              setShowPassword={setShowPassword}
+              showRePassword={showRePassword}
+              setShowRePassword={setShowRePassword}
+              commentPW={commentPW}
+              setCommentPW={setCommentPW}
+              commentRPW={commentRPW}
+              setCommentRPW={setCommentRPW}
+              commentEmail={commentEmail}
+              setCommentEmail={setCommentEmail}
+              Email={Email}
+              setEmail={setEmail}
+              passwd={PW}
+              setPW={setPW}
+              repasswd={RPW}
+              setRPW={setRPW}
             />
           ) : path == "2" ? (
             <Dvd />
