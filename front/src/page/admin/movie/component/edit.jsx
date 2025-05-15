@@ -29,11 +29,6 @@ export default function MovieEdit() {
   const [dvdDiscount, setDvdDiscount] = useState("")
   const [dvdDateFrom, setDvdDateFrom] = useState("")
   const [dvdDateTo, setDvdDateTo] = useState("")
-  const [reserveUse, setReserveUse] = useState(true)
-  const [reservePrice, setReservePrice] = useState("")
-  const [reserveDiscount, setReserveDiscount] = useState("")
-  const [reserveDateFrom, setReserveDateFrom] = useState("")
-  const [reserveDateTo, setReserveDateTo] = useState("")
   const [loading, setLoading] = useState(false)
   const [runtime, setRuntime] = useState("")
   const [creatorList, setCreatorList] = useState([])
@@ -74,17 +69,30 @@ export default function MovieEdit() {
       } else {
         setRuntime("")
       }
-      // DVD/예매 시스템 사용여부 및 값 세팅
-      setDvdUse(movie.dvdUse === "Y")
-      setDvdPrice(movie.dvdPrice || "")
-      setDvdDiscount(movie.dvdDiscount || "")
-      setDvdDateFrom(movie.dvdDateFrom || "")
-      setDvdDateTo(movie.dvdDateTo || "")
-      setReserveUse(movie.reserveUse === "Y")
-      setReservePrice(movie.reservePrice || "")
-      setReserveDiscount(movie.reserveDiscount || "")
-      setReserveDateFrom(movie.reserveDateFrom || "")
-      setReserveDateTo(movie.reserveDateTo || "")
+      // DVD 시스템 사용여부 및 값 세팅
+      const hasDvd =
+        (movie.dvdPrice && movie.dvdPrice !== "") ||
+        (movie.dvdDiscount && movie.dvdDiscount !== "" && movie.dvdDiscount !== "0") ||
+        (movie.dvdDateFrom && movie.dvdDateFrom !== "") ||
+        (movie.dvdDateTo && movie.dvdDateTo !== "")
+      if (hasDvd) {
+        setDvdUse(true)
+        setDvdPrice(movie.dvdPrice || "")
+        setDvdDiscount(
+          movie.dvdDiscount !== undefined && movie.dvdDiscount !== null && movie.dvdDiscount !== ""
+            ? movie.dvdDiscount
+            : "0",
+        )
+        setDvdDateFrom(movie.dvdDateFrom || "")
+        setDvdDateTo(movie.dvdDateTo || "")
+      } else {
+        setDvdUse(false)
+        setDvdPrice("")
+        setDvdDiscount("0")
+        setDvdDateFrom("")
+        setDvdDateTo("")
+      }
+      // 예매관리 부분 제거
     })
   }, [movieCode])
 
@@ -163,11 +171,7 @@ export default function MovieEdit() {
       dvdPrice ||
       dvdDiscount ||
       dvdDateFrom ||
-      dvdDateTo ||
-      reservePrice ||
-      reserveDiscount ||
-      reserveDateFrom ||
-      reserveDateTo
+      dvdDateTo
 
     if (hasValue) {
       if (window.confirm("작성 중인 내용이 있습니다. 정말 목록으로 이동하시겠습니까?")) {
@@ -178,7 +182,7 @@ export default function MovieEdit() {
     }
   }
 
-  // 폼 제출
+  // 제출 버튼 클릭 시
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!genre) return alert("장르를 선택하세요.")
@@ -188,19 +192,11 @@ export default function MovieEdit() {
     if (directors.length === 0) return alert("감독을 1명 이상 등록하세요.")
     if (casts.length === 0) return alert("출연진을 1명 이상 등록하세요.")
 
-    // DVD 시스템 사용 시 필수값 체크
+    // DVD 시스템 사용 시 필수값 개별 체크
     if (dvdUse) {
       if (!dvdPrice) return alert("DVD 판매금액을 입력하세요.")
-      if (!dvdDiscount) return alert("DVD 할인금액을 입력하세요.")
-      if (!dvdDateFrom) return alert("DVD 판매 시작일을 입력하세요.")
-      if (!dvdDateTo) return alert("DVD 판매 종료일을 입력하세요.")
-    }
-    // 예매 시스템 사용 시 필수값 체크
-    if (reserveUse) {
-      if (!reservePrice) return alert("예매 판매금액을 입력하세요.")
-      if (!reserveDiscount) return alert("예매 할인금액을 입력하세요.")
-      if (!reserveDateFrom) return alert("예매 시작일을 입력하세요.")
-      if (!reserveDateTo) return alert("예매 종료일을 입력하세요.")
+      if (!dvdDateFrom) return alert("DVD 시작일을 입력하세요.")
+      if (!dvdDateTo) return alert("DVD 종료일을 입력하세요.")
     }
 
     setLoading(true)
@@ -223,17 +219,17 @@ export default function MovieEdit() {
       formData.append("DVD_USE", dvdUse ? "Y" : "N")
       if (dvdUse) {
         formData.append("DVD_PRICE", dvdPrice)
-        formData.append("DVD_DISCOUNT", dvdDiscount)
+        formData.append("DVD_DISCOUNT", dvdDiscount === "" ? "0" : dvdDiscount)
         formData.append("DVD_DATE_FROM", dvdDateFrom)
         formData.append("DVD_DATE_TO", dvdDateTo)
+      } else {
+        // 미사용 시 빈 값으로 명확히 전송
+        formData.append("DVD_PRICE", "")
+        formData.append("DVD_DISCOUNT", "0")
+        formData.append("DVD_DATE_FROM", "")
+        formData.append("DVD_DATE_TO", "")
       }
-      formData.append("RESERVE_USE", reserveUse ? "Y" : "N")
-      if (reserveUse) {
-        formData.append("SEAT_PRICE", reservePrice)
-        formData.append("SEAT_DISCOUNT", reserveDiscount)
-        formData.append("SEAT_DATE_FROM", reserveDateFrom)
-        formData.append("SEAT_DATE_TO", reserveDateTo)
-      }
+
       if (movieCode) {
         await updateMovie(movieCode, formData)
         alert("수정이 완료되었습니다.")
@@ -495,117 +491,59 @@ export default function MovieEdit() {
             </div>
           </div>
         </div>
-        {/* DVD/예매 시스템 */}
+        {/* DVD 시스템 */}
         <div css={trStyle}>
           <div css={thStyle} style={{ verticalAlign: "top" }}>
-            DVD/예매 시스템
+            DVD 시스템
           </div>
           <div css={tdStyle}>
-            <div css={systemWrap}>
-              <div css={systemCol}>
-                <div css={systemTitle}>DVD 시스템</div>
-                <div>
-                  <label css={checkLabel}>
-                    <input type="radio" checked={dvdUse} onChange={() => setDvdUse(true)} /> 사용
-                  </label>
-                  <label css={checkLabel}>
-                    <input type="radio" checked={!dvdUse} onChange={() => setDvdUse(false)} />{" "}
-                    미사용
-                  </label>
-                </div>
-                {dvdUse && (
-                  <div css={systemInputRow}>
-                    <input
-                      css={inputStyle}
-                      type="number"
-                      placeholder="판매금액"
-                      value={dvdPrice}
-                      onChange={(e) => setDvdPrice(e.target.value)}
-                      style={{ width: 120 }}
-                    />{" "}
-                    원
-                    <input
-                      css={inputStyle}
-                      type="number"
-                      placeholder="할인금액"
-                      value={dvdDiscount}
-                      onChange={(e) => setDvdDiscount(e.target.value)}
-                      style={{ marginLeft: 8, width: 120 }}
-                    />{" "}
-                    원
-                    <input
-                      css={inputStyle}
-                      type="date"
-                      value={dvdDateFrom}
-                      onChange={(e) => setDvdDateFrom(e.target.value)}
-                      style={{ marginLeft: 8, width: 140 }}
-                    />
-                    ~
-                    <input
-                      css={inputStyle}
-                      type="date"
-                      value={dvdDateTo}
-                      onChange={(e) => setDvdDateTo(e.target.value)}
-                      style={{ marginLeft: 8, width: 140 }}
-                    />
-                  </div>
-                )}
-              </div>
-              <div css={systemCol}>
-                <div css={systemTitle}>예매 시스템</div>
-                <div>
-                  <label css={checkLabel}>
-                    <input type="radio" checked={reserveUse} onChange={() => setReserveUse(true)} />{" "}
-                    사용
-                  </label>
-                  <label css={checkLabel}>
-                    <input
-                      type="radio"
-                      checked={!reserveUse}
-                      onChange={() => setReserveUse(false)}
-                    />{" "}
-                    미사용
-                  </label>
-                </div>
-                {reserveUse && (
-                  <div css={systemInputRow}>
-                    <input
-                      css={inputStyle}
-                      type="number"
-                      placeholder="판매금액"
-                      value={reservePrice}
-                      onChange={(e) => setReservePrice(e.target.value)}
-                      style={{ width: 120 }}
-                    />{" "}
-                    원
-                    <input
-                      css={inputStyle}
-                      type="number"
-                      placeholder="할인금액"
-                      value={reserveDiscount}
-                      onChange={(e) => setReserveDiscount(e.target.value)}
-                      style={{ marginLeft: 8, width: 120 }}
-                    />{" "}
-                    원
-                    <input
-                      css={inputStyle}
-                      type="date"
-                      value={reserveDateFrom}
-                      onChange={(e) => setReserveDateFrom(e.target.value)}
-                      style={{ marginLeft: 8, width: 140 }}
-                    />
-                    ~
-                    <input
-                      css={inputStyle}
-                      type="date"
-                      value={reserveDateTo}
-                      onChange={(e) => setReserveDateTo(e.target.value)}
-                      style={{ marginLeft: 8, width: 140 }}
-                    />
-                  </div>
-                )}
-              </div>
+            <div>
+              <label css={checkLabel}>
+                <input type="radio" checked={dvdUse} onChange={() => setDvdUse(true)} /> 사용
+              </label>
+              <label css={checkLabel}>
+                <input type="radio" checked={!dvdUse} onChange={() => setDvdUse(false)} /> 미사용
+              </label>
             </div>
+            {dvdUse && (
+              <div css={systemInputRow}>
+                <input
+                  css={inputStyle}
+                  type="number"
+                  placeholder="판매금액"
+                  value={dvdPrice}
+                  onChange={(e) => setDvdPrice(e.target.value)}
+                  style={{ width: 120 }}
+                />{" "}
+                원
+                <input
+                  css={inputStyle}
+                  type="number"
+                  placeholder="할인금액"
+                  value={dvdDiscount}
+                  onChange={(e) => setDvdDiscount(e.target.value)}
+                  style={{ marginLeft: 8, width: 120 }}
+                  min={0}
+                  max={32767} // 컬럼 타입에 맞게 수정
+                />{" "}
+                원
+                <input
+                  css={inputStyle}
+                  type="date"
+                  value={dvdDateFrom}
+                  onChange={(e) => setDvdDateFrom(e.target.value)}
+                  style={{ marginLeft: 8, width: 140 }}
+                />
+                ~
+                <input
+                  css={inputStyle}
+                  type="date"
+                  value={dvdDateTo}
+                  onChange={(e) => setDvdDateTo(e.target.value)}
+                  style={{ marginLeft: 8, width: 140 }}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -11,13 +11,9 @@
       m.MOVIE_NAME as movieName,
       m.POSTER as poster,
       v.PRICE as dvdPrice,
-      v.DISCOUNT as dvdDiscount,
-      MIN(s.PRICE) as reservePrice,
-      MIN(s.DISCOUNT_PER) as reserveDiscount
+      v.DISCOUNT as dvdDiscount
     FROM MOVIE m
     LEFT JOIN VOD v ON m.MOVIE_CODE = v.MOVIE_CODE
-    LEFT JOIN RUN_SCHEDULE rs ON rs.MOVIE_CODE = m.MOVIE_CODE
-    LEFT JOIN SEAT s ON s.THEATER_CODE = rs.THEATER_CODE
     <where>
       <if test="movieName != null and movieName != ''">
         AND m.MOVIE_NAME LIKE CONCAT('%', #{movieName}, '%')
@@ -57,15 +53,9 @@
       v.PRICE as dvdPrice,
       v.START_DATE as dvdDateFrom,
       v.END_DATE as dvdDateTo,
-      v.DISCOUNT as dvdDiscount,
-      s.PRICE as reservePrice,
-      s.DISCOUNT_PER as reserveDiscount,
-      rs.RUN_DATE as reserveDateFrom,
-      rs.RUN_DATE as reserveDateTo
+      v.DISCOUNT as dvdDiscount
     FROM MOVIE m
     LEFT JOIN VOD v ON m.MOVIE_CODE = v.MOVIE_CODE
-    LEFT JOIN RUN_SCHEDULE rs ON rs.MOVIE_CODE = m.MOVIE_CODE
-    LEFT JOIN SEAT s ON s.THEATER_CODE = rs.THEATER_CODE
     WHERE m.MOVIE_CODE = #{movieCode}
     LIMIT 1
   </select>
@@ -114,29 +104,9 @@
     SELECT GENRE_CODE as code, GENRE_NAME as name FROM GENRE
   </select>
 
-  <delete id="deleteOrderHistoryByMovieCode">
-    DELETE FROM order_history WHERE MOVIE_CODE = #{movieCode}
-  </delete>
-
-  <delete id="deleteMovie">
-    DELETE FROM MOVIE WHERE MOVIE_CODE = #{movieCode}
-  </delete>
-
-  <delete id="deleteReservationByMovieCode">
-    DELETE FROM reservation WHERE MOVIE_CODE = #{movieCode}
-  </delete>
-
-  <delete id="deleteRunScheduleByMovieCode">
-    DELETE FROM run_schedule WHERE MOVIE_CODE = #{movieCode}
-  </delete>
-
-  <delete id="deleteWatchHistoryByMovieCode">
-    DELETE FROM watch_history WHERE MOVIE_CODE = #{movieCode}
-  </delete>
-
-  <delete id="deleteVodByMovieCode">
-    DELETE FROM vod WHERE MOVIE_CODE = #{movieCode}
-  </delete>
+  <select id="selectCreatorList" resultType="map">
+    SELECT CREATOR_CODE as code, CREATOR_NAME as name FROM CREATOR
+  </select>
 
   <insert id="insertMovie" parameterType="com.project.model.MovieDto">
     INSERT INTO MOVIE (
@@ -160,10 +130,6 @@
     INSERT INTO VOD (MOVIE_CODE, PRICE, START_DATE, END_DATE, DISCOUNT)
     VALUES (#{movieCode}, #{price}, #{startDate}, #{endDate}, #{discount})
   </insert>
-
-  <select id="selectCreatorList" resultType="map">
-    SELECT CREATOR_CODE as code, CREATOR_NAME as name FROM CREATOR
-  </select>
 
   <update id="updateMovie" parameterType="com.project.model.MovieDto">
     UPDATE MOVIE SET
@@ -196,11 +162,19 @@
     WHERE MOVIE_CODE = #{movieCode}
   </update>
 
-  <update id="updateSeat" parameterType="map">
-    UPDATE SEAT
-    SET
-      PRICE = #{price},
-      DISCOUNT_PER = #{discount}
-    WHERE SEAT_CODE = #{seatCode}
-  </update>
+  <delete id="deleteOrderHistoryByMovieCode">
+    DELETE FROM order_history WHERE MOVIE_CODE = #{movieCode}
+  </delete>
+
+  <delete id="deleteMovie">
+    DELETE FROM MOVIE WHERE MOVIE_CODE = #{movieCode}
+  </delete>
+
+  <delete id="deleteWatchHistoryByMovieCode">
+    DELETE FROM watch_history WHERE MOVIE_CODE = #{movieCode}
+  </delete>
+
+  <delete id="deleteVodByMovieCode">
+    DELETE FROM vod WHERE MOVIE_CODE = #{movieCode}
+  </delete>
 </mapper>

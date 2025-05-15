@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { fetchMovieList } from "@/api/admin"
 import { css } from "@emotion/react"
-import { useNavigate } from "react-router-dom" // 추가
+import { useNavigate } from "react-router-dom"
 
 const PAGE_SIZE = 10
 
@@ -10,11 +10,10 @@ export default function Movie() {
   const [movieName, setMovieName] = useState("")
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
-  const navigate = useNavigate() // 추가
+  const navigate = useNavigate()
 
   const getList = async (name = "", pageNum = 1) => {
     const res = await fetchMovieList({ movieName: name, page: pageNum, size: PAGE_SIZE })
-    // res.data가 undefined면 res에서 바로 list, total을 꺼냄
     const data = res.data || res
     setList(data.list || [])
     setTotal(data.total || 0)
@@ -54,7 +53,7 @@ export default function Movie() {
         <button
           css={registerBtn}
           style={{ float: "right" }}
-          onClick={() => navigate("/admin/movie/edit")} // 등록 버튼 클릭 시 이동
+          onClick={() => navigate("/admin/movie/edit")}
         >
           등록
         </button>
@@ -66,8 +65,6 @@ export default function Movie() {
           <dt>포스터</dt>
           <dt>DVD 금액</dt>
           <dt>DVD 할인금액</dt>
-          <dt>예매 금액</dt>
-          <dt>예매 할인금액</dt>
         </dl>
         {list.length === 0 ? (
           <div css={emptyRow}>영화가 없습니다.</div>
@@ -76,7 +73,7 @@ export default function Movie() {
             <dl
               css={listRow}
               key={row.movieCode}
-              onClick={() => navigate(`/admin/movie/${row.movieCode}`)} // 상세로 이동
+              onClick={() => navigate(`/admin/movie/${row.movieCode}`)}
               style={{ cursor: "pointer" }}
             >
               <dd>{row.movieCode}</dd>
@@ -110,8 +107,6 @@ export default function Movie() {
               </dd>
               <dd>{row.dvdPrice?.toLocaleString()} 원</dd>
               <dd>{row.dvdDiscount?.toLocaleString()} 원</dd>
-              <dd>{row.reservePrice?.toLocaleString()} 원</dd>
-              <dd>{row.reserveDiscount?.toLocaleString()} 원</dd>
             </dl>
           ))
         )}
