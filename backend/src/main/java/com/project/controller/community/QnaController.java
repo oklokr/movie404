@@ -16,13 +16,16 @@ public class QnaController {
     private QnaService qnaService;
 
     @GetMapping("")
-    public ApiResponse getQnaList(@RequestParam String userId, @RequestParam boolean isAdmin) {
+    public ApiResponse getQnaList(
+        @RequestParam("userId") String userId,
+        @RequestParam("isAdmin") boolean isAdmin
+    ) {
         List<QnaDto> list = qnaService.getQnaList(userId, isAdmin);
         return new ApiResponse(list);
     }
 
     @GetMapping("/{qnaCode}")
-    public ApiResponse getQnaDetail(@PathVariable String qnaCode) {
+    public ApiResponse getQnaDetail(@PathVariable("qnaCode") String qnaCode) {
         QnaDto detail = qnaService.getQnaDetail(qnaCode);
         return new ApiResponse(detail);
     }

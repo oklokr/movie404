@@ -20,8 +20,8 @@ public interface UserMapper {
     List<UserDto> getUserList();
 
     UserDto getUserDetail(String userId);
-    int resetUserPassword(String userId, String password);
-    int updateUserType(String userId, String type);
+    int resetUserPassword(@Param("userId") String userId, @Param("password") String password);
+    int updateUserType(@Param("userId") String userId, @Param("type") String type);
     int checkId(String id);
     int checkEmail(String email);
     String insertUser(UserDto newUser);
