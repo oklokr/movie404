@@ -70,11 +70,28 @@ export default function MovieEdit() {
         setRuntime("")
       }
       // DVD 시스템 사용여부 및 값 세팅
-      setDvdUse(movie.dvdUse === "Y")
-      setDvdPrice(movie.dvdPrice || "")
-      setDvdDiscount(movie.dvdDiscount || "")
-      setDvdDateFrom(movie.dvdDateFrom || "")
-      setDvdDateTo(movie.dvdDateTo || "")
+      const hasDvd =
+        (movie.dvdPrice && movie.dvdPrice !== "") ||
+        (movie.dvdDiscount && movie.dvdDiscount !== "" && movie.dvdDiscount !== "0") ||
+        (movie.dvdDateFrom && movie.dvdDateFrom !== "") ||
+        (movie.dvdDateTo && movie.dvdDateTo !== "")
+      if (hasDvd) {
+        setDvdUse(true)
+        setDvdPrice(movie.dvdPrice || "")
+        setDvdDiscount(
+          movie.dvdDiscount !== undefined && movie.dvdDiscount !== null && movie.dvdDiscount !== ""
+            ? movie.dvdDiscount
+            : "0",
+        )
+        setDvdDateFrom(movie.dvdDateFrom || "")
+        setDvdDateTo(movie.dvdDateTo || "")
+      } else {
+        setDvdUse(false)
+        setDvdPrice("")
+        setDvdDiscount("0")
+        setDvdDateFrom("")
+        setDvdDateTo("")
+      }
       // 예매관리 부분 제거
     })
   }, [movieCode])
@@ -175,14 +192,6 @@ export default function MovieEdit() {
     if (directors.length === 0) return alert("감독을 1명 이상 등록하세요.")
     if (casts.length === 0) return alert("출연진을 1명 이상 등록하세요.")
 
-    // DVD 시스템 사용 시 필수값 체크
-    if (dvdUse) {
-      if (!dvdPrice) return alert("DVD 판매금액을 입력하세요.")
-      if (!dvdDiscount) return alert("DVD 할인금액을 입력하세요.")
-      if (!dvdDateFrom) return alert("DVD 판매 시작일을 입력하세요.")
-      if (!dvdDateTo) return alert("DVD 판매 종료일을 입력하세요.")
-    }
-
     setLoading(true)
     try {
       const formData = new FormData()
@@ -203,11 +212,16 @@ export default function MovieEdit() {
       formData.append("DVD_USE", dvdUse ? "Y" : "N")
       if (dvdUse) {
         formData.append("DVD_PRICE", dvdPrice)
-        formData.append("DVD_DISCOUNT", dvdDiscount)
+        formData.append("DVD_DISCOUNT", dvdDiscount === "" ? "0" : dvdDiscount)
         formData.append("DVD_DATE_FROM", dvdDateFrom)
         formData.append("DVD_DATE_TO", dvdDateTo)
+      } else {
+        // 미사용 시 빈 값으로 명확히 전송
+        formData.append("DVD_PRICE", "")
+        formData.append("DVD_DISCOUNT", "0")
+        formData.append("DVD_DATE_FROM", "")
+        formData.append("DVD_DATE_TO", "")
       }
-      // 예매관리 관련 필드 제거
 
       if (movieCode) {
         await updateMovie(movieCode, formData)

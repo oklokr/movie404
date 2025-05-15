@@ -84,12 +84,14 @@ public class MovieService {
 
         movieMapper.insertMovie(movie);
 
-        // DVD(VOD) 정보 저장
+        // DVD(VOD) 정보 등록/삭제
         if ("Y".equals(allParams.get("DVD_USE"))) {
             Integer price = parseIntOrNull(allParams.get("DVD_PRICE"));
             Integer discount = parseIntOrNull(allParams.get("DVD_DISCOUNT"));
             String startDate = allParams.get("DVD_DATE_FROM");
             String endDate = allParams.get("DVD_DATE_TO");
+
+            // 등록 시에는 무조건 insertVod
             movieMapper.insertVod(
                 movieCode,
                 price != null ? price : 0,
@@ -97,6 +99,8 @@ public class MovieService {
                 endDate != null ? endDate : "2024-12-31",
                 discount != null ? discount : 0
             );
+        } else {
+            movieMapper.deleteVodByMovieCode(movieCode);
         }
     }
 
@@ -146,13 +150,28 @@ public class MovieService {
             Integer discount = parseIntOrNull(allParams.get("DVD_DISCOUNT"));
             String startDate = allParams.get("DVD_DATE_FROM");
             String endDate = allParams.get("DVD_DATE_TO");
-            movieMapper.updateVod(
-                movieCode,
-                price != null ? price : 0,
-                startDate != null ? startDate : "2024-01-01",
-                endDate != null ? endDate : "2024-12-31",
-                discount != null ? discount : 0
-            );
+
+            // VOD 레코드 존재 여부 확인 후 분기
+            MovieDto detail = movieMapper.selectMovieDetail(movieCode);
+            if (detail.getDvdPrice() == null) {
+                // 없으면 insert
+                movieMapper.insertVod(
+                    movieCode,
+                    price != null ? price : 0,
+                    startDate != null ? startDate : "2024-01-01",
+                    endDate != null ? endDate : "2024-12-31",
+                    discount != null ? discount : 0
+                );
+            } else {
+                // 있으면 update
+                movieMapper.updateVod(
+                    movieCode,
+                    price != null ? price : 0,
+                    startDate != null ? startDate : "2024-01-01",
+                    endDate != null ? endDate : "2024-12-31",
+                    discount != null ? discount : 0
+                );
+            }
         } else {
             movieMapper.deleteVodByMovieCode(movieCode);
         }
