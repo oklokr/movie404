@@ -10,6 +10,13 @@
       m.MOVIE_CODE as movieCode,
       m.MOVIE_NAME as movieName,
       m.POSTER as poster,
+      m.GENRE_CODEA as genreCodeA,
+      m.SYNOPSIS as synopsis,
+      m.DIRECT_CODEA as directCodeA,
+      m.DIRECT_CODEB as directCodeB,
+      m.ACTOR_CODEA as actorCodeA,
+      m.ACTOR_CODEB as actorCodeB,
+      m.ACTOR_CODEC as actorCodeC,
       v.PRICE as dvdPrice,
       v.DISCOUNT as dvdDiscount
     FROM MOVIE m
