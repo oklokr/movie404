@@ -4,7 +4,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class TMDBMovieListResponse {
+public class TMDBMovieListResponseDto {
     private int page;
-    private List<MovieResponse> results;
+    private List<MovieResponseDto> results;
 }

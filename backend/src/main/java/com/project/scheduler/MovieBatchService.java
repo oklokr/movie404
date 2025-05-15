@@ -1,6 +1,6 @@
 package com.project.scheduler;
 
-import com.project.scheduler.dto.MovieResponse;
+import com.project.scheduler.dto.MovieResponseDto;
 import com.project.repository.MovieMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +16,9 @@ public class MovieBatchService {
     private final MovieMapper movieMapper;
 
     public void updateMovies() {
-        List<MovieResponse> movies = tmdbClient.fetchPopularMovies();
+        List<MovieResponseDto> movies = tmdbClient.fetchPopularMovies();
 
-        for (MovieResponse movie : movies) {
+        for (MovieResponseDto movie : movies) {
             if (!movieMapper.existsByMovieName(movie.getTitle())) {
                 log.info("삽입 대상 영화: {}", movie.getTitle());
                 movieMapper.insertMovie(movie);
