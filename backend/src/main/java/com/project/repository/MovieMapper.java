@@ -27,13 +27,28 @@ public interface MovieMapper {
     void deleteVodByMovieCode(@Param("movieCode") String movieCode);
     void insertMovie(MovieDto movie);
     void insertVod(@Param("movieCode") String movieCode,
-                @Param("price") int price,
-                @Param("startDate") String startDate,
-                @Param("endDate") String endDate);
+               @Param("price") int price,
+               @Param("startDate") String startDate,
+               @Param("endDate") String endDate,
+               @Param("discount") int discount);
+
     List<Map<String, Object>> selectCreatorList();    
     void updateMovie(MovieDto movie);
     void updateVod(@Param("movieCode") String movieCode,
+               @Param("price") int price,
+               @Param("startDate") String startDate,
+               @Param("endDate") String endDate,
+               @Param("discount") int discount);
+    void insertSeat(@Param("seatCode") String seatCode,
+                @Param("theaterCode") String theaterCode,
                 @Param("price") int price,
-                @Param("startDate") String startDate,
-                @Param("endDate") String endDate);            
+                @Param("discount") int discount,
+                @Param("seatActive") String seatActive);
+
+    void updateSeat(@Param("seatCode") String seatCode,
+                @Param("theaterCode") String theaterCode,
+                @Param("price") int price,
+                @Param("discount") int discount,
+                @Param("seatActive") String seatActive);       
+                     
 }

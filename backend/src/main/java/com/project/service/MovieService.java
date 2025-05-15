@@ -47,10 +47,9 @@ public class MovieService {
         movieMapper.deleteVodByMovieCode(movieCode);
         movieMapper.deleteMovie(movieCode);
     }
-    
+
     public void createMovie(Map<String, String> allParams, MultipartFile posterFile) {
         MovieDto movie = new MovieDto();
-        // PK 생성 (8자리)
         String movieCode = "M" + UUID.randomUUID().toString().replace("-", "").substring(0, 7).toUpperCase();
         movie.setMovieCode(movieCode);
         movie.setGenreCodeA(allParams.get("GENRE_CODEA"));
@@ -68,15 +67,15 @@ public class MovieService {
         movie.setRatingTpcd(allParams.get("RATING_TPCD"));
         movie.setMovieRelease(allParams.get("MOVIE_RELEASE"));
         movie.setSales(0L);
-    
-        // runtime: "110" 분 → "01:50:00" 변환 예시
+
+        // runtime: "110" 분 → "01:50:00" 변환
         String runtimeMin = allParams.get("RUNTIME");
         if (runtimeMin != null && !runtimeMin.isEmpty()) {
             int min = Integer.parseInt(runtimeMin);
             LocalTime time = LocalTime.of(min / 60, min % 60);
             movie.setRuntime(time.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         }
-    
+
         // 포스터 파일 저장 (파일명만 저장)
         if (posterFile != null && !posterFile.isEmpty()) {
             String fileName = UUID.randomUUID() + "_" + posterFile.getOriginalFilename();
@@ -84,15 +83,36 @@ public class MovieService {
             // posterFile.transferTo(new File("저장경로/" + fileName));
             movie.setPoster(fileName);
         }
-    
+
         movieMapper.insertMovie(movie);
-    
-        // VOD 테이블도 같이 insert
-        if (allParams.get("VOD_PRICE") != null) {
-            movieMapper.insertVod(movieCode,
-                Integer.parseInt(allParams.get("VOD_PRICE")),
-                allParams.getOrDefault("VOD_START_DATE", "2024-01-01"),
-                allParams.getOrDefault("VOD_END_DATE", "2024-12-31")
+
+        // DVD(VOD) 정보 저장
+        if ("Y".equals(allParams.get("DVD_USE"))) {
+            Integer price = parseIntOrNull(allParams.get("DVD_PRICE"));
+            Integer discount = parseIntOrNull(allParams.get("DVD_DISCOUNT"));
+            String startDate = allParams.get("DVD_DATE_FROM");
+            String endDate = allParams.get("DVD_DATE_TO");
+            movieMapper.insertVod(
+                movieCode,
+                price != null ? price : 0,
+                startDate != null ? startDate : "2024-01-01",
+                endDate != null ? endDate : "2024-12-31",
+                discount != null ? discount : 0
+            );
+        }
+
+        // 예매(극장) SEAT 정보 저장
+        if ("Y".equals(allParams.get("RESERVE_USE"))) {
+            Integer price = parseIntOrNull(allParams.get("SEAT_PRICE"));
+            Integer discount = parseIntOrNull(allParams.get("SEAT_DISCOUNT"));
+            String seatCode = "A1"; // 실제 좌석코드 생성/선택 로직 필요
+            String theaterCode = "T001"; // 실제 극장코드 필요
+            movieMapper.insertSeat(
+                seatCode,
+                theaterCode,
+                price != null ? price : 0,
+                discount != null ? discount : 0,
+                "Y"
             );
         }
     }
@@ -119,7 +139,7 @@ public class MovieService {
         movie.setRatingTpcd(allParams.get("RATING_TPCD"));
         movie.setMovieRelease(allParams.get("MOVIE_RELEASE"));
         movie.setSales(0L);
-    
+
         // runtime: "110" 분 → "01:50:00" 변환
         String runtimeMin = allParams.get("RUNTIME");
         if (runtimeMin != null && !runtimeMin.isEmpty()) {
@@ -127,24 +147,65 @@ public class MovieService {
             LocalTime time = LocalTime.of(min / 60, min % 60);
             movie.setRuntime(time.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         }
-    
+
         // 포스터 파일 저장 (파일명만 저장)
         if (posterFile != null && !posterFile.isEmpty()) {
             String fileName = UUID.randomUUID() + "_" + posterFile.getOriginalFilename();
             // 실제 파일 저장 필요
             movie.setPoster(fileName);
         }
-    
+
         movieMapper.updateMovie(movie);
-    
-        // VOD 테이블도 같이 update (필요시)
-        if (allParams.get("VOD_PRICE") != null) {
+
+        // DVD(VOD) 정보 수정/삭제
+        if ("Y".equals(allParams.get("DVD_USE"))) {
+            Integer price = parseIntOrNull(allParams.get("DVD_PRICE"));
+            Integer discount = parseIntOrNull(allParams.get("DVD_DISCOUNT"));
+            String startDate = allParams.get("DVD_DATE_FROM");
+            String endDate = allParams.get("DVD_DATE_TO");
             movieMapper.updateVod(
                 movieCode,
-                Integer.parseInt(allParams.get("VOD_PRICE")),
-                allParams.getOrDefault("VOD_START_DATE", "2024-01-01"),
-                allParams.getOrDefault("VOD_END_DATE", "2024-12-31")
+                price != null ? price : 0,
+                startDate != null ? startDate : "2024-01-01",
+                endDate != null ? endDate : "2024-12-31",
+                discount != null ? discount : 0
             );
+        } else {
+            movieMapper.deleteVodByMovieCode(movieCode);
+        }
+
+        // 예매(극장) SEAT 정보 수정/삭제
+        if ("Y".equals(allParams.get("RESERVE_USE"))) {
+            Integer price = parseIntOrNull(allParams.get("SEAT_PRICE"));
+            Integer discount = parseIntOrNull(allParams.get("SEAT_DISCOUNT"));
+            String seatCode = "A1"; // 실제 좌석코드 생성/선택 로직 필요
+            String theaterCode = "T001"; // 실제 극장코드 필요
+            movieMapper.updateSeat(
+                seatCode,
+                theaterCode,
+                price != null ? price : 0,
+                discount != null ? discount : 0,
+                "Y"
+            );
+        } else {
+            // 좌석 비활성화 처리 (삭제 대신)
+            String seatCode = "A1";
+            String theaterCode = "T001";
+            movieMapper.updateSeat(
+                seatCode,
+                theaterCode,
+                0,
+                0,
+                "N"
+            );
+        }
+    }
+
+    private Integer parseIntOrNull(String s) {
+        try {
+            return (s == null || s.isEmpty()) ? null : Integer.parseInt(s);
+        } catch (Exception e) {
+            return null;
         }
     }
 }

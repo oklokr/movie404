@@ -58,7 +58,6 @@ export default function MovieEdit() {
       setRating(movie.ratingTpcd || "")
       setTitle(movie.movieName || "")
       setDesc(movie.synopsis || "")
-      // 감독/출연진: 여러 명일 수 있으니 배열로 변환
       setDirectors([movie.directCodeA, movie.directCodeB].filter(Boolean))
       setCasts(
         [
@@ -69,18 +68,20 @@ export default function MovieEdit() {
           movie.actorCodeE,
         ].filter(Boolean),
       )
-      // 상영시간(분) 변환 (movie.runtime이 "HH:mm:ss"라면)
       if (movie.runtime) {
         const [h, m] = movie.runtime.split(":")
         setRuntime(String(parseInt(h) * 60 + parseInt(m)))
       } else {
         setRuntime("")
       }
+      // DVD/예매 시스템 사용여부 및 값 세팅
+      setDvdUse(movie.dvdUse === "Y")
       setDvdPrice(movie.dvdPrice || "")
-      setReservePrice(movie.reservePrice || "")
       setDvdDiscount(movie.dvdDiscount || "")
       setDvdDateFrom(movie.dvdDateFrom || "")
       setDvdDateTo(movie.dvdDateTo || "")
+      setReserveUse(movie.reserveUse === "Y")
+      setReservePrice(movie.reservePrice || "")
       setReserveDiscount(movie.reserveDiscount || "")
       setReserveDateFrom(movie.reserveDateFrom || "")
       setReserveDateTo(movie.reserveDateTo || "")
@@ -187,6 +188,21 @@ export default function MovieEdit() {
     if (directors.length === 0) return alert("감독을 1명 이상 등록하세요.")
     if (casts.length === 0) return alert("출연진을 1명 이상 등록하세요.")
 
+    // DVD 시스템 사용 시 필수값 체크
+    if (dvdUse) {
+      if (!dvdPrice) return alert("DVD 판매금액을 입력하세요.")
+      if (!dvdDiscount) return alert("DVD 할인금액을 입력하세요.")
+      if (!dvdDateFrom) return alert("DVD 판매 시작일을 입력하세요.")
+      if (!dvdDateTo) return alert("DVD 판매 종료일을 입력하세요.")
+    }
+    // 예매 시스템 사용 시 필수값 체크
+    if (reserveUse) {
+      if (!reservePrice) return alert("예매 판매금액을 입력하세요.")
+      if (!reserveDiscount) return alert("예매 할인금액을 입력하세요.")
+      if (!reserveDateFrom) return alert("예매 시작일을 입력하세요.")
+      if (!reserveDateTo) return alert("예매 종료일을 입력하세요.")
+    }
+
     setLoading(true)
     try {
       const formData = new FormData()
@@ -197,11 +213,9 @@ export default function MovieEdit() {
       formData.append("RUNTIME", runtime)
       if (posterFile) formData.append("POSTER", posterFile)
 
-      // 감독 코드 추가 (빈 값 제외)
       directors.forEach((d, i) => {
         if (d) formData.append(`DIRECT_CODE${String.fromCharCode(65 + i)}`, d)
       })
-      // 출연진 코드 추가 (빈 값 제외)
       casts.forEach((c, i) => {
         if (c) formData.append(`ACTOR_CODE${String.fromCharCode(65 + i)}`, c)
       })
@@ -215,10 +229,10 @@ export default function MovieEdit() {
       }
       formData.append("RESERVE_USE", reserveUse ? "Y" : "N")
       if (reserveUse) {
-        formData.append("RESERVE_PRICE", reservePrice)
-        formData.append("RESERVE_DISCOUNT", reserveDiscount)
-        formData.append("RESERVE_DATE_FROM", reserveDateFrom)
-        formData.append("RESERVE_DATE_TO", reserveDateTo)
+        formData.append("SEAT_PRICE", reservePrice)
+        formData.append("SEAT_DISCOUNT", reserveDiscount)
+        formData.append("SEAT_DATE_FROM", reserveDateFrom)
+        formData.append("SEAT_DATE_TO", reserveDateTo)
       }
       if (movieCode) {
         await updateMovie(movieCode, formData)
