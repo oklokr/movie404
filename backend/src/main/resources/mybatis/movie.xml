@@ -60,6 +60,17 @@
     LIMIT 1
   </select>
 
+  <select id="existsByGenreCode" resultType="boolean">
+    SELECT EXISTS (
+      SELECT 1 FROM GENRE WHERE GENRE_CODE = #{genreCode}
+    )
+  </select>
+  <select id="existsByMovieName" resultType="boolean">
+    SELECT EXISTS (
+      SELECT 1 FROM MOVIE WHERE MOVIE_NAME = #{movieName}
+    )
+  </select>
+
   <select id="selectGenreList" resultType="map">
     SELECT GENRE_CODE as code, GENRE_NAME as name FROM GENRE
   </select>
@@ -80,6 +91,10 @@
       #{actorCodeA}, #{actorCodeB}, #{actorCodeC}, #{actorCodeD}, #{actorCodeE},
       #{synopsis}, #{runtime}, #{ratingTpcd}, #{movieRelease}, #{poster}, #{sales}
     )
+  </insert>
+  <insert id="insertGenre">
+    INSERT INTO GENRE (GENRE_CODE, GENRE_NAME)
+    VALUES (#{genreCode}, #{genreName})
   </insert>
 
   <insert id="insertVod">

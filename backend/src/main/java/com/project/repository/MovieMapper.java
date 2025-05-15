@@ -1,6 +1,7 @@
 package com.project.repository;
 
 import com.project.model.MovieDto;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -12,6 +13,7 @@ public interface MovieMapper {
     List<MovieDto> selectMovieList(@Param("movieName") String movieName, @Param("offset") int offset, @Param("size") int size);
     int countMovieList(@Param("movieName") String movieName);
     MovieDto selectMovieDetail(@Param("movieCode") String movieCode);
+
     List<Map<String, Object>> selectGenreList();
     void deleteOrderHistoryByMovieCode(@Param("movieCode") String movieCode);
     void deleteMovie(@Param("movieCode") String movieCode);
