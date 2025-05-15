@@ -13,8 +13,8 @@ export default function MovieEdit() {
   const navigate = useNavigate()
   const { movieCode } = useParams()
   // 폼 상태
-  const [poster, setPoster] = useState(null)
-  const [posterFile, setPosterFile] = useState(null)
+  const [poster, setPoster] = useState("") // 이미지 URL
+  const [posterInput, setPosterInput] = useState("") // 입력값
   const [genreList, setGenreList] = useState([])
   const [genre, setGenre] = useState("") // 단일 선택
   const [rating, setRating] = useState("") // "1" or "2" 단일 선택
@@ -48,7 +48,8 @@ export default function MovieEdit() {
     if (!movieCode) return
     fetchMovieDetail(movieCode).then((res) => {
       const movie = res.data ? res.data : res
-      setPoster(movie.poster)
+      setPoster(movie.poster || "")
+      setPosterInput(movie.poster || "")
       setGenre(movie.genreCodeA || "")
       setRating(movie.ratingTpcd || "")
       setTitle(movie.movieName || "")
@@ -92,22 +93,18 @@ export default function MovieEdit() {
         setDvdDateFrom("")
         setDvdDateTo("")
       }
-      // 예매관리 부분 제거
     })
   }, [movieCode])
 
-  // 포스터 업로드
-  const handlePosterChange = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      setPoster(URL.createObjectURL(file))
-      setPosterFile(file)
-    }
+  // 포스터 URL 입력 핸들러
+  const handlePosterInputChange = (e) => {
+    setPosterInput(e.target.value)
+    setPoster(e.target.value)
   }
   // 포스터 삭제
   const handlePosterRemove = () => {
-    setPoster(null)
-    setPosterFile(null)
+    setPoster("")
+    setPosterInput("")
   }
 
   // 자동완성 필터
@@ -161,7 +158,7 @@ export default function MovieEdit() {
   // 목록 버튼 클릭 시 작성된 값이 있으면 확인 후 이동
   const handleListClick = () => {
     const hasValue =
-      posterFile ||
+      posterInput ||
       genre ||
       rating ||
       title ||
@@ -207,7 +204,8 @@ export default function MovieEdit() {
       formData.append("MOVIE_NAME", title)
       formData.append("SYNOPSIS", desc)
       formData.append("RUNTIME", runtime)
-      if (posterFile) formData.append("POSTER", posterFile)
+      // 파일대신 URL 저장
+      formData.append("POSTER", posterInput)
 
       directors.forEach((d, i) => {
         if (d) formData.append(`DIRECT_CODE${String.fromCharCode(65 + i)}`, d)
@@ -223,7 +221,6 @@ export default function MovieEdit() {
         formData.append("DVD_DATE_FROM", dvdDateFrom)
         formData.append("DVD_DATE_TO", dvdDateTo)
       } else {
-        // 미사용 시 빈 값으로 명확히 전송
         formData.append("DVD_PRICE", "")
         formData.append("DVD_DISCOUNT", "0")
         formData.append("DVD_DATE_FROM", "")
@@ -251,27 +248,34 @@ export default function MovieEdit() {
       <div css={tableWrap}>
         {/* 포스터 */}
         <div css={trStyle}>
-          <div css={thStyle}>포스터 이미지</div>
+          <div css={thStyle}>포스터 이미지 URL</div>
           <div css={tdStyle}>
-            <div css={posterArea}>
-              {poster ? (
-                <div css={posterThumbWrap}>
-                  <img src={poster} alt="포스터" css={posterImg} />
-                  <button type="button" css={posterDelBtn} onClick={handlePosterRemove}>
-                    ×
-                  </button>
-                </div>
-              ) : null}
-              <label css={posterAddBtn}>
-                <div css={plusIcon}>+</div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  onChange={handlePosterChange}
+            <input
+              css={inputStyle}
+              type="text"
+              placeholder="이미지 주소를 입력하세요"
+              value={posterInput}
+              onChange={handlePosterInputChange}
+              style={{ width: 400 }}
+            />
+            {posterInput && (
+              <div style={{ marginTop: 12 }}>
+                <img
+                  src={posterInput}
+                  alt="포스터 미리보기"
+                  style={{ width: 120, borderRadius: 8, background: "#eee" }}
                 />
-              </label>
-            </div>
+                <button
+                  type="button"
+                  css={posterDelBtn}
+                  style={{ position: "absolute", top: 0, right: 0 }}
+                  onClick={handlePosterRemove}
+                  title="삭제"
+                >
+                  ×
+                </button>
+              </div>
+            )}
           </div>
         </div>
         {/* 장르/등급 */}

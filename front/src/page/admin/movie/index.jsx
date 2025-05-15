@@ -79,7 +79,7 @@ export default function Movie() {
               <dd>{row.movieCode}</dd>
               <dd>{row.movieName}</dd>
               <dd>
-                {row.poster ? (
+                {row.poster && typeof row.poster === "string" && row.poster.trim() !== "" ? (
                   <img
                     src={row.poster}
                     alt="포스터"
@@ -91,6 +91,12 @@ export default function Movie() {
                       objectFit: "cover",
                       display: "block",
                       margin: "0 auto",
+                    }}
+                    onError={(e) => {
+                      const target = e.target
+                      if (target instanceof HTMLImageElement) {
+                        target.style.display = "none"
+                      }
                     }}
                   />
                 ) : (

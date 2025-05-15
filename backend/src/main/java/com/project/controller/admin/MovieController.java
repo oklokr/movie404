@@ -5,7 +5,6 @@ import com.project.service.MovieService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -45,10 +44,9 @@ public class MovieController {
 
     @PostMapping
     public ResponseEntity<?> createMovie(
-            @RequestParam Map<String, String> allParams,
-            @RequestParam(value = "POSTER", required = false) MultipartFile poster
+            @RequestParam Map<String, String> allParams
     ) {
-        movieService.createMovie(allParams, poster);
+        movieService.createMovie(allParams);
         return ResponseEntity.ok().build();
     }
 
@@ -60,10 +58,9 @@ public class MovieController {
     @PutMapping("/{movieCode}")
     public ResponseEntity<?> updateMovie(
             @PathVariable("movieCode") String movieCode,
-            @RequestParam Map<String, String> allParams,
-            @RequestParam(value = "POSTER", required = false) MultipartFile poster
+            @RequestParam Map<String, String> allParams
     ) {
-        movieService.updateMovie(movieCode, allParams, poster);
+        movieService.updateMovie(movieCode, allParams);
         return ResponseEntity.ok().build();
     }
 }

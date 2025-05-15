@@ -3,7 +3,6 @@ package com.project.service;
 import com.project.model.MovieDto;
 import com.project.repository.MovieMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +45,7 @@ public class MovieService {
         movieMapper.deleteMovie(movieCode);
     }
 
-    public void createMovie(Map<String, String> allParams, MultipartFile posterFile) {
+    public void createMovie(Map<String, String> allParams) {
         MovieDto movie = new MovieDto();
         String movieCode = "M" + UUID.randomUUID().toString().replace("-", "").substring(0, 7).toUpperCase();
         movie.setMovieCode(movieCode);
@@ -74,13 +73,8 @@ public class MovieService {
             movie.setRuntime(time.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         }
 
-        // 포스터 파일 저장 (파일명만 저장)
-        if (posterFile != null && !posterFile.isEmpty()) {
-            String fileName = UUID.randomUUID() + "_" + posterFile.getOriginalFilename();
-            // 실제 파일 저장 필요
-            // posterFile.transferTo(new File("저장경로/" + fileName));
-            movie.setPoster(fileName);
-        }
+        // 포스터 URL만 저장
+        movie.setPoster(allParams.get("POSTER"));
 
         movieMapper.insertMovie(movie);
 
@@ -112,7 +106,7 @@ public class MovieService {
         return movieMapper.selectCreatorList();
     }
 
-    public void updateMovie(String movieCode, Map<String, String> allParams, MultipartFile posterFile) {
+    public void updateMovie(String movieCode, Map<String, String> allParams) {
         MovieDto movie = new MovieDto();
         movie.setMovieCode(movieCode);
         movie.setGenreCodeA(allParams.get("GENRE_CODEA"));
@@ -139,12 +133,8 @@ public class MovieService {
             movie.setRuntime(time.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         }
 
-        // 포스터 파일 저장 (파일명만 저장)
-        if (posterFile != null && !posterFile.isEmpty()) {
-            String fileName = UUID.randomUUID() + "_" + posterFile.getOriginalFilename();
-            // 실제 파일 저장 필요
-            movie.setPoster(fileName);
-        }
+        // 포스터 URL만 저장
+        movie.setPoster(allParams.get("POSTER"));
 
         movieMapper.updateMovie(movie);
 
