@@ -21,6 +21,9 @@ function mypage() {
   const [subpath_orderlist, setSubpath_orderlist] = useState("1")
   const [subpath_terms, setSubpath_terms] = useState("1")
   const [path, setPath] = useState("1")
+  const [emailchange, setEmailEvent] = useState(0)
+  const [telchange, setTelEvent] = useState(0)
+  const [emailauth, setEmailAuth] = useState(0)
 
   function handlePath(e) {
     if (e.target.id == "1") setPath("1")
@@ -66,7 +69,14 @@ function mypage() {
         </Grid>
         <Grid size={{ xs: 6, md: 8 }} css={Rightcontainer}>
           {path == "1" ? (
-            <User />
+            <User
+              emailchange={emailchange}
+              setEmailEvent={setEmailEvent}
+              telchange={telchange}
+              setTelEvent={setTelEvent}
+              emailauth={emailauth}
+              setEmailAuth={setEmailAuth}
+            />
           ) : path == "2" ? (
             <Dvd />
           ) : path == "3" ? (

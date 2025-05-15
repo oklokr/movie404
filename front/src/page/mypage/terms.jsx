@@ -16,6 +16,15 @@ import {
   Typography,
 } from "@mui/material"
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
+import { useSelector } from "react-redux"
+import { selectUser } from "@/store/selectors"
+
+const userinfo = {
+  id: "",
+  adult: "",
+  savehistory: "",
+  terms: [],
+}
 
 function TermsMenu(props) {
   function setSubpath_terms(e) {
@@ -23,19 +32,29 @@ function TermsMenu(props) {
     else if (e.target.id == "B") props.setSubpath_terms("2")
     else if (e.target.id == "C") props.setSubpath_terms("3")
   }
-  return (
-    <>
-      <Button id="A" href="#Terms#TermA" size="large" css={Leftbtn} onClick={setSubpath_terms}>
-        서비스이용약관
-      </Button>
-      <Button id="B" href="#Terms#TermsB" size="large" css={Leftbtn} onClick={setSubpath_terms}>
-        개인정보처리방침
-      </Button>
-      <Button id="C" href="#Terms#TermsB" size="large" css={Leftbtn} onClick={setSubpath_terms}>
-        마케팅약관
-      </Button>
-    </>
-  )
+  let state = useSelector(selectUser)
+
+  if (!state.info || state.info === null || state.info === undefined) {
+    return <div>로딩</div>
+  } else {
+    userinfo.id = state.info.userId
+    userinfo.adult = state.info.viewAdult
+    userinfo.savehistory = state.info.saveHistory
+    userinfo.terms = state.info.terms
+    return (
+      <>
+        <Button id="A" href="#Terms#TermA" size="large" css={Leftbtn} onClick={setSubpath_terms}>
+          서비스이용약관
+        </Button>
+        <Button id="B" href="#Terms#TermsB" size="large" css={Leftbtn} onClick={setSubpath_terms}>
+          개인정보처리방침
+        </Button>
+        <Button id="C" href="#Terms#TermsB" size="large" css={Leftbtn} onClick={setSubpath_terms}>
+          마케팅약관
+        </Button>
+      </>
+    )
+  }
 }
 
 function TermsA() {
@@ -102,6 +121,8 @@ function TermsA() {
             aria-labelledby="demo-row-radio-buttons-group-label"
             name="row-radio-buttons-group"
             css={cssJust}
+            value={userinfo.terms[0] == "1" ? 1 : 0}
+
             //  onChange={handleTermA}
           >
             <FormControlLabel value="0" control={<Radio />} label="동의하지 않음" />
@@ -174,6 +195,7 @@ function TermsB() {
             aria-labelledby="demo-row-radio-buttons-group-label"
             name="row-radio-buttons-group"
             css={cssJust}
+            value={userinfo.terms[1] == "1" ? 1 : 0}
             // onChange={handleTermA}
           >
             <FormControlLabel value="0" control={<Radio />} label="동의하지 않음" />
@@ -213,6 +235,8 @@ function TermsC() {
             aria-labelledby="demo-row-radio-buttons-group-label"
             name="row-radio-buttons-group"
             css={cssJust}
+            value={userinfo.terms[2] == "1" ? 1 : 0}
+
             // onChange={handleTermA}
           >
             <FormControlLabel value="0" control={<Radio />} label="동의하지 않음" />

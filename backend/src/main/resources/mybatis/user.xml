@@ -146,5 +146,4 @@
     <select id="checkUserByIdEmail" resultType="int">
         SELECT COUNT(*) FROM MEMBERS WHERE EMAIL=#{email} and USER_ID=#{id}
     </select>
-
 </mapper>
