@@ -91,12 +91,16 @@ public class MovieService {
             String startDate = allParams.get("DVD_DATE_FROM");
             String endDate = allParams.get("DVD_DATE_TO");
 
+            // 빈 문자열 처리
+            startDate = (startDate == null || startDate.isEmpty()) ? "2024-01-01" : startDate;
+            endDate = (endDate == null || endDate.isEmpty()) ? "2024-12-31" : endDate;
+
             // 등록 시에는 무조건 insertVod
             movieMapper.insertVod(
                 movieCode,
                 price != null ? price : 0,
-                startDate != null ? startDate : "2024-01-01",
-                endDate != null ? endDate : "2024-12-31",
+                startDate,
+                endDate,
                 discount != null ? discount : 0
             );
         } else {
@@ -151,6 +155,10 @@ public class MovieService {
             String startDate = allParams.get("DVD_DATE_FROM");
             String endDate = allParams.get("DVD_DATE_TO");
 
+            // 빈 문자열 처리
+            startDate = (startDate == null || startDate.isEmpty()) ? "2024-01-01" : startDate;
+            endDate = (endDate == null || endDate.isEmpty()) ? "2024-12-31" : endDate;
+
             // VOD 레코드 존재 여부 확인 후 분기
             MovieDto detail = movieMapper.selectMovieDetail(movieCode);
             if (detail.getDvdPrice() == null) {
@@ -158,8 +166,8 @@ public class MovieService {
                 movieMapper.insertVod(
                     movieCode,
                     price != null ? price : 0,
-                    startDate != null ? startDate : "2024-01-01",
-                    endDate != null ? endDate : "2024-12-31",
+                    startDate,
+                    endDate,
                     discount != null ? discount : 0
                 );
             } else {
@@ -167,8 +175,8 @@ public class MovieService {
                 movieMapper.updateVod(
                     movieCode,
                     price != null ? price : 0,
-                    startDate != null ? startDate : "2024-01-01",
-                    endDate != null ? endDate : "2024-12-31",
+                    startDate,
+                    endDate,
                     discount != null ? discount : 0
                 );
             }

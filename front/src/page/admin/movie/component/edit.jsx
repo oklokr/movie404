@@ -182,7 +182,7 @@ export default function MovieEdit() {
     }
   }
 
-  // 폼 제출
+  // 제출 버튼 클릭 시
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!genre) return alert("장르를 선택하세요.")
@@ -191,6 +191,13 @@ export default function MovieEdit() {
     if (!desc) return alert("설명을 입력하세요.")
     if (directors.length === 0) return alert("감독을 1명 이상 등록하세요.")
     if (casts.length === 0) return alert("출연진을 1명 이상 등록하세요.")
+
+    // DVD 시스템 사용 시 필수값 개별 체크
+    if (dvdUse) {
+      if (!dvdPrice) return alert("DVD 판매금액을 입력하세요.")
+      if (!dvdDateFrom) return alert("DVD 시작일을 입력하세요.")
+      if (!dvdDateTo) return alert("DVD 종료일을 입력하세요.")
+    }
 
     setLoading(true)
     try {
