@@ -1,5 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { css } from "@emotion/react"
+import { fetchMovieList } from "@/api/admin"
 
 const hours = Array.from({ length: 19 }, (_, i) => i + 6) // 06~24
 const PAGE_SIZE = 5
@@ -19,109 +20,8 @@ export default function Play() {
   // 영화선택 모달 상태
   const [movieModalOpen, setMovieModalOpen] = useState(false)
   const [movieSearch, setMovieSearch] = useState("")
-  const [movieList, setMovieList] = useState([
-    // 더미 데이터
-    {
-      id: 1,
-      genre: "액션",
-      title: "액션영화",
-      price: "10000",
-      discount: "8000",
-      desc: "액션영화 설명",
-      cast: "액션배우",
-      director: "액션감독",
-    },
-    {
-      id: 2,
-      genre: "코미디",
-      title: "코미디영화",
-      price: "12000",
-      discount: "10000",
-      desc: "코미디영화 설명",
-      cast: "코미디배우",
-      director: "코미디감독",
-    },
-    {
-      id: 3,
-      genre: "드라마",
-      title: "드라마영화",
-      price: "11000",
-      discount: "9000",
-      desc: "드라마영화 설명",
-      cast: "드라마배우",
-      director: "드라마감독",
-    },
-    {
-      id: 4,
-      genre: "공포",
-      title: "공포영화",
-      price: "13000",
-      discount: "11000",
-      desc: "공포영화 설명",
-      cast: "공포배우",
-      director: "공포감독",
-    },
-    {
-      id: 5,
-      genre: "SF",
-      title: "SF영화",
-      price: "15000",
-      discount: "13000",
-      desc: "SF영화 설명",
-      cast: "SF배우",
-      director: "SF감독",
-    },
-    {
-      id: 6,
-      genre: "로맨스",
-      title: "로맨스영화",
-      price: "9000",
-      discount: "7000",
-      desc: "로맨스영화 설명",
-      cast: "로맨스배우",
-      director: "로맨스감독",
-    },
-    {
-      id: 7,
-      genre: "스릴러",
-      title: "스릴러영화",
-      price: "14000",
-      discount: "12000",
-      desc: "스릴러영화 설명",
-      cast: "스릴러배우",
-      director: "스릴러감독",
-    },
-    {
-      id: 8,
-      genre: "판타지",
-      title: "판타지영화",
-      price: "16000",
-      discount: "14000",
-      desc: "판타지영화 설명",
-      cast: "판타지배우",
-      director: "판타지감독",
-    },
-    {
-      id: 9,
-      genre: "애니메이션",
-      title: "애니영화",
-      price: "8000",
-      discount: "6000",
-      desc: "애니영화 설명",
-      cast: "애니배우",
-      director: "애니감독",
-    },
-    {
-      id: 10,
-      genre: "다큐",
-      title: "다큐영화",
-      price: "7000",
-      discount: "5000",
-      desc: "다큐영화 설명",
-      cast: "다큐배우",
-      director: "다큐감독",
-    },
-  ])
+  const [movieList, setMovieList] = useState([])
+  const [movieTotal, setMovieTotal] = useState(0)
   const [selectedMovieId, setSelectedMovieId] = useState(null)
   const [moviePage, setMoviePage] = useState(1)
   const [selectedMovieInfo, setSelectedMovieInfo] = useState(null)
@@ -130,47 +30,52 @@ export default function Play() {
   const [price, setPrice] = useState("")
   const [discount, setDiscount] = useState("")
 
+  // 영화 목록 불러오기 (모달 열릴 때마다, 검색/페이지 변경 시)
+  useEffect(() => {
+    if (movieModalOpen) {
+      fetchMovieList({
+        movieName: movieSearch,
+        page: moviePage,
+        size: PAGE_SIZE,
+      }).then((res) => {
+        const data = res.data || res
+        setMovieList(data.list || [])
+        setMovieTotal(data.total || 0)
+      })
+    }
+  }, [movieModalOpen, movieSearch, moviePage])
+
   // 시간 클릭 핸들러 (최대 3시간, 연속, 중간 자동채움)
   const handleHourClick = (theaterId, hour) => {
     setSelectedHours((prev) => {
       const prevArr = prev[theaterId] || []
-      // 이미 선택된 시간 클릭 시 해제
       if (prevArr.includes(hour)) {
         return {
           ...prev,
           [theaterId]: prevArr.filter((h) => h !== hour),
         }
       }
-      // 아무것도 없으면 추가
       if (prevArr.length === 0) {
         return { ...prev, [theaterId]: [hour] }
       }
-      // 1개 선택된 상태에서 클릭
       if (prevArr.length === 1) {
         const min = Math.min(prevArr[0], hour)
         const max = Math.max(prevArr[0], hour)
-        // 2개 연속이면 2개, 아니면 2개만 선택
         if (Math.abs(prevArr[0] - hour) === 1) {
           return { ...prev, [theaterId]: [min, max] }
         }
-        // 2개 이상 차이나면 중간 채움(최대 3개)
         if (Math.abs(prevArr[0] - hour) === 2) {
           return { ...prev, [theaterId]: [min, min + 1, max] }
         }
-        // 그 외는 2개만 선택
         return { ...prev, [theaterId]: [prevArr[0], hour] }
       }
-      // 2개 선택된 상태에서 클릭
       if (prevArr.length === 2) {
         const arr = [...prevArr, hour].sort((a, b) => a - b)
-        // 3개 연속이면 3개 모두
         if (arr[2] - arr[0] === 2 && arr[1] - arr[0] === 1 && arr[2] - arr[1] === 1) {
           return { ...prev, [theaterId]: arr }
         }
-        // 3개 연속이 아니면 마지막 2개+새로 클릭한 것 중 2개만 남김
         return { ...prev, [theaterId]: [prevArr[1], hour] }
       }
-      // 이미 3개 선택된 상태에서는 아무 동작 안함
       if (prevArr.length >= 3) {
         return prev
       }
@@ -221,10 +126,9 @@ export default function Play() {
   // step2에서 사용할 데이터
   const selectedHourArr = selectedHours[selectedTheater]?.sort((a, b) => a - b) || []
 
-  // 영화 모달 페이징 및 필터링
-  const filteredMovies = movieList.filter((m) => m.title.includes(movieSearch))
-  const totalPages = Math.ceil(filteredMovies.length / PAGE_SIZE)
-  const pagedMovies = filteredMovies.slice((moviePage - 1) * PAGE_SIZE, moviePage * PAGE_SIZE)
+  // 영화 모달 페이징
+  const totalPages = Math.ceil(movieTotal / PAGE_SIZE)
+  const pagedMovies = movieList
 
   // Step2 화면
   if (step === 2 && goStep2) {
@@ -281,22 +185,50 @@ export default function Play() {
                 <th css={thStyle}>영화정보</th>
                 <td colSpan={3}>
                   <div css={movieInfoBox}>
-                    <div css={moviePosterBox}></div>
+                    <div css={moviePosterBox}>
+                      {selectedMovieInfo && selectedMovieInfo.poster && (
+                        <img
+                          src={selectedMovieInfo.poster}
+                          alt="포스터"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            borderRadius: 6,
+                          }}
+                        />
+                      )}
+                    </div>
                     <div>
                       <div>
                         제목 :{" "}
-                        {selectedMovieInfo ? selectedMovieInfo.title : "영화를 등록해주세요."}
+                        {selectedMovieInfo ? selectedMovieInfo.movieName : "영화를 등록해주세요."}
                       </div>
                       <div>
-                        설명 : {selectedMovieInfo ? selectedMovieInfo.desc : "영화를 등록해주세요."}
+                        설명 :{" "}
+                        {selectedMovieInfo
+                          ? selectedMovieInfo.synopsis || "-"
+                          : "영화를 등록해주세요."}
                       </div>
                       <div>
                         출연진 :{" "}
-                        {selectedMovieInfo ? selectedMovieInfo.cast : "영화를 등록해주세요."}
+                        {selectedMovieInfo
+                          ? [
+                              selectedMovieInfo.actorCodeA,
+                              selectedMovieInfo.actorCodeB,
+                              selectedMovieInfo.actorCodeC,
+                            ]
+                              .filter(Boolean)
+                              .join(", ") || "-"
+                          : "영화를 등록해주세요."}
                       </div>
                       <div>
                         감독 :{" "}
-                        {selectedMovieInfo ? selectedMovieInfo.director : "영화를 등록해주세요."}
+                        {selectedMovieInfo
+                          ? [selectedMovieInfo.directCodeA, selectedMovieInfo.directCodeB]
+                              .filter(Boolean)
+                              .join(", ") || "-"
+                          : "영화를 등록해주세요."}
                       </div>
                     </div>
                     <button
@@ -305,7 +237,7 @@ export default function Play() {
                         setMovieModalOpen(true)
                         setMoviePage(1)
                         setMovieSearch("")
-                        setSelectedMovieId(selectedMovieInfo?.id ?? null)
+                        setSelectedMovieId(selectedMovieInfo?.movieCode ?? null)
                       }}
                     >
                       등록
@@ -352,7 +284,7 @@ export default function Play() {
                     검색
                   </button>
                 </div>
-                <div css={movieModalCount}>총 {filteredMovies.length} 개</div>
+                <div css={movieModalCount}>총 {movieTotal} 개</div>
                 <div css={movieModalTableWrap}>
                   <table css={movieModalTable}>
                     <thead>
@@ -365,12 +297,14 @@ export default function Play() {
                     <tbody>
                       {pagedMovies.map((movie) => (
                         <tr
-                          key={movie.id}
-                          css={selectedMovieId === movie.id ? movieModalRowActive : undefined}
-                          onClick={() => setSelectedMovieId(movie.id)}
+                          key={movie.movieCode}
+                          css={
+                            selectedMovieId === movie.movieCode ? movieModalRowActive : undefined
+                          }
+                          onClick={() => setSelectedMovieId(movie.movieCode)}
                         >
-                          <td>{movie.genre}</td>
-                          <td>{movie.title}</td>
+                          <td>{movie.genreCodeA || "-"}</td>
+                          <td>{movie.movieName}</td>
                           <td
                             style={{
                               maxWidth: 180,
@@ -379,7 +313,7 @@ export default function Play() {
                               textOverflow: "ellipsis",
                             }}
                           >
-                            {movie.desc}
+                            {movie.synopsis || "-"}
                           </td>
                         </tr>
                       ))}
@@ -417,10 +351,10 @@ export default function Play() {
                     css={movieModalApplyBtn}
                     disabled={selectedMovieId === null}
                     onClick={() => {
-                      const movie = movieList.find((m) => m.id === selectedMovieId)
+                      const movie = movieList.find((m) => m.movieCode === selectedMovieId)
                       setSelectedMovieInfo(movie)
-                      setPrice(movie.price)
-                      setDiscount(movie.discount)
+                      setPrice(movie.dvdPrice || "")
+                      setDiscount(movie.dvdDiscount || "")
                       setMovieModalOpen(false)
                     }}
                   >
