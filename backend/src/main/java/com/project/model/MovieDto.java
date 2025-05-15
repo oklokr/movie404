@@ -26,10 +26,6 @@ public class MovieDto {
     private Long sales;
     private String dvdDateFrom;
     private String dvdDateTo;
-    private String reserveDateFrom;
-    private String reserveDateTo;
     private Integer dvdPrice;
-    private Integer reservePrice;
     private Integer dvdDiscount;
-    private Integer reserveDiscount;
 }

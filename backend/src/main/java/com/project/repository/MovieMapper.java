@@ -15,8 +15,6 @@ public interface MovieMapper {
     List<Map<String, Object>> selectGenreList();
     void deleteOrderHistoryByMovieCode(@Param("movieCode") String movieCode);
     void deleteMovie(@Param("movieCode") String movieCode);
-    void deleteReservationByMovieCode(@Param("movieCode") String movieCode);
-    void deleteRunScheduleByMovieCode(@Param("movieCode") String movieCode);
     void deleteWatchHistoryByMovieCode(@Param("movieCode") String movieCode);
     void deleteVodByMovieCode(@Param("movieCode") String movieCode);
     void insertMovie(MovieDto movie);
@@ -33,16 +31,4 @@ public interface MovieMapper {
                @Param("startDate") String startDate,
                @Param("endDate") String endDate,
                @Param("discount") int discount);
-    void insertSeat(@Param("seatCode") String seatCode,
-                @Param("theaterCode") String theaterCode,
-                @Param("price") int price,
-                @Param("discount") int discount,
-                @Param("seatActive") String seatActive);
-
-    void updateSeat(@Param("seatCode") String seatCode,
-                @Param("theaterCode") String theaterCode,
-                @Param("price") int price,
-                @Param("discount") int discount,
-                @Param("seatActive") String seatActive);       
-                     
 }

@@ -41,8 +41,6 @@ public class MovieService {
 
     public void deleteMovie(String movieCode) {
         movieMapper.deleteOrderHistoryByMovieCode(movieCode);
-        movieMapper.deleteReservationByMovieCode(movieCode);
-        movieMapper.deleteRunScheduleByMovieCode(movieCode);
         movieMapper.deleteWatchHistoryByMovieCode(movieCode);
         movieMapper.deleteVodByMovieCode(movieCode);
         movieMapper.deleteMovie(movieCode);
@@ -98,21 +96,6 @@ public class MovieService {
                 startDate != null ? startDate : "2024-01-01",
                 endDate != null ? endDate : "2024-12-31",
                 discount != null ? discount : 0
-            );
-        }
-
-        // 예매(극장) SEAT 정보 저장
-        if ("Y".equals(allParams.get("RESERVE_USE"))) {
-            Integer price = parseIntOrNull(allParams.get("SEAT_PRICE"));
-            Integer discount = parseIntOrNull(allParams.get("SEAT_DISCOUNT"));
-            String seatCode = "A1"; // 실제 좌석코드 생성/선택 로직 필요
-            String theaterCode = "T001"; // 실제 극장코드 필요
-            movieMapper.insertSeat(
-                seatCode,
-                theaterCode,
-                price != null ? price : 0,
-                discount != null ? discount : 0,
-                "Y"
             );
         }
     }
@@ -172,32 +155,6 @@ public class MovieService {
             );
         } else {
             movieMapper.deleteVodByMovieCode(movieCode);
-        }
-
-        // 예매(극장) SEAT 정보 수정/삭제
-        if ("Y".equals(allParams.get("RESERVE_USE"))) {
-            Integer price = parseIntOrNull(allParams.get("SEAT_PRICE"));
-            Integer discount = parseIntOrNull(allParams.get("SEAT_DISCOUNT"));
-            String seatCode = "A1"; // 실제 좌석코드 생성/선택 로직 필요
-            String theaterCode = "T001"; // 실제 극장코드 필요
-            movieMapper.updateSeat(
-                seatCode,
-                theaterCode,
-                price != null ? price : 0,
-                discount != null ? discount : 0,
-                "Y"
-            );
-        } else {
-            // 좌석 비활성화 처리 (삭제 대신)
-            String seatCode = "A1";
-            String theaterCode = "T001";
-            movieMapper.updateSeat(
-                seatCode,
-                theaterCode,
-                0,
-                0,
-                "N"
-            );
         }
     }
 
