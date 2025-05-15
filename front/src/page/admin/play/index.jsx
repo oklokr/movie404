@@ -25,8 +25,8 @@ export default function Play() {
       id: 1,
       genre: "액션",
       title: "액션영화",
-      price: "10,000",
-      discount: "8,000",
+      price: "10000",
+      discount: "8000",
       desc: "액션영화 설명",
       cast: "액션배우",
       director: "액션감독",
@@ -35,8 +35,8 @@ export default function Play() {
       id: 2,
       genre: "코미디",
       title: "코미디영화",
-      price: "12,000",
-      discount: "10,000",
+      price: "12000",
+      discount: "10000",
       desc: "코미디영화 설명",
       cast: "코미디배우",
       director: "코미디감독",
@@ -45,8 +45,8 @@ export default function Play() {
       id: 3,
       genre: "드라마",
       title: "드라마영화",
-      price: "11,000",
-      discount: "9,000",
+      price: "11000",
+      discount: "9000",
       desc: "드라마영화 설명",
       cast: "드라마배우",
       director: "드라마감독",
@@ -55,8 +55,8 @@ export default function Play() {
       id: 4,
       genre: "공포",
       title: "공포영화",
-      price: "13,000",
-      discount: "11,000",
+      price: "13000",
+      discount: "11000",
       desc: "공포영화 설명",
       cast: "공포배우",
       director: "공포감독",
@@ -65,8 +65,8 @@ export default function Play() {
       id: 5,
       genre: "SF",
       title: "SF영화",
-      price: "15,000",
-      discount: "13,000",
+      price: "15000",
+      discount: "13000",
       desc: "SF영화 설명",
       cast: "SF배우",
       director: "SF감독",
@@ -75,8 +75,8 @@ export default function Play() {
       id: 6,
       genre: "로맨스",
       title: "로맨스영화",
-      price: "9,000",
-      discount: "7,000",
+      price: "9000",
+      discount: "7000",
       desc: "로맨스영화 설명",
       cast: "로맨스배우",
       director: "로맨스감독",
@@ -85,8 +85,8 @@ export default function Play() {
       id: 7,
       genre: "스릴러",
       title: "스릴러영화",
-      price: "14,000",
-      discount: "12,000",
+      price: "14000",
+      discount: "12000",
       desc: "스릴러영화 설명",
       cast: "스릴러배우",
       director: "스릴러감독",
@@ -95,8 +95,8 @@ export default function Play() {
       id: 8,
       genre: "판타지",
       title: "판타지영화",
-      price: "16,000",
-      discount: "14,000",
+      price: "16000",
+      discount: "14000",
       desc: "판타지영화 설명",
       cast: "판타지배우",
       director: "판타지감독",
@@ -105,8 +105,8 @@ export default function Play() {
       id: 9,
       genre: "애니메이션",
       title: "애니영화",
-      price: "8,000",
-      discount: "6,000",
+      price: "8000",
+      discount: "6000",
       desc: "애니영화 설명",
       cast: "애니배우",
       director: "애니감독",
@@ -115,8 +115,8 @@ export default function Play() {
       id: 10,
       genre: "다큐",
       title: "다큐영화",
-      price: "7,000",
-      discount: "5,000",
+      price: "7000",
+      discount: "5000",
       desc: "다큐영화 설명",
       cast: "다큐배우",
       director: "다큐감독",
@@ -125,6 +125,10 @@ export default function Play() {
   const [selectedMovieId, setSelectedMovieId] = useState(null)
   const [moviePage, setMoviePage] = useState(1)
   const [selectedMovieInfo, setSelectedMovieInfo] = useState(null)
+
+  // 가격/할인가 입력 상태
+  const [price, setPrice] = useState("")
+  const [discount, setDiscount] = useState("")
 
   // 시간 클릭 핸들러 (최대 3시간, 연속, 중간 자동채움)
   const handleHourClick = (theaterId, hour) => {
@@ -252,6 +256,28 @@ export default function Play() {
                 </td>
               </tr>
               <tr>
+                <th css={thStyle}>가격</th>
+                <td>
+                  <input
+                    css={inputStyle}
+                    type="number"
+                    placeholder="가격"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                  />
+                </td>
+                <th css={thStyle}>할인가격</th>
+                <td>
+                  <input
+                    css={inputStyle}
+                    type="number"
+                    placeholder="할인가격"
+                    value={discount}
+                    onChange={(e) => setDiscount(e.target.value)}
+                  />
+                </td>
+              </tr>
+              <tr>
                 <th css={thStyle}>영화정보</th>
                 <td colSpan={3}>
                   <div css={movieInfoBox}>
@@ -333,8 +359,7 @@ export default function Play() {
                       <tr>
                         <th>장르</th>
                         <th>제목</th>
-                        <th>가격</th>
-                        <th>할인가격</th>
+                        <th>설명</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -346,13 +371,21 @@ export default function Play() {
                         >
                           <td>{movie.genre}</td>
                           <td>{movie.title}</td>
-                          <td>{movie.price}</td>
-                          <td>{movie.discount}</td>
+                          <td
+                            style={{
+                              maxWidth: 180,
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {movie.desc}
+                          </td>
                         </tr>
                       ))}
                       {pagedMovies.length === 0 && (
                         <tr>
-                          <td colSpan={4} style={{ textAlign: "center", color: "#888" }}>
+                          <td colSpan={3} style={{ textAlign: "center", color: "#888" }}>
                             검색 결과가 없습니다.
                           </td>
                         </tr>
@@ -386,6 +419,8 @@ export default function Play() {
                     onClick={() => {
                       const movie = movieList.find((m) => m.id === selectedMovieId)
                       setSelectedMovieInfo(movie)
+                      setPrice(movie.price)
+                      setDiscount(movie.discount)
                       setMovieModalOpen(false)
                     }}
                   >
