@@ -5,6 +5,13 @@ import { fetchMovieList } from "@/api/admin"
 const hours = Array.from({ length: 19 }, (_, i) => i + 6) // 06~24
 const PAGE_SIZE = 5
 
+// 코드 → 이름 변환 함수
+function getCreatorName(code, creatorList) {
+  if (!code || !creatorList) return ""
+  const found = creatorList.find((c) => c.code === code)
+  return found ? found.name : code
+}
+
 export default function Play() {
   const [step, setStep] = useState(1)
   const [selectedDate, setSelectedDate] = useState("")
@@ -29,6 +36,16 @@ export default function Play() {
   // 가격/할인가 입력 상태
   const [price, setPrice] = useState("")
   const [discount, setDiscount] = useState("")
+
+  // 크리에이터 목록 상태
+  const [creatorList, setCreatorList] = useState([])
+
+  // 크리에이터 목록 불러오기 (최초 1회)
+  useEffect(() => {
+    fetch("/api/admin/movie/creator")
+      .then((res) => res.json())
+      .then((data) => setCreatorList(data))
+  }, [])
 
   // 영화 목록 불러오기 (모달 열릴 때마다, 검색/페이지 변경 시)
   useEffect(() => {
@@ -214,9 +231,9 @@ export default function Play() {
                         출연진 :{" "}
                         {selectedMovieInfo
                           ? [
-                              selectedMovieInfo.actorCodeA,
-                              selectedMovieInfo.actorCodeB,
-                              selectedMovieInfo.actorCodeC,
+                              getCreatorName(selectedMovieInfo.actorCodeA, creatorList),
+                              getCreatorName(selectedMovieInfo.actorCodeB, creatorList),
+                              getCreatorName(selectedMovieInfo.actorCodeC, creatorList),
                             ]
                               .filter(Boolean)
                               .join(", ") || "-"
@@ -225,7 +242,10 @@ export default function Play() {
                       <div>
                         감독 :{" "}
                         {selectedMovieInfo
-                          ? [selectedMovieInfo.directCodeA, selectedMovieInfo.directCodeB]
+                          ? [
+                              getCreatorName(selectedMovieInfo.directCodeA, creatorList),
+                              getCreatorName(selectedMovieInfo.directCodeB, creatorList),
+                            ]
                               .filter(Boolean)
                               .join(", ") || "-"
                           : "영화를 등록해주세요."}
