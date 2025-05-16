@@ -198,6 +198,19 @@ export default function Play() {
   const totalPages = Math.ceil(movieTotal / PAGE_SIZE)
   const pagedMovies = movieList
 
+  // 페이지네이션 블록 처리 (10개씩)
+  const PAGINATION_BLOCK = 10
+  const currentBlock = Math.floor((moviePage - 1) / PAGINATION_BLOCK)
+  const startPage = currentBlock * PAGINATION_BLOCK + 1
+  const endPage = Math.min(startPage + PAGINATION_BLOCK - 1, totalPages)
+
+  const handlePrevBlock = () => {
+    if (startPage > 1) setMoviePage(startPage - 1)
+  }
+  const handleNextBlock = () => {
+    if (endPage < totalPages) setMoviePage(endPage + 1)
+  }
+
   // 예약된 시간대 버튼 스타일 적용
   const hourBtn = (selected, reserved) => css`
     width: 38px;
@@ -326,7 +339,7 @@ export default function Play() {
                         제목 :{" "}
                         {selectedMovieInfo ? selectedMovieInfo.movieName : "영화를 등록해주세요."}
                       </div>
-                      <div>
+                      <div css={movieInfoText}>
                         설명 :{" "}
                         {selectedMovieInfo
                           ? selectedMovieInfo.synopsis || "-"
@@ -455,20 +468,34 @@ export default function Play() {
                   </table>
                 </div>
                 <div css={movieModalPaging}>
-                  {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    css={movieModalPageBtn}
+                    disabled={startPage === 1}
+                    onClick={handlePrevBlock}
+                  >
+                    &lt;
+                  </button>
+                  {Array.from({ length: endPage - startPage + 1 }, (_, i) => (
                     <button
-                      key={i + 1}
+                      key={startPage + i}
                       css={movieModalPageBtn}
                       style={{
-                        background: moviePage === i + 1 ? "#ff9800" : "#fff",
-                        color: moviePage === i + 1 ? "#fff" : "#888",
-                        fontWeight: moviePage === i + 1 ? 700 : 400,
+                        background: moviePage === startPage + i ? "#ff9800" : "#fff",
+                        color: moviePage === startPage + i ? "#fff" : "#888",
+                        fontWeight: moviePage === startPage + i ? 700 : 400,
                       }}
-                      onClick={() => setMoviePage(i + 1)}
+                      onClick={() => setMoviePage(startPage + i)}
                     >
-                      {i + 1}
+                      {startPage + i}
                     </button>
                   ))}
+                  <button
+                    css={movieModalPageBtn}
+                    disabled={endPage === totalPages}
+                    onClick={handleNextBlock}
+                  >
+                    &gt;
+                  </button>
                 </div>
                 <div css={movieModalFooter}>
                   <button css={movieModalCancelBtn} onClick={() => setMovieModalOpen(false)}>
@@ -833,8 +860,12 @@ const thStyle = css`
 `
 const movieInfoBox = css`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 18px;
+  min-height: 100px;
+  /* 버튼이 항상 오른쪽에 가로로 나오도록 */
+  width: 100%;
+  position: relative;
 `
 const moviePosterBox = css`
   width: 80px;
@@ -842,9 +873,26 @@ const moviePosterBox = css`
   background: #e0e0e0;
   border-radius: 6px;
   margin-right: 12px;
+  flex-shrink: 0; // 사진 크기 고정
+  overflow: hidden; // 혹시 모를 오버플로 방지
+`
+const movieInfoText = css`
+  max-width: 340px;
+  max-height: 100px;
+  overflow: auto;
+  white-space: pre-line;
+  word-break: break-all;
+  font-size: 15px;
+  margin: 6px 0 8px 0;
+  padding: 8px 12px;
+  background: #fafbfc;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  color: #333;
 `
 const movieRegBtn = css`
-  margin-left: 24px;
+  margin-left: auto;
+  align-self: flex-start;
   padding: 8px 18px;
   border: none;
   border-radius: 4px;
@@ -854,6 +902,11 @@ const movieRegBtn = css`
   font-size: 15px;
   cursor: pointer;
   transition: background 0.2s;
+  min-width: 60px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   &:hover {
     background: #ff9800;
     color: #fff;
