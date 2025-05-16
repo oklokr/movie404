@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { css } from "@emotion/react"
 import { fetchMovieList, fetchCreatorList, createSchedule, fetchRunScheduleList } from "@/api/admin"
 
-const hours = Array.from({ length: 19 }, (_, i) => i + 6) // 06~24
+const hours = Array.from({ length: 18 }, (_, i) => i + 6) // 06~23
 const PAGE_SIZE = 5
 
 // 코드 → 이름 변환 함수
