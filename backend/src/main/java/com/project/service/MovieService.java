@@ -186,6 +186,22 @@ public class MovieService {
     public void createRunSchedule(Map<String, Object> param) {
         // SCHEDULE_CODE 생성 (예: UUID)
         param.put("scheduleCode", UUID.randomUUID().toString().replace("-", "").substring(0, 8));
+
+        // startHour, endHour → startTime, endTime 변환
+        Object startHourObj = param.get("startHour");
+        Object endHourObj = param.get("endHour");
+        if (startHourObj != null && endHourObj != null) {
+            int startHour = Integer.parseInt(startHourObj.toString());
+            int endHour = Integer.parseInt(endHourObj.toString());
+            String startTime = String.format("%02d:00:00", startHour);
+            String endTime = String.format("%02d:00:00", endHour);
+            param.put("startTime", startTime);
+            param.put("endTime", endTime);
+        } else {
+            param.put("startTime", null);
+            param.put("endTime", null);
+        }
+
         movieMapper.insertRunSchedule(param);
     }
     

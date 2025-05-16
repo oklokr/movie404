@@ -164,7 +164,14 @@
   </insert>
 
   <select id="selectRunScheduleList" resultType="map">
-    SELECT * FROM RUN_SCHEDULE
+    SELECT
+      SCHEDULE_CODE as scheduleCode,
+      THEATER_CODE as theaterCode,
+      MOVIE_CODE as movieCode,
+      RUN_DATE as runDate,
+      START_TIME as startTime,
+      END_TIME as endTime
+    FROM RUN_SCHEDULE
     <where>
       <if test="runDate != null">AND RUN_DATE = #{runDate}</if>
       <if test="theaterCode != null">AND THEATER_CODE = #{theaterCode}</if>

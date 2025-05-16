@@ -99,3 +99,11 @@ export function createSchedule(data) {
     data,
   }).then((res) => res)
 }
+
+export function fetchRunScheduleList(runDate, theaterCode) {
+  return request({
+    url: "/api/admin/movie/schedule",
+    method: "get",
+    params: { runDate, theaterCode },
+  }).then((res) => res)
+}

@@ -72,8 +72,8 @@ public class MovieController {
 
     @GetMapping("/schedule")
     public List<Map<String, Object>> getRunScheduleList(
-        @RequestParam(required = false) String runDate,
-        @RequestParam(required = false) String theaterCode
+        @RequestParam(name = "runDate", required = false) String runDate,
+        @RequestParam(name = "theaterCode", required = false) String theaterCode
     ) {
         return movieService.getRunScheduleList(runDate, theaterCode);
     }
