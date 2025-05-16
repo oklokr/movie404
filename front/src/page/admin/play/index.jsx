@@ -238,7 +238,7 @@ export default function Play() {
           theaterName: selectedTheaterObj.name,
           runDate: selectedDate,
           startHour: selectedHourArr[0],
-          endHour: selectedHourArr[selectedHourArr.length - 1],
+          endHour: selectedHourArr[selectedHourArr.length - 1] + 1, // 종료시간 +1
           price: Number(price),
           discount: discount ? Number(discount) : null,
           movieCode: selectedMovieInfo.movieCode,
