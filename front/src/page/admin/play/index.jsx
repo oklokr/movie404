@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { css } from "@emotion/react"
-import { fetchMovieList, fetchCreatorList, createSchedule } from "@/api/admin"
+import { fetchMovieList, fetchCreatorList, createSchedule, fetchRunScheduleList } from "@/api/admin"
 
 const hours = Array.from({ length: 19 }, (_, i) => i + 6) // 06~24
 const PAGE_SIZE = 5
@@ -15,7 +15,6 @@ function getCreatorName(code, creatorList) {
 export default function Play() {
   const [step, setStep] = useState(1)
   const [selectedDate, setSelectedDate] = useState("")
-  // 상영관 코드 추가
   const [theaters, setTheaters] = useState([
     { id: 1, code: "T001", name: "1관" },
     { id: 2, code: "T002", name: "2관" },
@@ -24,6 +23,9 @@ export default function Play() {
   const [selectedHours, setSelectedHours] = useState({ 1: [], 2: [] })
   const [deleteTarget, setDeleteTarget] = useState(null)
   const [goStep2, setGoStep2] = useState(false)
+
+  // 예약된 시간대 상태
+  const [reservedHours, setReservedHours] = useState({}) // { [theaterId]: [hour, ...] }
 
   // 영화선택 모달 상태
   const [movieModalOpen, setMovieModalOpen] = useState(false)
@@ -40,6 +42,49 @@ export default function Play() {
 
   // 크리에이터 목록 상태
   const [creatorList, setCreatorList] = useState([])
+
+  // 예약된 시간대 조회 함수
+  const fetchReserved = async (date, theaters) => {
+    if (!date) {
+      setReservedHours({})
+      return
+    }
+    const result = {}
+    for (const t of theaters) {
+      try {
+        // 반드시 평평한 파라미터로 넘겨야 함!
+        const res = await fetchRunScheduleList({
+          runDate: date,
+          theaterCode: t.code,
+        })
+        const list = res.data ? res.data : res
+        let hoursArr = []
+        for (const sch of list) {
+          if (sch.startTime && sch.endTime) {
+            const start = parseInt(sch.startTime.split(":")[0], 10)
+            const end = parseInt(sch.endTime.split(":")[0], 10)
+            for (let h = start; h < end; h++) {
+              hoursArr.push(h)
+            }
+          }
+        }
+        result[t.id] = hoursArr
+      } catch (e) {
+        result[t.id] = []
+      }
+    }
+    setReservedHours(result)
+  }
+
+  // step1 접근/날짜 변경/상영관 추가 시 예약 시간 조회
+  useEffect(() => {
+    fetchReserved(selectedDate, theaters)
+  }, [selectedDate, theaters.length])
+
+  // step1 접근 시에도 조회
+  useEffect(() => {
+    if (step === 1) fetchReserved(selectedDate, theaters)
+  }, [step])
 
   // 크리에이터 목록 불러오기 (최초 1회)
   useEffect(() => {
@@ -67,8 +112,9 @@ export default function Play() {
     }
   }, [movieModalOpen, movieSearch, moviePage])
 
-  // 시간 클릭 핸들러 (최대 3시간, 연속, 중간 자동채움)
+  // 시간 클릭 핸들러 (예약된 시간대는 선택 불가)
   const handleHourClick = (theaterId, hour) => {
+    if (reservedHours[theaterId]?.includes(hour)) return
     setSelectedHours((prev) => {
       const prevArr = prev[theaterId] || []
       if (prevArr.includes(hour)) {
@@ -107,7 +153,6 @@ export default function Play() {
 
   const handleAddTheater = () => {
     const nextId = theaters.length > 0 ? Math.max(...theaters.map((t) => t.id)) + 1 : 1
-    // 새 상영관 코드 자동 생성 (예: T003, T004 ...)
     const nextCode = "T" + String(nextId).padStart(3, "0")
     setTheaters([...theaters, { id: nextId, code: nextCode, name: `${nextId}관` }])
     setSelectedHours((prev) => ({ ...prev, [nextId]: [] }))
@@ -154,9 +199,26 @@ export default function Play() {
   const totalPages = Math.ceil(movieTotal / PAGE_SIZE)
   const pagedMovies = movieList
 
+  // 예약된 시간대 버튼 스타일 적용
+  const hourBtn = (selected, reserved) => css`
+    width: 38px;
+    height: 38px;
+    border: 1px solid ${selected ? "#1976d2" : reserved ? "#bbb" : "#ccc"};
+    background: ${selected ? "#1976d2" : reserved ? "#eee" : "#fff"};
+    color: ${selected ? "#fff" : reserved ? "#bbb" : "#222"};
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 600;
+    margin-right: 2px;
+    cursor: ${reserved ? "not-allowed" : "pointer"};
+    opacity: ${reserved ? 0.5 : 1};
+    &:hover {
+      background: ${reserved ? "#eee" : "#e3f2fd"};
+    }
+  `
+
   // Step2 화면
   if (step === 2 && goStep2) {
-    // 저장 처리 함수
     const handleApply = async () => {
       if (!selectedMovieInfo) {
         alert("영화를 등록해주세요.")
@@ -175,7 +237,7 @@ export default function Play() {
         const payload = {
           theaterCode: selectedTheaterObj.code,
           theaterName: selectedTheaterObj.name,
-          runDate: selectedDate, // ← runDate로 변경!
+          runDate: selectedDate,
           startHour: selectedHourArr[0],
           endHour: selectedHourArr[selectedHourArr.length - 1] + 1,
           price: Number(price),
@@ -476,15 +538,21 @@ export default function Play() {
             </div>
             {selectedTheater === theater.id && (
               <div css={hourRow}>
-                {hours.map((hour) => (
-                  <button
-                    key={hour}
-                    css={hourBtn(selectedHours[theater.id]?.includes(hour))}
-                    onClick={() => handleHourClick(theater.id, hour)}
-                  >
-                    {hour.toString().padStart(2, "0")}
-                  </button>
-                ))}
+                {hours.map((hour) => {
+                  const reserved = reservedHours[theater.id]?.includes(hour)
+                  const selected = selectedHours[theater.id]?.includes(hour)
+                  return (
+                    <button
+                      key={hour}
+                      css={hourBtn(selected, reserved)}
+                      onClick={() => handleHourClick(theater.id, hour)}
+                      disabled={reserved}
+                      title={reserved ? "이미 등록된 시간" : undefined}
+                    >
+                      {hour.toString().padStart(2, "0")}
+                    </button>
+                  )
+                })}
               </div>
             )}
           </div>
@@ -609,21 +677,6 @@ const hourRow = css`
   gap: 4px;
   padding: 12px 18px;
   flex-wrap: wrap;
-`
-const hourBtn = (selected) => css`
-  width: 38px;
-  height: 38px;
-  border: 1px solid ${selected ? "#1976d2" : "#ccc"};
-  background: ${selected ? "#1976d2" : "#fff"};
-  color: ${selected ? "#fff" : "#222"};
-  border-radius: 4px;
-  font-size: 15px;
-  font-weight: 600;
-  margin-right: 2px;
-  cursor: pointer;
-  &:hover {
-    background: #e3f2fd;
-  }
 `
 const addTheaterWrap = css`
   display: flex;
