@@ -155,4 +155,20 @@
   <delete id="deleteVodByMovieCode">
     DELETE FROM vod WHERE MOVIE_CODE = #{movieCode}
   </delete>
+
+  <insert id="insertRunSchedule" parameterType="map">
+    INSERT INTO RUN_SCHEDULE
+      (SCHEDULE_CODE, THEATER_CODE, MOVIE_CODE, RUN_DATE, START_TIME, END_TIME)
+    VALUES
+      (#{scheduleCode}, #{theaterCode}, #{movieCode}, #{runDate}, #{startTime}, #{endTime})
+  </insert>
+
+  <select id="selectRunScheduleList" resultType="map">
+    SELECT * FROM RUN_SCHEDULE
+    <where>
+      <if test="runDate != null">AND RUN_DATE = #{runDate}</if>
+      <if test="theaterCode != null">AND THEATER_CODE = #{theaterCode}</if>
+    </where>
+    ORDER BY RUN_DATE DESC, START_TIME ASC
+  </select>
 </mapper>

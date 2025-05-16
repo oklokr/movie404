@@ -63,4 +63,18 @@ public class MovieController {
         movieService.updateMovie(movieCode, allParams);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/schedule")
+    public ResponseEntity<?> createRunSchedule(@RequestBody Map<String, Object> param) {
+        movieService.createRunSchedule(param);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/schedule")
+    public List<Map<String, Object>> getRunScheduleList(
+        @RequestParam(required = false) String runDate,
+        @RequestParam(required = false) String theaterCode
+    ) {
+        return movieService.getRunScheduleList(runDate, theaterCode);
+    }
 }

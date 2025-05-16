@@ -182,4 +182,14 @@ public class MovieService {
             return null;
         }
     }
+
+    public void createRunSchedule(Map<String, Object> param) {
+        // SCHEDULE_CODE 생성 (예: UUID)
+        param.put("scheduleCode", UUID.randomUUID().toString().replace("-", "").substring(0, 8));
+        movieMapper.insertRunSchedule(param);
+    }
+    
+    public List<Map<String, Object>> getRunScheduleList(String runDate, String theaterCode) {
+        return movieMapper.selectRunScheduleList(runDate, theaterCode);
+    }
 }

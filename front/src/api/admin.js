@@ -91,3 +91,11 @@ export function fetchCreatorList() {
     method: "get",
   }).then((res) => res)
 }
+
+export function createSchedule(data) {
+  return request({
+    url: "/api/admin/movie/schedule",
+    method: "post",
+    data,
+  }).then((res) => res)
+}

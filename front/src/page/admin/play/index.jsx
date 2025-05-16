@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { css } from "@emotion/react"
-import { fetchMovieList, fetchCreatorList } from "@/api/admin"
+import { fetchMovieList, fetchCreatorList, createSchedule } from "@/api/admin"
 
 const hours = Array.from({ length: 19 }, (_, i) => i + 6) // 06~24
 const PAGE_SIZE = 5
@@ -15,9 +15,10 @@ function getCreatorName(code, creatorList) {
 export default function Play() {
   const [step, setStep] = useState(1)
   const [selectedDate, setSelectedDate] = useState("")
+  // 상영관 코드 추가
   const [theaters, setTheaters] = useState([
-    { id: 1, name: "1관" },
-    { id: 2, name: "2관" },
+    { id: 1, code: "T001", name: "1관" },
+    { id: 2, code: "T002", name: "2관" },
   ])
   const [selectedTheater, setSelectedTheater] = useState(1)
   const [selectedHours, setSelectedHours] = useState({ 1: [], 2: [] })
@@ -106,7 +107,9 @@ export default function Play() {
 
   const handleAddTheater = () => {
     const nextId = theaters.length > 0 ? Math.max(...theaters.map((t) => t.id)) + 1 : 1
-    setTheaters([...theaters, { id: nextId, name: `${nextId}관` }])
+    // 새 상영관 코드 자동 생성 (예: T003, T004 ...)
+    const nextCode = "T" + String(nextId).padStart(3, "0")
+    setTheaters([...theaters, { id: nextId, code: nextCode, name: `${nextId}관` }])
     setSelectedHours((prev) => ({ ...prev, [nextId]: [] }))
   }
 
@@ -153,6 +156,45 @@ export default function Play() {
 
   // Step2 화면
   if (step === 2 && goStep2) {
+    // 저장 처리 함수
+    const handleApply = async () => {
+      if (!selectedMovieInfo) {
+        alert("영화를 등록해주세요.")
+        return
+      }
+      if (!price) {
+        alert("가격을 입력해주세요.")
+        return
+      }
+      if (selectedHourArr.length < 2) {
+        alert("상영 시간을 2시간 이상 선택해주세요.")
+        return
+      }
+      try {
+        const selectedTheaterObj = theaters.find((t) => t.id === selectedTheater)
+        const payload = {
+          theaterCode: selectedTheaterObj.code,
+          theaterName: selectedTheaterObj.name,
+          runDate: selectedDate, // ← runDate로 변경!
+          startHour: selectedHourArr[0],
+          endHour: selectedHourArr[selectedHourArr.length - 1] + 1,
+          price: Number(price),
+          discount: discount ? Number(discount) : null,
+          movieCode: selectedMovieInfo.movieCode,
+        }
+        await createSchedule(payload)
+        alert("상영 스케줄이 저장되었습니다.")
+        setStep(1)
+        setGoStep2(false)
+        setSelectedMovieInfo(null)
+        setPrice("")
+        setDiscount("")
+        setSelectedHours((prev) => ({ ...prev, [selectedTheater]: [] }))
+      } catch (err) {
+        alert("저장에 실패했습니다.\n" + (err?.message || err))
+      }
+    }
+
     return (
       <div>
         <div css={stepWrap}>
@@ -282,7 +324,9 @@ export default function Play() {
           >
             이전
           </button>
-          <button css={nextBtn}>적용</button>
+          <button css={nextBtn} onClick={handleApply}>
+            적용
+          </button>
         </div>
         {movieModalOpen && (
           <div css={modalOverlay}>
@@ -483,6 +527,7 @@ export default function Play() {
 }
 
 // --- 스타일 ---
+// (아래 스타일 코드는 기존과 동일)
 const stepWrap = css`
   display: flex;
   align-items: center;
