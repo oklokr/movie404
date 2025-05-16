@@ -1,6 +1,9 @@
 package com.project.repository;
 
 import com.project.model.MovieDto;
+import com.project.scheduler.dto.insert.InsertCreatorDto;
+import com.project.scheduler.dto.insert.InsertGenreDto;
+import com.project.scheduler.dto.insert.InsertMovieDto;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -35,4 +38,12 @@ public interface MovieMapper {
                @Param("discount") int discount);
     void insertRunSchedule(Map<String, Object> param);
     List<Map<String, Object>> selectRunScheduleList(@Param("runDate") String runDate, @Param("theaterCode") String theaterCode);
+
+
+    boolean existsGenre(String genreCode);
+    boolean existsCreator(String creatorCode);
+    boolean existsMovie(Integer movieCode);
+    void batchInsertGenre(InsertGenreDto genre);
+    void batchInsertCreator(InsertCreatorDto creator);
+    void batchInsertMovie(InsertMovieDto movie);
 }

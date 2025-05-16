@@ -69,7 +69,22 @@ not404/
 │        │        │  ├─ MovieService.java
 │        │        │  └─ UserService.java
 │        │        └─ util/
-│        │           └─ DateFormatUtil.java
+│        │        │  └─ DateFormatUtil.java
+│        │        └─ scheduler/
+│        │           ├─ dto/
+│        │           │  ├─ response/
+│        │           │  │   ├─  TMDBCreditResponseDto.java
+│        │           │  │   ├─  TMDBDiscoverIdListResponseDto.java
+│        │           │  │   ├─  TMDBGenreResponseDto.java
+│        │           │  │   └─  TMDBVideoResponseDto.java
+│        │           │  ├─ TMDBCastDto.java
+│        │           │  ├─ TMDBDiscoverIdListDto.java
+│        │           │  ├─ TMDBGenreDto.java
+│        │           │  ├─ TMDBMovieDetailDto.java
+│        │           │  └─ TMDBVideoDto.java
+│        │           ├─ MovieBatchService.java
+│        │           ├─ TMDBClient.java
+│        │           └─ TMDBScheduler.java
 │        └─ resources/
 │           ├─ application.yml
 │           ├─ logback-spring.xml
