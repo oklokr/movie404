@@ -52,7 +52,6 @@ export default function Play() {
     const result = {}
     for (const t of theaters) {
       try {
-        // 반드시 평평한 파라미터로 넘겨야 함!
         const res = await fetchRunScheduleList({
           runDate: date,
           theaterCode: t.code,
@@ -114,7 +113,7 @@ export default function Play() {
 
   // 시간 클릭 핸들러 (예약된 시간대는 선택 불가)
   const handleHourClick = (theaterId, hour) => {
-    if (reservedHours[theaterId]?.includes(hour)) return
+    if (reservedHours[theaterId]?.includes(hour) || !selectedDate) return
     setSelectedHours((prev) => {
       const prevArr = prev[theaterId] || []
       if (prevArr.includes(hour)) {
@@ -239,7 +238,7 @@ export default function Play() {
           theaterName: selectedTheaterObj.name,
           runDate: selectedDate,
           startHour: selectedHourArr[0],
-          endHour: selectedHourArr[selectedHourArr.length - 1], // +1 제거!
+          endHour: selectedHourArr[selectedHourArr.length - 1],
           price: Number(price),
           discount: discount ? Number(discount) : null,
           movieCode: selectedMovieInfo.movieCode,
@@ -510,7 +509,10 @@ export default function Play() {
           css={inputStyle}
           type="date"
           value={selectedDate}
-          onChange={(e) => setSelectedDate(e.target.value)}
+          onChange={(e) => {
+            setSelectedDate(e.target.value)
+            setSelectedHours({ 1: [], 2: [] }) // 날짜 변경 시 시간 초기화
+          }}
         />
       </div>
       <div>
@@ -539,13 +541,20 @@ export default function Play() {
                 {hours.map((hour) => {
                   const reserved = reservedHours[theater.id]?.includes(hour)
                   const selected = selectedHours[theater.id]?.includes(hour)
+                  const disabled = reserved || !selectedDate
                   return (
                     <button
                       key={hour}
-                      css={hourBtn(selected, reserved)}
+                      css={hourBtn(selected, reserved || !selectedDate)}
                       onClick={() => handleHourClick(theater.id, hour)}
-                      disabled={reserved}
-                      title={reserved ? "이미 등록된 시간" : undefined}
+                      disabled={disabled}
+                      title={
+                        !selectedDate
+                          ? "날짜를 먼저 선택하세요"
+                          : reserved
+                            ? "이미 등록된 시간"
+                            : undefined
+                      }
                     >
                       {hour.toString().padStart(2, "0")}
                     </button>
