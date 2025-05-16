@@ -99,3 +99,19 @@ export function updateUserTerms(data) {
     data,
   }).then((res) => res)
 }
+
+export function createSchedule(data) {
+  return request({
+    url: "/api/admin/movie/schedule",
+    method: "post",
+    data,
+  }).then((res) => res)
+}
+
+export function fetchRunScheduleList(params) {
+  return request({
+    url: "/api/admin/movie/schedule",
+    method: "get",
+    params,
+  }).then((res) => res)
+}

@@ -65,8 +65,14 @@ export default function MovieEdit() {
         ].filter(Boolean),
       )
       if (movie.runtime) {
-        const [h, m] = movie.runtime.split(":")
-        setRuntime(String(parseInt(h) * 60 + parseInt(m)))
+        if (typeof movie.runtime === "string" && movie.runtime.includes(":")) {
+          // "01:50:00" 같은 문자열이면 분 단위로 변환
+          const [h, m] = movie.runtime.split(":")
+          setRuntime(String(parseInt(h) * 60 + parseInt(m)))
+        } else {
+          // 정수(분)로 들어오면 그대로 사용
+          setRuntime(String(movie.runtime))
+        }
       } else {
         setRuntime("")
       }
@@ -118,6 +124,10 @@ export default function MovieEdit() {
   // 감독 추가/삭제 (코드 기반)
   const addDirector = (code) => {
     if (!code) return
+    if (directors.length >= 2) {
+      alert("감독은 최대 2명까지 등록할 수 있습니다.")
+      return
+    }
     if (!directors.includes(code)) {
       setDirectors([...directors, code])
       setDirectorInput("")
@@ -130,6 +140,10 @@ export default function MovieEdit() {
   // 출연진 추가/삭제 (코드 기반)
   const addCast = (code) => {
     if (!code) return
+    if (casts.length >= 5) {
+      alert("출연진은 최대 5명까지 등록할 수 있습니다.")
+      return
+    }
     if (!casts.includes(code)) {
       setCasts([...casts, code])
       setCastInput("")
@@ -203,7 +217,13 @@ export default function MovieEdit() {
       formData.append("RATING_TPCD", rating)
       formData.append("MOVIE_NAME", title)
       formData.append("SYNOPSIS", desc)
-      formData.append("RUNTIME", runtime)
+      // runtime이 비어있거나 숫자가 아니면 0으로 처리
+      formData.append(
+        "RUNTIME",
+        runtime && !isNaN(Number(runtime.trim())) && Number(runtime.trim()) > 0
+          ? String(Number(runtime.trim()))
+          : "0",
+      )
       // 파일대신 URL 저장
       formData.append("POSTER", posterInput)
 

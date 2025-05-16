@@ -67,17 +67,6 @@
     LIMIT 1
   </select>
 
-  <select id="existsByGenreCode" resultType="boolean">
-    SELECT EXISTS (
-      SELECT 1 FROM GENRE WHERE GENRE_CODE = #{genreCode}
-    )
-  </select>
-  <select id="existsByMovieName" resultType="boolean">
-    SELECT EXISTS (
-      SELECT 1 FROM MOVIE WHERE MOVIE_NAME = #{movieName}
-    )
-  </select>
-
   <select id="selectGenreList" resultType="map">
     SELECT GENRE_CODE as code, GENRE_NAME as name FROM GENRE
   </select>
@@ -98,10 +87,6 @@
       #{actorCodeA}, #{actorCodeB}, #{actorCodeC}, #{actorCodeD}, #{actorCodeE},
       #{synopsis}, #{runtime}, #{ratingTpcd}, #{movieRelease}, #{poster}, #{sales}
     )
-  </insert>
-  <insert id="insertGenre">
-    INSERT INTO GENRE (GENRE_CODE, GENRE_NAME)
-    VALUES (#{genreCode}, #{genreName})
   </insert>
 
   <insert id="insertVod">
@@ -158,4 +143,123 @@
 
 
   <select id = "selectUserVod" resultType="com.project.model.MovieDto"></select>
+
+  <insert id="insertRunSchedule" parameterType="map">
+    INSERT INTO RUN_SCHEDULE
+      (SCHEDULE_CODE, THEATER_CODE, MOVIE_CODE, RUN_DATE, START_TIME, END_TIME)
+    VALUES
+      (#{scheduleCode}, #{theaterCode}, #{movieCode}, #{runDate}, #{startTime}, #{endTime})
+  </insert>
+
+  <select id="selectRunScheduleList" resultType="map">
+    SELECT
+      SCHEDULE_CODE as scheduleCode,
+      THEATER_CODE as theaterCode,
+      MOVIE_CODE as movieCode,
+      RUN_DATE as runDate,
+      START_TIME as startTime,
+      END_TIME as endTime
+    FROM RUN_SCHEDULE
+    <where>
+      <if test="runDate != null">AND RUN_DATE = #{runDate}</if>
+      <if test="theaterCode != null">AND THEATER_CODE = #{theaterCode}</if>
+    </where>
+    ORDER BY RUN_DATE DESC, START_TIME ASC
+  </select>
+
+
+
+
+
+  <!-- ========================= -->
+    <!-- EXISTS: 중복 확인 쿼리 -->
+    <!-- ========================= -->
+
+    <select id="existsGenre" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1 FROM GENRE WHERE GENRE_CODE = #{genreCode}
+        )
+    </select>
+
+    <select id="existsCreator" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1 FROM CREATOR WHERE CREATOR_CODE = #{creatorCode}
+        )
+    </select>
+
+    <select id="existsMovie" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1 FROM MOVIE WHERE MOVIE_CODE = #{movieCode}
+        )
+    </select>
+
+    <!-- ========================= -->
+    <!-- INSERT: 데이터 삽입 쿼리 -->
+    <!-- ========================= -->
+
+    <insert id="batchInsertGenre">
+        INSERT INTO GENRE (
+            GENRE_CODE,
+            GENRE_NAME
+        ) VALUES (
+            #{genreCode},
+            #{genreName}
+        )
+    </insert>
+
+    <insert id="batchInsertCreator">
+        INSERT INTO CREATOR (
+            CREATOR_CODE,
+            CREATOR_NAME,
+            GENDER
+        ) VALUES (
+            #{creatorCode},
+            #{creatorName},
+            #{gender}
+        )
+    </insert>
+
+    <insert id="batchInsertMovie">
+        INSERT INTO MOVIE (
+            MOVIE_CODE,
+            GENRE_CODEA,
+            GENRE_CODEB,
+            GENRE_CODEC,
+            MOVIE_NAME,
+            DIRECT_CODEA,
+            DIRECT_CODEB,
+            ACTOR_CODEA,
+            ACTOR_CODEB,
+            ACTOR_CODEC,
+            ACTOR_CODED,
+            ACTOR_CODEE,
+            SYNOPSIS,
+            RUNTIME,
+            RATING_TPCD,
+            MOVIE_RELEASE,
+            TEASER,
+            POSTER,
+            SALES
+        ) VALUES (
+            #{movieCode},
+            #{genreCodeA},
+            #{genreCodeB},
+            #{genreCodeC},
+            #{movieName},
+            #{directCodeA},
+            #{directCodeB},
+            #{actorCodeA},
+            #{actorCodeB},
+            #{actorCodeC},
+            #{actorCodeD},
+            #{actorCodeE},
+            #{synopsis},
+            #{runtime},
+            #{ratingTpcd},
+            #{movieRelease},
+            #{teaser},
+            #{poster},
+            #{sales}
+        )
+    </insert>
 </mapper>
