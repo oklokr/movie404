@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { css } from "@emotion/react"
 import { fetchMovieList, fetchCreatorList, createSchedule, fetchRunScheduleList } from "@/api/admin"
 
-const hours = Array.from({ length: 18 }, (_, i) => i + 6) // 06~23
+const hours = Array.from({ length: 17 }, (_, i) => i + 6) // 06~22
 const PAGE_SIZE = 5
 
 // 코드 → 이름 변환 함수
@@ -239,7 +239,7 @@ export default function Play() {
           theaterName: selectedTheaterObj.name,
           runDate: selectedDate,
           startHour: selectedHourArr[0],
-          endHour: selectedHourArr[selectedHourArr.length - 1] + 1,
+          endHour: selectedHourArr[selectedHourArr.length - 1], // +1 제거!
           price: Number(price),
           discount: discount ? Number(discount) : null,
           movieCode: selectedMovieInfo.movieCode,
@@ -278,9 +278,7 @@ export default function Play() {
                 <th css={thStyle}>퇴장시간</th>
                 <td>
                   {selectedHourArr[selectedHourArr.length - 1] !== undefined
-                    ? (selectedHourArr[selectedHourArr.length - 1] + 1)
-                        .toString()
-                        .padStart(2, "0") + "시"
+                    ? selectedHourArr[selectedHourArr.length - 1].toString().padStart(2, "0") + "시"
                     : ""}
                 </td>
               </tr>
