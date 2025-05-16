@@ -5,11 +5,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TMDBCastDto {
-    private int cast_id;
-    private String character;
+public class TMDBCreditDto {
+    private int id;
     private String name;
-    private String profile_path;
-    private int order; // 출연 순서
+    private Integer gender;
     private String known_for_department;
+    private String job;
 }

@@ -24,3 +24,7 @@ yarn-error.log*
 
 # 환경 설정 파일
 setting.env
+
+logs/
+logs/*
+*.log

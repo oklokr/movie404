@@ -5,6 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+// 사용 시 https://youtu.be/id?key
 public class TMDBVideoDto {
     private String id;
     private String key;         // YouTube key

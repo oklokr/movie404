@@ -5,11 +5,11 @@ import lombok.Setter;
 
 import java.util.List;
 
-import com.project.scheduler.dto.TMDBCastDto;
+import com.project.scheduler.dto.TMDBCreditDto;
 
 @Getter
 @Setter
 public class TMDBCreditResponseDto {
-    private List<TMDBCastDto> cast;
-    // crew 정보도 필요하면 추가 가능
+    private List<TMDBCreditDto> cast;
+    private List<TMDBCreditDto> crew;
 }

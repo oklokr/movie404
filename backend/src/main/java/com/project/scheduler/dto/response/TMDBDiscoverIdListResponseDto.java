@@ -10,5 +10,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class TMDBDiscoverIdListResponseDto {
+    private int page;
+    private int total_pages;
     private List<TMDBDiscoverIdListDto> results;
 }
