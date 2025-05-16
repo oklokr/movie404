@@ -3,6 +3,7 @@ package com.project.controller.admin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.project.model.ApiResponse;
 import com.project.model.UserDto;
 import com.project.service.UserService;
 
@@ -38,4 +39,22 @@ public class AdminController {
         String type = (String) body.get("type");
         return userService.updateUserType(id, type);
     }
+
+    //회원 약관동의 변경
+    @PostMapping("/user/terms")
+    public ApiResponse updateUserTerms(@RequestBody Map<String, Object> body) {
+        String id = (String) body.get("id");
+        String terms = (String) body.get("terms");
+        
+        try{
+            userService.updateUserTerms(id, terms);
+            return new ApiResponse(200,"success",null);
+
+        }catch(Exception e){
+            return new ApiResponse(404,"fail",null);
+
+        }
+
+    }
+    
 }

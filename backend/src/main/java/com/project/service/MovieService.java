@@ -182,4 +182,8 @@ public class MovieService {
             return null;
         }
     }
+
+    public MovieDto selectUserVod(String id){
+        return movieMapper.selectUserVod(id);
+    }
 }

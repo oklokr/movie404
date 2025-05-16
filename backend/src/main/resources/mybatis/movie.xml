@@ -155,4 +155,7 @@
   <delete id="deleteVodByMovieCode">
     DELETE FROM vod WHERE MOVIE_CODE = #{movieCode}
   </delete>
+
+
+  <select id = "selectUserVod" resultType="com.project.model.MovieDto"></select>
 </mapper>
