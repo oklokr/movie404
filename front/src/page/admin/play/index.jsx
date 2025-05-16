@@ -43,6 +43,9 @@ export default function Play() {
   // 크리에이터 목록 상태
   const [creatorList, setCreatorList] = useState([])
 
+  // 최종 등록 확인 모달 상태
+  const [confirmApplyOpen, setConfirmApplyOpen] = useState(false)
+
   // 예약된 시간대 조회 함수
   const fetchReserved = async (date, theaters) => {
     if (!date) {
@@ -231,19 +234,8 @@ export default function Play() {
 
   // Step2 화면
   if (step === 2 && goStep2) {
-    const handleApply = async () => {
-      if (!selectedMovieInfo) {
-        alert("영화를 등록해주세요.")
-        return
-      }
-      if (!price) {
-        alert("가격을 입력해주세요.")
-        return
-      }
-      if (selectedHourArr.length < 2) {
-        alert("상영 시간을 2시간 이상 선택해주세요.")
-        return
-      }
+    // 실제 등록 함수
+    const doApply = async () => {
       try {
         const selectedTheaterObj = theaters.find((t) => t.id === selectedTheater)
         const payload = {
@@ -251,7 +243,7 @@ export default function Play() {
           theaterName: selectedTheaterObj.name,
           runDate: selectedDate,
           startHour: selectedHourArr[0],
-          endHour: selectedHourArr[selectedHourArr.length - 1] + 1, // 종료시간 +1
+          endHour: selectedHourArr[selectedHourArr.length - 1] + 1,
           price: Number(price),
           discount: discount ? Number(discount) : null,
           movieCode: selectedMovieInfo.movieCode,
@@ -267,6 +259,23 @@ export default function Play() {
       } catch (err) {
         alert("저장에 실패했습니다.\n" + (err?.message || err))
       }
+    }
+
+    // 적용 버튼 클릭 시
+    const handleApply = () => {
+      if (!selectedMovieInfo) {
+        alert("영화를 등록해주세요.")
+        return
+      }
+      if (!price) {
+        alert("가격을 입력해주세요.")
+        return
+      }
+      if (selectedHourArr.length < 2) {
+        alert("상영 시간을 2시간 이상 선택해주세요.")
+        return
+      }
+      setConfirmApplyOpen(true)
     }
 
     return (
@@ -400,6 +409,28 @@ export default function Play() {
             적용
           </button>
         </div>
+        {/* 최종 등록 확인 모달 */}
+        {confirmApplyOpen && (
+          <div css={modalOverlay}>
+            <div css={modalBox}>
+              <div css={modalMsg}>정말로 상영스케줄을 등록하시겠습니까?</div>
+              <div css={modalBtnWrap}>
+                <button
+                  css={modalBtn}
+                  onClick={() => {
+                    setConfirmApplyOpen(false)
+                    doApply()
+                  }}
+                >
+                  확인
+                </button>
+                <button css={modalBtnCancel} onClick={() => setConfirmApplyOpen(false)}>
+                  취소
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         {movieModalOpen && (
           <div css={modalOverlay}>
             <div css={movieModalBox}>
