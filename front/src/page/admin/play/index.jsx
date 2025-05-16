@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { css } from "@emotion/react"
-import { fetchMovieList } from "@/api/admin"
+import { fetchMovieList, fetchCreatorList } from "@/api/admin"
 
 const hours = Array.from({ length: 19 }, (_, i) => i + 6) // 06~24
 const PAGE_SIZE = 5
@@ -42,9 +42,13 @@ export default function Play() {
 
   // 크리에이터 목록 불러오기 (최초 1회)
   useEffect(() => {
-    fetch("/api/admin/movie/creator")
-      .then((res) => res.json())
-      .then((data) => setCreatorList(data))
+    fetchCreatorList()
+      .then((res) => {
+        setCreatorList(res.data ? res.data : res)
+      })
+      .catch((err) => {
+        alert("크리에이터 목록을 불러올 수 없습니다.\n" + (err?.message || err))
+      })
   }, [])
 
   // 영화 목록 불러오기 (모달 열릴 때마다, 검색/페이지 변경 시)
