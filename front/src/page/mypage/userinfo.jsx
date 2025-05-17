@@ -136,7 +136,7 @@ function User(props) {
         if (res.code === 200) {
           alert("인증메일을 전송했습니다!")
           userinfo.authcode = res.data
-          setSendMail(1)
+          //setSendMail(1)
         }
       })
     }
@@ -281,7 +281,7 @@ function User(props) {
   }
 }
 const Leftbtn = {
-  "font-size": "1.3rem",
+  fontSize: "1.3rem",
   align: "center",
 }
 export { User, UserMenu }
