@@ -146,4 +146,7 @@
     <select id="checkUserByIdEmail" resultType="int">
         SELECT COUNT(*) FROM MEMBERS WHERE EMAIL=#{email} and USER_ID=#{id}
     </select>
+    <update id="updateUserTerms">
+    UPDATE MEMBERS SET TERMS=#{terms} WHERE USER_ID=#{id}
+    </update>
 </mapper>

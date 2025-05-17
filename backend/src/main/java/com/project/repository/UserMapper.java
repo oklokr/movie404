@@ -27,4 +27,5 @@ public interface UserMapper {
     String insertUser(UserDto newUser);
     String selectIdbyEmail(String email);
     int checkUserByIdEmail(String email, String id);
+    int updateUserTerms(String id, String terms);
 }

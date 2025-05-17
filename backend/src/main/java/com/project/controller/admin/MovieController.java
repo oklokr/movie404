@@ -63,6 +63,13 @@ public class MovieController {
         movieService.updateMovie(movieCode, allParams);
         return ResponseEntity.ok().build();
     }
+    /*@PostMapping("/uservod")
+    public MovieDto selectUserVod(@RequestBody Map<String, Object> requestBody) {
+        String id = (String) requestBody.get("id");
+        Movie movieService.selectUserVod(id);
+        if()
+        return ResponseEntity.ok().build();
+    }*/
 
     @PostMapping("/schedule")
     public ResponseEntity<?> createRunSchedule(@RequestBody Map<String, Object> param) {

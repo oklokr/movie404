@@ -1,3 +1,4 @@
+import { sendAuthEmail, signupCheckEmail } from "@/api/signup"
 import { selectUser } from "@/store/selectors"
 import {
   Button,
@@ -72,12 +73,28 @@ function User(props) {
       props.setEmail(val)
     }
 
+    function handleSelectEmail(e) {
+      const val = e.target.value + ".com"
+      if (val == userinfo.domain) {
+        if (props.Email == userinfo.email) props.setEmailEvent(0)
+        else {
+          props.setEmailEvent(1)
+          userinfo.domain = e.target.label
+        }
+        props.setEmailAuth(0)
+      } else {
+        props.setEmailEvent(1)
+      }
+    }
+
     function handleChangeTel(e) {
       // alert(props.test)
       if (e.target.value == userinfo.tel) props.setTelEvent(0)
       else props.setTelEvent(1)
     }
     function handleClickEamilAuth(e) {
+      checkEmail()
+
       props.setEmailAuth(1)
     }
     function handleChangePW(e) {
@@ -94,6 +111,34 @@ function User(props) {
       props.setRPW(val)
 
       if (val === "") props.setCommentRPW("비밀번호 재확인을 입력해주세요")
+    }
+
+    const checkEmail = () => {
+      signupCheckEmail({
+        email: props.Email + props.EmailFormat,
+      }).then((res) => {
+        console.log(res)
+        if (res.code === 200) {
+          userinfo.email = props.Email + props.EmailFormat
+          alert("사용 가능한 이메일 입니다.")
+          //메일전송
+          sendEmail()
+        } else {
+          alert("이미 등록된 이메일 입니다.")
+        }
+      })
+    }
+
+    const sendEmail = () => {
+      sendAuthEmail({
+        email: userinfo.email,
+      }).then((res) => {
+        if (res.code === 200) {
+          alert("인증메일을 전송했습니다!")
+          userinfo.authcode = res.data
+          setSendMail(1)
+        }
+      })
     }
 
     return (
@@ -165,7 +210,7 @@ function User(props) {
           <div>
             <TextField
               id="outlined-select-currency-native"
-              //onChange={handleSelectEmail}
+              onChange={handleSelectEmail}
               select
               slotProps={{
                 select: {

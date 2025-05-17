@@ -92,6 +92,14 @@ export function fetchCreatorList() {
   }).then((res) => res)
 }
 
+export function updateUserTerms(data) {
+  return request({
+    url: "/api/admin/user/terms",
+    method: "post",
+    data,
+  }).then((res) => res)
+}
+
 export function createSchedule(data) {
   return request({
     url: "/api/admin/movie/schedule",

@@ -141,6 +141,9 @@
     DELETE FROM vod WHERE MOVIE_CODE = #{movieCode}
   </delete>
 
+
+  <select id = "selectUserVod" resultType="com.project.model.MovieDto"></select>
+
   <insert id="insertRunSchedule" parameterType="map">
     INSERT INTO RUN_SCHEDULE
       (SCHEDULE_CODE, THEATER_CODE, MOVIE_CODE, RUN_DATE, START_TIME, END_TIME)

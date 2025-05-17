@@ -100,4 +100,8 @@ public class UserService {
     public int checkUserByIdEmail(String email, String id){
         return userMapper.checkUserByIdEmail(email, id);
     }
+    public int updateUserTerms(String id, String terms){
+        return userMapper.updateUserTerms(id, terms);
+
+    }
 }

@@ -144,6 +144,10 @@ public class MovieService {
         }
     }
 
+    public MovieDto selectUserVod(String id){
+        return movieMapper.selectUserVod(id);
+    }
+
     public void createRunSchedule(Map<String, Object> param) {
         // SCHEDULE_CODE 생성 (예: UUID)
         param.put("scheduleCode", UUID.randomUUID().toString().replace("-", "").substring(0, 8));
