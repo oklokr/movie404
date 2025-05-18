@@ -2,6 +2,23 @@ body {
   margin: initial;
 }
 
+#root {
+  width: 100%;
+  min-width: 1200px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  padding: 0 40px;
+}
+.container {
+  padding: 0 40px;
+}
+.footer {
+  padding: 0 40px;
+}
+
 .MuiButton-root {
   height: 48px;
 }
