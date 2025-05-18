@@ -34,7 +34,7 @@ export function insertUser(data) {
 
 export function login(data) {
   return request({
-    url: "/api/signup/login",
+    url: "/api/login",
     method: "post",
     data,
   })
