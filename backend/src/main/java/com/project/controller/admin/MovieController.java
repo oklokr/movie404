@@ -1,6 +1,8 @@
 package com.project.controller.admin;
 
+import com.project.model.ApiResponse;
 import com.project.model.MovieDto;
+import com.project.model.VodDto;
 import com.project.service.MovieService;
 
 import org.springframework.http.ResponseEntity;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/admin/movie")
@@ -83,5 +86,19 @@ public class MovieController {
         @RequestParam(name = "theaterCode", required = false) String theaterCode
     ) {
         return movieService.getRunScheduleList(runDate, theaterCode);
+    }
+
+    @PostMapping("/uservodlist")
+    public ApiResponse selectUserVodList(@RequestBody Map<String, Object> requestBody) {
+                String id = (String) requestBody.get("id");
+                
+                try{
+                    List<VodDto> list= movieService.selectUserVodList(id);
+                    return new ApiResponse(200,"success",list);
+                }catch(Exception e){
+                    System.out.println(e);
+                    return new ApiResponse(404,"fail",null);
+                }
+
     }
 }

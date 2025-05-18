@@ -142,7 +142,12 @@
   </delete>
 
 
-  <select id = "selectUserVod" resultType="com.project.model.MovieDto"></select>
+  <select id = "selectUserVodList" resultType="com.project.model.VodDto">
+  select mv.MOVIE_NAME, mv.POSTER
+  from members m, order_history oh, movie mv
+  where m.USER_ID=#{id}
+  and oh.MOVIE_CODE=mv.MOVIE_CODE;
+  </select>
 
   <insert id="insertRunSchedule" parameterType="map">
     INSERT INTO RUN_SCHEDULE

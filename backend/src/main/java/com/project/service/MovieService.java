@@ -1,6 +1,7 @@
 package com.project.service;
 
 import com.project.model.MovieDto;
+import com.project.model.VodDto;
 import com.project.repository.MovieMapper;
 import org.springframework.stereotype.Service;
 
@@ -172,5 +173,9 @@ public class MovieService {
 
     public List<Map<String, Object>> getRunScheduleList(String runDate, String theaterCode) {
         return movieMapper.selectRunScheduleList(runDate, theaterCode);
+    }
+
+        public List<VodDto> selectUserVodList(String id) {
+                    return movieMapper.selectUserVodList(id);
     }
 }

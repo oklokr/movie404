@@ -128,3 +128,11 @@ export function fetchRunScheduleList(params) {
     params,
   }).then((res) => res)
 }
+
+export function selectUserVodList(data) {
+  return request({
+    url: "/api/admin/movie/uservodlist",
+    method: "post",
+    data,
+  }).then((res) => res)
+}
