@@ -52,7 +52,7 @@ function Payment() {
   )
 }
 const Leftbtn = {
-  "font-size": "1.3rem",
+  fontSize: "1.3rem",
   align: "center",
 }
 export { OrderList, Payment, OrderListMenu }
