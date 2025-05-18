@@ -2,7 +2,7 @@ import request from "@/utils/request"
 
 export function signupCheckId(data) {
   return request({
-    url: "/api/checkId",
+    url: "/api/signup/checkId",
     method: "post",
     data,
   })
@@ -10,7 +10,7 @@ export function signupCheckId(data) {
 
 export function signupCheckEmail(data) {
   return request({
-    url: "api/checkEmail",
+    url: "/api/signup/checkEmail",
     method: "post",
     data,
   })
@@ -18,7 +18,7 @@ export function signupCheckEmail(data) {
 
 export function sendAuthEmail(data) {
   return request({
-    url: "api/authEmail",
+    url: "/api/signup/authEmail",
     method: "post",
     data,
   })
@@ -26,7 +26,7 @@ export function sendAuthEmail(data) {
 
 export function insertUser(data) {
   return request({
-    url: "api/insertUser",
+    url: "/api/signup/insertUser",
     method: "post",
     data,
   })
@@ -34,7 +34,7 @@ export function insertUser(data) {
 
 export function login(data) {
   return request({
-    url: "api/login",
+    url: "/api/signup/login",
     method: "post",
     data,
   })
