@@ -149,4 +149,11 @@
     <update id="updateUserTerms">
     UPDATE MEMBERS SET TERMS=#{terms} WHERE USER_ID=#{id}
     </update>
+
+    <update id="updateUserSet">
+    UPDATE MEMBERS SET VIEW_ADULT=#{adult}, LANG_TPCD=#{lang}, DATE_TPCD=#{dateformat}, SAVE_HISTORY=#{savehistory} WHERE USER_ID=#{id}
+    </update>
+  <update id="updateUser">
+    UPDATE MEMBERS SET PASSWD=#{pwd}, EMAIL=#{email} WHERE USER_ID=#{id}
+    </update>
 </mapper>

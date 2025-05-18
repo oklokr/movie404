@@ -1,3 +1,4 @@
+import { updateUser } from "@/api/admin"
 import { sendAuthEmail, signupCheckEmail } from "@/api/signup"
 import { selectUser } from "@/store/selectors"
 import {
@@ -11,6 +12,18 @@ import {
 } from "@mui/material"
 import { useSelector } from "react-redux"
 import { Navigate, useNavigate } from "react-router"
+const userchange = {
+  pwd: "",
+  repwd: "",
+  pwdpass: 0,
+  repwdpass: 0,
+  email: "",
+  domain: "",
+  sendemail: 0,
+  authcode: "",
+  inputauthcode: "",
+  tel: "",
+}
 
 function UserMenu() {
   return (
@@ -26,7 +39,7 @@ function User(props) {
       label: "@naver.com",
     },
     {
-      value: "google",
+      value: "gmail",
       label: "@gmail.com",
     },
     {
@@ -58,59 +71,116 @@ function User(props) {
       state.info.email.length,
     )
     userinfo.tel = state.info.tel
+    if (userchange.email == "") userchange.email = userinfo.email
+    if (userchange.domain == "") userchange.domain = userinfo.domain
 
-    function handleChangeEmail(e) {
-      const val = e.target.value
-      props.setEmail("")
-      if (val === "") props.setCommentEmail("이메일을 입력해주세요")
-      if (/[!@#$%^&*|ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(val)) props.setCommentEmail("특수문자/한글 포함 불가")
-      if (val == userinfo.email) {
+    function handlerSaveEvent() {
+      alert("/handlerSave")
+      var check = 1
+      if (userchange.pwd == "") {
+        alert("비밀번호를 입력해주세요")
+        check = 0
+      } else if (userchange.repwd == "") {
+        alert("비밀번호 재확인을 입력해주세요")
+        check = 0
+      } else if (userchange.pwd != userchange.repwd) {
+        alert("비밀번호가 일치하지 않습니다.")
+        check = 0
+      } else if (userchange.pwdpass != 1 || userchange.repwdpass != 1) {
+        alert("비밀번호 입력 조건을 확인해주세요")
+        check = 0
+      } else if (userchange.sendemail == 1) {
+        if (userchange.authcode != "인증완료") {
+          alert("이메일 인증을 완료해주세요")
+          check = 0
+        } else {
+          check = 1
+          //DB업데이트 코드
+        }
+      }
+
+      if (check == 1) {
+        updateuser()
+      }
+    }
+    const updateuser = () => {
+      //if(userchange)
+      updateUser({
+        id: userinfo.id,
+        pwd: userchange.pwd,
+        email: userchange.email + "@" + userchange.domain,
+        // tel: userchange.tel,
+      }).then((res) => {
+        if (res.code === 200) {
+          alert("수정완료!")
+        } else {
+          alert("수정 실패!")
+        }
+      })
+    }
+
+    function handleCheckEamilAuth(e) {
+      if (userchange.authcode == userchange.inputauthcode) {
+        alert("이메일 인증 성공!")
+        userchange.authcode = "인증완료"
         props.setEmailEvent(0)
         props.setEmailAuth(0)
       } else {
+        alert("인증실패!")
+      }
+    }
+    function handleChangeEmail(e) {
+      //초기값설정
+      const val = e.target.value
+      userchange.email = ""
+      if (val === "") {
+        props.setCommentEmail("이메일을 입력해주세요")
+        userchange.sendemail = 1
+      }
+      if (/[!@#$%^&*|ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(val)) {
+        props.setCommentEmail("특수문자/한글 포함 불가")
+        userchange.sendemail = 1
+      }
+      if (val == userinfo.email) {
+        props.setEmailEvent(0)
+        props.setEmailAuth(0)
+        userchange.sendemail = 0
+      } else {
+        userchange.sendemail = 1
+
         props.setEmailEvent(1)
+        userchange.email = val
       }
       props.setEmail(val)
     }
-
     function handleSelectEmail(e) {
       const val = e.target.value + ".com"
       if (val == userinfo.domain) {
         if (props.Email == userinfo.email) props.setEmailEvent(0)
         else {
           props.setEmailEvent(1)
-          userinfo.domain = e.target.label
+          userchange.domain = val
         }
         props.setEmailAuth(0)
       } else {
         props.setEmailEvent(1)
+        userchange.domain = val
       }
+      alert(userchange.domain)
     }
-
-    function handleChangeTel(e) {
-      // alert(props.test)
-      if (e.target.value == userinfo.tel) props.setTelEvent(0)
-      else props.setTelEvent(1)
-    }
-    function handleClickEamilAuth(e) {
-      checkEmail()
-
-      props.setEmailAuth(1)
-    }
-    function handleChangePW(e) {
-      const val = e.target.value
-      props.setPW(val)
-
-      if (val === "") props.setCommentPW("비밀번호를 입력해주세요")
-      else if (/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(val)) props.setCommentPW("한글 포함 불가")
-      else if (!/[!@#$%^&*]/.test(val)) props.setCommentPW("특수문자를 포함해주세요")
-      else props.setCommentPW("비밀번호 입력 완료!")
-    }
-    function handleChangeRPW(e) {
-      const val = e.target.value
-      props.setRPW(val)
-
-      if (val === "") props.setCommentRPW("비밀번호 재확인을 입력해주세요")
+    const sendEmail = () => {
+      alert(userchange.email + "@" + userchange.domain)
+      sendAuthEmail({
+        email: userchange.email + "@" + userchange.domain,
+      }).then((res) => {
+        if (res.code === 200) {
+          alert("인증메일을 전송했습니다!")
+          userchange.authcode = res.data
+          userchange.sendemail = 1
+        } else {
+          alert("전송실패!")
+        }
+      })
     }
 
     const checkEmail = () => {
@@ -128,17 +198,44 @@ function User(props) {
         }
       })
     }
+    function handleClickEamilAuth(e) {
+      checkEmail()
 
-    const sendEmail = () => {
-      sendAuthEmail({
-        email: userinfo.email,
-      }).then((res) => {
-        if (res.code === 200) {
-          alert("인증메일을 전송했습니다!")
-          userinfo.authcode = res.data
-          //setSendMail(1)
-        }
-      })
+      props.setEmailAuth(1)
+    }
+    function handleChangeInputAuth(e) {
+      userchange.inputauthcode = e.target.value
+    }
+    function handleChangeTel(e) {
+      // alert(props.test)
+      if (e.target.value == userinfo.tel) props.setTelEvent(0)
+      else props.setTelEvent(1)
+    }
+
+    function handleChangePW(e) {
+      const val = e.target.value
+      userchange.pwd = val
+      userchange.pwdpass = 0
+      if (val === "") props.setCommentPW("비밀번호를 입력해주세요")
+      else if (/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(val)) props.setCommentPW("한글 포함 불가")
+      else if (!/[!@#$%^&*]/.test(val)) props.setCommentPW("특수문자를 포함해주세요")
+      else {
+        props.setCommentPW("비밀번호 입력 완료!")
+        userchange.pwdpass = 1
+      }
+    }
+    function handleChangeRPW(e) {
+      const val = e.target.value
+      userchange.repwd = val
+      userchange.repwdpass = 0
+
+      if (val === "") props.setCommentRPW("비밀번호 재확인을 입력해주세요")
+      else if (userchange.pwd == userchange.repwd) {
+        props.setCommentRPW("비밀번호가 일치합니다.")
+        userchange.repwdpass = 1
+      } else if (userchange.pwd != userchange.repwd) {
+        props.setCommentRPW("비밀번호가 일치하지 않습니다.")
+      }
     }
 
     return (
@@ -236,13 +333,18 @@ function User(props) {
           )}
         </div>
         <div>
-          <TextField id="outlined-select-currency-native"></TextField>
+          <TextField
+            id="outlined-select-currency-native"
+            onChange={handleChangeInputAuth}
+          ></TextField>
           {props.emailauth == 0 ? (
             <Button variant="contained" disabled>
               인증요청
             </Button>
           ) : (
-            <Button variant="contained">인증요청</Button>
+            <Button variant="contained" onClick={handleCheckEamilAuth}>
+              인증요청
+            </Button>
           )}
         </div>
 
@@ -275,7 +377,9 @@ function User(props) {
           취소
         </Button>
 
-        <Button variant="contained">수정</Button>
+        <Button variant="contained" onClick={handlerSaveEvent}>
+          수정
+        </Button>
       </>
     )
   }

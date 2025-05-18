@@ -99,7 +99,20 @@ export function updateUserTerms(data) {
     data,
   }).then((res) => res)
 }
-
+export function updateUserSet(data) {
+  return request({
+    url: "/api/admin/user/set",
+    method: "post",
+    data,
+  }).then((res) => res)
+}
+export function updateUser(data) {
+  return request({
+    url: "/api/admin/user/info",
+    method: "post",
+    data,
+  }).then((res) => res)
+}
 export function createSchedule(data) {
   return request({
     url: "/api/admin/movie/schedule",

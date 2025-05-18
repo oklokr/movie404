@@ -1,3 +1,4 @@
+import { updateUserSet, updateUserTerms } from "@/api/admin"
 import { selectUser } from "@/store/selectors"
 import {
   Button,
@@ -67,6 +68,7 @@ function UserSet() {
     }
     userinfo.id = state.info.userId
     userinfo.adult = state.info.viewAdult
+    userinfo.lang = state.info.langTpcd
     userinfo.dateformat = state.info.dateTpcd
     userinfo.savehistory = state.info.saveHistory
     function SaveEventHandler(e) {
@@ -83,8 +85,23 @@ function UserSet() {
           "//" +
           userinfo.savehistory,
       )
+      updateSetting()
     }
-
+    const updateSetting = () => {
+      updateUserSet({
+        id: userinfo.id,
+        adult: userinfo.adult,
+        lang: userinfo.lang,
+        dateformat: userinfo.dateformat,
+        savehistory: userinfo.savehistory,
+      }).then((res) => {
+        if (res.code === 200) {
+          alert("수정 성공!")
+        } else {
+          alert("저장실패!")
+        }
+      })
+    }
     function handleChangeLang(e) {
       if (e.target.value == "eng") userchange.lang = "1"
       else userchange.lang = "2"

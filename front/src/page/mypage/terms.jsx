@@ -314,9 +314,9 @@ function TermsC(props) {
   )
 }
 
-const cssJust = { "justify-content": "right" }
+const cssJust = { justifyContent: "right" }
 const cssWidth = { width: "100%" }
-const cssAccordion = { "max-height": "400px", "overflow-y": "scroll" }
+const cssAccordion = { maxHeight: "400px", overflowY: "scroll" }
 const Leftbtn = {
   fontSize: "1.3rem",
   align: "center",
