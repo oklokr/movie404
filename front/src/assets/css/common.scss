@@ -4,21 +4,38 @@ body {
 
 #root {
   width: 100%;
-  min-width: 1200px;
-  max-width: 1400px;
+  // min-width: 1200px;
+  // max-width: 1400px;
   margin: 0 auto;
   position: relative;
   height: 100%;
 }
 
+header {
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+}
 .header {
+  min-width: 1200px;
+  max-width: 1400px;
   padding: 0 40px;
+  margin: 0 auto;
 }
 .container {
+  min-width: 1200px;
+  max-width: 1400px;
   padding: 0 40px;
+  margin: 0 auto;
+
+  &.main-page {
+    max-width: initial;
+    padding: initial;
+  }
 }
 .footer {
+  min-width: 1200px;
+  max-width: 1400px;
   padding: 0 40px;
+  margin: 0 auto;
 }
 
 .MuiButton-root {
