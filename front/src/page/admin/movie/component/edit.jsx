@@ -543,14 +543,21 @@ export default function MovieEdit() {
                 <input
                   css={inputStyle}
                   type="number"
-                  placeholder="할인금액"
+                  placeholder="할인율"
                   value={dvdDiscount}
-                  onChange={(e) => setDvdDiscount(e.target.value)}
+                  onChange={(e) => {
+                    // 1~100 사이로 제한
+                    let value = e.target.value.replace(/[^0-9]/g, "")
+                    if (value === "") value = ""
+                    else if (Number(value) < 1) value = "1"
+                    else if (Number(value) > 100) value = "100"
+                    setDvdDiscount(value)
+                  }}
                   style={{ marginLeft: 8, width: 120 }}
-                  min={0}
-                  max={32767} // 컬럼 타입에 맞게 수정
+                  min={1}
+                  max={100}
                 />{" "}
-                원
+                %
                 <input
                   css={inputStyle}
                   type="date"

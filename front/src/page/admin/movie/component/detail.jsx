@@ -73,6 +73,9 @@ export default function MovieDetail() {
         <DetailRow label="DVD 가격">
           {movie.dvdPrice ? `${movie.dvdPrice.toLocaleString()} 원` : ""}
         </DetailRow>
+        <DetailRow label="DVD 할인율">
+          {movie.dvdDiscount != null && movie.dvdDiscount !== "" ? `${movie.dvdDiscount}%` : ""}
+        </DetailRow>
         <DetailRow label="DVD 판매기간">
           {movie.dvdDateFrom && movie.dvdDateTo ? `${movie.dvdDateFrom} ~ ${movie.dvdDateTo}` : ""}
         </DetailRow>
