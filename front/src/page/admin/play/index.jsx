@@ -36,9 +36,9 @@ export default function Play() {
   const [moviePage, setMoviePage] = useState(1)
   const [selectedMovieInfo, setSelectedMovieInfo] = useState(null)
 
-  // 가격/할인가 입력 상태
+  // 가격/할인율 입력 상태
   const [price, setPrice] = useState("")
-  const [discount, setDiscount] = useState("")
+  const [discount, setDiscount] = useState("") // 할인율(%)로 사용
 
   // 크리에이터 목록 상태
   const [creatorList, setCreatorList] = useState([])
@@ -245,7 +245,7 @@ export default function Play() {
           startHour: selectedHourArr[0],
           endHour: selectedHourArr[selectedHourArr.length - 1] + 1,
           price: Number(price),
-          discount: discount ? Number(discount) : null,
+          discount: discount ? Number(discount) : null, // 할인율(%)로 저장
           movieCode: selectedMovieInfo.movieCode,
         }
         await createSchedule(payload)
@@ -314,15 +314,25 @@ export default function Play() {
                     onChange={(e) => setPrice(e.target.value)}
                   />
                 </td>
-                <th css={thStyle}>할인가격</th>
+                <th css={thStyle}>할인율</th>
                 <td>
                   <input
                     css={inputStyle}
                     type="number"
-                    placeholder="할인가격"
+                    placeholder="할인율(%)"
                     value={discount}
-                    onChange={(e) => setDiscount(e.target.value)}
-                  />
+                    min={1}
+                    max={100}
+                    onChange={(e) => {
+                      // 1~100 사이만 허용
+                      let value = e.target.value.replace(/[^0-9]/g, "")
+                      if (value === "") value = ""
+                      else if (Number(value) < 1) value = "1"
+                      else if (Number(value) > 100) value = "100"
+                      setDiscount(value)
+                    }}
+                  />{" "}
+                  %
                 </td>
               </tr>
               <tr>

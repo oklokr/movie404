@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { fetchMovieList } from "@/api/admin"
 import { css } from "@emotion/react"
-import { useNavigate, useLocation } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router"
 
 const PAGE_SIZE = 10
 
