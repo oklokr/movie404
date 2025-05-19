@@ -17,6 +17,7 @@ import Paper from "@mui/material/Paper"
 import { selectOrderList } from "@/api/admin"
 import { selectUser } from "@/store/selectors"
 import { useSelector } from "react-redux"
+import * as PortOne from "@portone/browser-sdk/v2"
 
 let userid = ""
 function OrderListMenu(props) {
@@ -94,8 +95,48 @@ function OrderList() {
     </>
   )
 }
+function requestIssueBillingKey() {
+  PortOne.requestIssueBillingKey({
+    storeId: "store-56e4a946-8aac-456d-a3f9-5d7749040500", // 고객사 storeId로 변경해주세요.
+    channelKey: "channel-key-b703b5fa-ca19-4e5e-91d6-a2ba75a95574", // 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키를 입력해주세요.
+    billingKeyMethod: "CARD",
+    issueId: "test-issueId",
+    issueName: "test-issueName",
+    customer: {
+      fullName: "포트원",
+      phoneNumber: "010-0000-1234",
+      email: "test@portone.io",
+    },
+  })
+}
 
+function requestPayment() {
+  PortOne.requestPayment({
+    storeId: "store-56e4a946-8aac-456d-a3f9-5d7749040500", // 고객사 storeId로 변경해주세요.
+    channelKey: "channel-key-33088424-0132-4b0d-b1fe-b1a8cfc8f071", // 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키를 입력해주세요.
+    paymentId: `payment${crypto.randomUUID()}`,
+    orderName: "나이키 와플 트레이너 2 SD",
+    totalAmount: 1000,
+    currency: "CURRENCY_KRW",
+    payMethod: "CARD",
+    customer: {
+      fullName: "포트원",
+      phoneNumber: "010-0000-1234",
+      email: "test@portone.io",
+    },
+  })
+}
+function test() {
+  PortOne.requestIdentityVerification({
+    // 고객사 storeId로 변경해주세요.
+    storeId: "store-56e4a946-8aac-456d-a3f9-5d7749040500",
+    identityVerificationId: `identity-verification-${crypto.randomUUID()}`,
+    // 연동 정보 메뉴의 채널 관리 탭에서 확인 가능합니다.
+    channelKey: "channel-key-33088424-0132-4b0d-b1fe-b1a8cfc8f071",
+  })
+}
 function Payment() {
+  test()
   return (
     <>
       <h1>카드관리</h1>
