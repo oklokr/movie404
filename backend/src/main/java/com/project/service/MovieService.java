@@ -17,13 +17,19 @@ public class MovieService {
         this.movieMapper = movieMapper;
     }
 
-    public Map<String, Object> getMovieList(String movieName, int page, int size) {
+    public Map<String, Object> getMovieList(
+        String genreTpcd,   // nullable
+        String keyword,     // nullable
+        String schedule,
+        int page,
+        int size
+    ) {
         int offset = (page - 1) * size;
-        List<MovieDto> list = movieMapper.selectMovieList(movieName, offset, size);
-        int total = movieMapper.countMovieList(movieName);
+        List<MovieDto> list = movieMapper.selectMovieList(genreTpcd, keyword, schedule, offset, size);
+        int total = movieMapper.countMovieList(genreTpcd, keyword, schedule);
 
         Map<String, Object> result = new HashMap<>();
-        result.put("list", list);
+        result.put("list",  list);
         result.put("total", total);
         return result;
     }

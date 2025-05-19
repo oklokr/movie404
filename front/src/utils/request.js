@@ -105,6 +105,7 @@ serviceInterceptors.interceptors.response.use(
   },
   (error) => {
     if (error.status === 401) {
+      document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0; path=/"
       console.log("로그인이 필요한 서비스입니다")
       window.location.href = "/login"
     }

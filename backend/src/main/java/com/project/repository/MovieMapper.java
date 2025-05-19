@@ -13,8 +13,18 @@ import java.util.Map;
 
 @Mapper
 public interface MovieMapper {
-    List<MovieDto> selectMovieList(@Param("movieName") String movieName, @Param("offset") int offset, @Param("size") int size);
-    int countMovieList(@Param("movieName") String movieName);
+    List<MovieDto> selectMovieList(
+        @Param("genreTpcd") String genreTpcd,
+        @Param("keyword")   String keyword,
+        @Param("schedule")  String schedule, // "1"|"0"|null
+        @Param("offset")    int offset,
+        @Param("size")      int size
+    );
+    int countMovieList(
+        @Param("genreTpcd") String genreTpcd,
+        @Param("keyword")   String keyword,
+        @Param("schedule")  String schedule
+    );
     MovieDto selectMovieDetail(@Param("movieCode") String movieCode);
 
     List<Map<String, Object>> selectGenreList();

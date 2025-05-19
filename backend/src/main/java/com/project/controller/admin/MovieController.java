@@ -20,11 +20,13 @@ public class MovieController {
 
     @GetMapping
     public Map<String, Object> getMovieList(
-            @RequestParam(name = "movieName", required = false) String movieName,
-            @RequestParam(name = "page", defaultValue = "1") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size
+        @RequestParam(name = "genreTpcd", required = false) String genreTpcd,
+        @RequestParam(name = "movieName", required = false) String movieName,
+        @RequestParam(name = "schedule",  required = false) String schedule,
+        @RequestParam(name = "page",      defaultValue = "1")  int page,
+        @RequestParam(name = "size",      defaultValue = "10") int size
     ) {
-        return movieService.getMovieList(movieName, page, size);
+        return movieService.getMovieList(genreTpcd, movieName, schedule, page, size);
     }
 
     @GetMapping("/{movieCode}")

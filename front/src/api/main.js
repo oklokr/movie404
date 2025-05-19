@@ -1,9 +1,8 @@
 import request from "@/utils/request"
 
-export function mypageLoginInfo(data) {
-  console.log("test")
+export function mainGetMovieList(data) {
   return request({
-    url: "/api/login",
+    url: "/api/main/movieList",
     method: "post",
     data,
   })
