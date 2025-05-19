@@ -7,47 +7,78 @@ import { Swiper, SwiperSlide } from "swiper/react"
 import { Navigation } from "swiper/modules"
 
 import logoImg from "@/assets/images/logo/logo2.png"
-import icoUser from "@/assets/images/icon/ico_user.png"
-import icoSearch from "@/assets/images/icon/ico_search.png"
 
 import SearchIcon from "@mui/icons-material/Search"
+import PermIdentityIcon from "@mui/icons-material/PermIdentity"
+import SearchForm from "./component/searchForm"
+import { useState } from "react"
 
 export default function Header() {
   const { code } = useCommon()
+  const [searchState, setSearchState] = useState(false)
+  const [openSearch, setOpenSearch] = useState(false)
   const genreTpcd = code.GENRE_TPCD
+  const gnbMenu = []
+  for (let i = 0; i < genreTpcd.length; i += 10) {
+    gnbMenu.push(genreTpcd.slice(i, i + 10))
+  }
 
-  console.log(genreTpcd)
+  const handleOepnSearch = () => {
+    setSearchState(!searchState)
+    if (!openSearch) {
+      setOpenSearch(true)
+    } else {
+      setTimeout(() => {
+        setOpenSearch(false)
+      }, 200)
+    }
+  }
 
   return (
-    <div className="header" css={headerStyle}>
-      <h1 className="logo">
-        <a href="/main">
-          <span>Not404 Cinema</span>
-        </a>
-      </h1>
-      <Swiper navigation={true} modules={[Navigation]} className="gnb">
-        {genreTpcd.map((item) => (
-          <SwiperSlide key={item.commonValue}>
-            <Button>{item.commonName}</Button>
-          </SwiperSlide>
-        ))}
-      </Swiper>
-      <ul className="user-btns">
-        <li>
-          <Button className="search">검색</Button>
-        </li>
-        <li>
-          <Button className="user">사용자</Button>
-        </li>
-      </ul>
-    </div>
+    <header css={headerWrap}>
+      <div className="header" css={headerStyle}>
+        <h1 className="logo">
+          <a href="/main">
+            <span>Not404 Cinema</span>
+          </a>
+        </h1>
+        <Swiper navigation={true} modules={[Navigation]} spaceBetween={40} className="gnb">
+          {gnbMenu.map((wrap, idx) => (
+            <SwiperSlide key={idx}>
+              {wrap.map((item) => (
+                <Button key={item.commonValue}>{item.commonName}</Button>
+              ))}
+            </SwiperSlide>
+          ))}
+        </Swiper>
+
+        {openSearch && <SearchForm state={searchState} fn_HandleOepnSearch={handleOepnSearch} />}
+
+        <ul className="user-btns">
+          <li>
+            <IconButton aria-label="search" className="search" onClick={() => handleOepnSearch()}>
+              <SearchIcon />
+            </IconButton>
+          </li>
+          <li>
+            <IconButton aria-label="user" className="user">
+              <PermIdentityIcon />
+            </IconButton>
+          </li>
+        </ul>
+      </div>
+    </header>
   )
 }
-
+const headerWrap = css`
+  position: relative;
+`
 const headerStyle = css`
   display: flex;
+  align-items: center;
+  position: sticky;
   .logo {
-    flex: 1;
+    margin: 0;
     a {
       display: block;
       width: 88px;
@@ -65,38 +96,47 @@ const headerStyle = css`
     }
   }
 
+  .gnb {
+    max-width: 760px;
+    padding: 0 40px;
+    .swiper-button-prev,
+    .swiper-button-next {
+      --swiper-navigation-size: 20px;
+
+      &.swiper-button-disabled {
+        display: none;
+      }
+    }
+    .swiper-slide {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .MuiButton-text {
+      color: #212529;
+      &:hover {
+        color: #007aff;
+      }
+    }
+  }
+
   .user-btns {
     display: flex;
     align-items: center;
+    width: 88px;
     list-style: none;
-    width: 104px;
-    flex: 1;
-    margin: 0;
+    gap: 24px;
+    margin: 0 0 0 auto;
     padding: 0;
 
     .search,
     .user {
-      text-indent: -9999px;
-      color: transparent;
-      position: relative;
-    }
+      padding: 0;
 
-    .search:before {
-      content: "";
-      width: 32px;
-      height: 32px;
-      background: url(${icoSearch});
-      background-size: 100%;
+      svg {
+        width: 32px;
+        height: 32px;
+      }
     }
-    .user:before {
-      content: "";
-      width: 32px;
-      height: 32px;
-      background: url(${icoUser});
-      background-size: 100%;
-    }
-  }
-  .gnb {
-    height: 100%;
   }
 `
