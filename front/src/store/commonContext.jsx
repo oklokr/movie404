@@ -17,7 +17,7 @@ export const CommonProvider = ({ children }) => {
       ;(async () => {
         try {
           const { code, data, message } = await commonCodeList()
-          if (resCode !== 200) throw new Error(message)
+          if (code !== 200) throw new Error(message)
           localStorage.setItem("commonCode", JSON.stringify(data))
           setCode(data)
         } catch (e) {
