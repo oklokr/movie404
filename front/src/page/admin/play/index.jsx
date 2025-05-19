@@ -36,12 +36,15 @@ export default function Play() {
   const [moviePage, setMoviePage] = useState(1)
   const [selectedMovieInfo, setSelectedMovieInfo] = useState(null)
 
-  // 가격/할인가 입력 상태
+  // 가격/할인율 입력 상태
   const [price, setPrice] = useState("")
-  const [discount, setDiscount] = useState("")
+  const [discount, setDiscount] = useState("") // 할인율(%)로 사용
 
   // 크리에이터 목록 상태
   const [creatorList, setCreatorList] = useState([])
+
+  // 최종 등록 확인 모달 상태
+  const [confirmApplyOpen, setConfirmApplyOpen] = useState(false)
 
   // 예약된 시간대 조회 함수
   const fetchReserved = async (date, theaters) => {
@@ -198,6 +201,19 @@ export default function Play() {
   const totalPages = Math.ceil(movieTotal / PAGE_SIZE)
   const pagedMovies = movieList
 
+  // 페이지네이션 블록 처리 (10개씩)
+  const PAGINATION_BLOCK = 10
+  const currentBlock = Math.floor((moviePage - 1) / PAGINATION_BLOCK)
+  const startPage = currentBlock * PAGINATION_BLOCK + 1
+  const endPage = Math.min(startPage + PAGINATION_BLOCK - 1, totalPages)
+
+  const handlePrevBlock = () => {
+    if (startPage > 1) setMoviePage(startPage - 1)
+  }
+  const handleNextBlock = () => {
+    if (endPage < totalPages) setMoviePage(endPage + 1)
+  }
+
   // 예약된 시간대 버튼 스타일 적용
   const hourBtn = (selected, reserved) => css`
     width: 38px;
@@ -218,19 +234,8 @@ export default function Play() {
 
   // Step2 화면
   if (step === 2 && goStep2) {
-    const handleApply = async () => {
-      if (!selectedMovieInfo) {
-        alert("영화를 등록해주세요.")
-        return
-      }
-      if (!price) {
-        alert("가격을 입력해주세요.")
-        return
-      }
-      if (selectedHourArr.length < 2) {
-        alert("상영 시간을 2시간 이상 선택해주세요.")
-        return
-      }
+    // 실제 등록 함수
+    const doApply = async () => {
       try {
         const selectedTheaterObj = theaters.find((t) => t.id === selectedTheater)
         const payload = {
@@ -238,9 +243,9 @@ export default function Play() {
           theaterName: selectedTheaterObj.name,
           runDate: selectedDate,
           startHour: selectedHourArr[0],
-          endHour: selectedHourArr[selectedHourArr.length - 1],
+          endHour: selectedHourArr[selectedHourArr.length - 1] + 1,
           price: Number(price),
-          discount: discount ? Number(discount) : null,
+          discount: discount ? Number(discount) : null, // 할인율(%)로 저장
           movieCode: selectedMovieInfo.movieCode,
         }
         await createSchedule(payload)
@@ -254,6 +259,23 @@ export default function Play() {
       } catch (err) {
         alert("저장에 실패했습니다.\n" + (err?.message || err))
       }
+    }
+
+    // 적용 버튼 클릭 시
+    const handleApply = () => {
+      if (!selectedMovieInfo) {
+        alert("영화를 등록해주세요.")
+        return
+      }
+      if (!price) {
+        alert("가격을 입력해주세요.")
+        return
+      }
+      if (selectedHourArr.length < 2) {
+        alert("상영 시간을 2시간 이상 선택해주세요.")
+        return
+      }
+      setConfirmApplyOpen(true)
     }
 
     return (
@@ -292,15 +314,25 @@ export default function Play() {
                     onChange={(e) => setPrice(e.target.value)}
                   />
                 </td>
-                <th css={thStyle}>할인가격</th>
+                <th css={thStyle}>할인율</th>
                 <td>
                   <input
                     css={inputStyle}
                     type="number"
-                    placeholder="할인가격"
+                    placeholder="할인율(%)"
                     value={discount}
-                    onChange={(e) => setDiscount(e.target.value)}
-                  />
+                    min={1}
+                    max={100}
+                    onChange={(e) => {
+                      // 1~100 사이만 허용
+                      let value = e.target.value.replace(/[^0-9]/g, "")
+                      if (value === "") value = ""
+                      else if (Number(value) < 1) value = "1"
+                      else if (Number(value) > 100) value = "100"
+                      setDiscount(value)
+                    }}
+                  />{" "}
+                  %
                 </td>
               </tr>
               <tr>
@@ -326,7 +358,7 @@ export default function Play() {
                         제목 :{" "}
                         {selectedMovieInfo ? selectedMovieInfo.movieName : "영화를 등록해주세요."}
                       </div>
-                      <div>
+                      <div css={movieInfoText}>
                         설명 :{" "}
                         {selectedMovieInfo
                           ? selectedMovieInfo.synopsis || "-"
@@ -387,6 +419,28 @@ export default function Play() {
             적용
           </button>
         </div>
+        {/* 최종 등록 확인 모달 */}
+        {confirmApplyOpen && (
+          <div css={modalOverlay}>
+            <div css={modalBox}>
+              <div css={modalMsg}>정말로 상영스케줄을 등록하시겠습니까?</div>
+              <div css={modalBtnWrap}>
+                <button
+                  css={modalBtn}
+                  onClick={() => {
+                    setConfirmApplyOpen(false)
+                    doApply()
+                  }}
+                >
+                  확인
+                </button>
+                <button css={modalBtnCancel} onClick={() => setConfirmApplyOpen(false)}>
+                  취소
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         {movieModalOpen && (
           <div css={modalOverlay}>
             <div css={movieModalBox}>
@@ -455,20 +509,34 @@ export default function Play() {
                   </table>
                 </div>
                 <div css={movieModalPaging}>
-                  {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    css={movieModalPageBtn}
+                    disabled={startPage === 1}
+                    onClick={handlePrevBlock}
+                  >
+                    &lt;
+                  </button>
+                  {Array.from({ length: endPage - startPage + 1 }, (_, i) => (
                     <button
-                      key={i + 1}
+                      key={startPage + i}
                       css={movieModalPageBtn}
                       style={{
-                        background: moviePage === i + 1 ? "#ff9800" : "#fff",
-                        color: moviePage === i + 1 ? "#fff" : "#888",
-                        fontWeight: moviePage === i + 1 ? 700 : 400,
+                        background: moviePage === startPage + i ? "#ff9800" : "#fff",
+                        color: moviePage === startPage + i ? "#fff" : "#888",
+                        fontWeight: moviePage === startPage + i ? 700 : 400,
                       }}
-                      onClick={() => setMoviePage(i + 1)}
+                      onClick={() => setMoviePage(startPage + i)}
                     >
-                      {i + 1}
+                      {startPage + i}
                     </button>
                   ))}
+                  <button
+                    css={movieModalPageBtn}
+                    disabled={endPage === totalPages}
+                    onClick={handleNextBlock}
+                  >
+                    &gt;
+                  </button>
                 </div>
                 <div css={movieModalFooter}>
                   <button css={movieModalCancelBtn} onClick={() => setMovieModalOpen(false)}>
@@ -833,8 +901,12 @@ const thStyle = css`
 `
 const movieInfoBox = css`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 18px;
+  min-height: 100px;
+  /* 버튼이 항상 오른쪽에 가로로 나오도록 */
+  width: 100%;
+  position: relative;
 `
 const moviePosterBox = css`
   width: 80px;
@@ -842,9 +914,26 @@ const moviePosterBox = css`
   background: #e0e0e0;
   border-radius: 6px;
   margin-right: 12px;
+  flex-shrink: 0; // 사진 크기 고정
+  overflow: hidden; // 혹시 모를 오버플로 방지
+`
+const movieInfoText = css`
+  max-width: 340px;
+  max-height: 100px;
+  overflow: auto;
+  white-space: pre-line;
+  word-break: break-all;
+  font-size: 15px;
+  margin: 6px 0 8px 0;
+  padding: 8px 12px;
+  background: #fafbfc;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  color: #333;
 `
 const movieRegBtn = css`
-  margin-left: 24px;
+  margin-left: auto;
+  align-self: flex-start;
   padding: 8px 18px;
   border: none;
   border-radius: 4px;
@@ -854,6 +943,11 @@ const movieRegBtn = css`
   font-size: 15px;
   cursor: pointer;
   transition: background 0.2s;
+  min-width: 60px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   &:hover {
     background: #ff9800;
     color: #fff;

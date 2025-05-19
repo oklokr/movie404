@@ -54,24 +54,64 @@ function UserSet() {
     const userinfo = {
       id: "",
       adult: "",
+      lang: "",
+      dateformat: "",
       savehistory: "",
-      //terms: [],
+    }
+    const userchange = {
+      id: "",
+      adult: "",
+      lang: "",
+      dateformat: "",
+      savehistory: "",
     }
     userinfo.id = state.info.userId
     userinfo.adult = state.info.viewAdult
+    userinfo.dateformat = state.info.dateTpcd
     userinfo.savehistory = state.info.saveHistory
-    //userinfo.terms = state.info.terms
+    function SaveEventHandler(e) {
+      if (userchange.adult != "") userinfo.adult = userchange.adult
+      if (userchange.lang != "") userinfo.lang = userchange.lang
+      if (userchange.dateformat != "") userinfo.dateformat = userchange.dateformat
+      if (userchange.savehistory != "") userinfo.savehistory = userchange.savehistory
+      alert(
+        userinfo.adult +
+          "//" +
+          userinfo.lang +
+          "//" +
+          userinfo.dateformat +
+          "//" +
+          userinfo.savehistory,
+      )
+    }
 
+    function handleChangeLang(e) {
+      if (e.target.value == "eng") userchange.lang = "1"
+      else userchange.lang = "2"
+    }
+    function handleChangeDateFormat(e) {
+      if (e.target.value == "YMD") userchange.dateformat = "1"
+      else userchange.dateformat = "2"
+    }
+    function handleChangeAdult(e) {
+      if (e.target.checked == true) {
+        userchange.adult = "Y"
+      } else userchange.adult = "N"
+    }
+    function handleChangeHistory(e) {
+      if (e.target.checked == true) {
+        userchange.savehistory = "Y"
+      } else userchange.savehistory = "N"
+    }
     return (
       <>
         <h1>기본설정</h1>
-
         <div className="input-form">
           <InputLabel>언어설정 </InputLabel>
           <div>
             <TextField
               id="outlined-select-currency-native"
-              //onChange={handleSelectEmail}
+              onChange={handleChangeLang}
               select
               slotProps={{
                 select: {
@@ -92,7 +132,8 @@ function UserSet() {
           <div>
             <TextField
               id="outlined-select-currency-native"
-              //onChange={handleSelectEmail}
+              onChange={handleChangeDateFormat}
+              defaultValue={userinfo.dateformat == "1" ? dateformat[0].label : dateformat[1].label}
               select
               slotProps={{
                 select: {
@@ -113,17 +154,30 @@ function UserSet() {
 
           <FormGroup>
             {userinfo.adult == "N" ? (
-              <FormControlLabel control={<Checkbox />} label="성인 컨텐츠 노출" />
+              <FormControlLabel
+                control={<Checkbox onClick={handleChangeAdult} />}
+                label="성인 컨텐츠 노출"
+              />
             ) : (
-              <FormControlLabel control={<Checkbox defaultChecked />} label="성인 컨텐츠 노출" />
+              <FormControlLabel
+                control={<Checkbox defaultChecked onClick={handleChangeAdult} />}
+                label="성인 컨텐츠 노출"
+              />
             )}
             {userinfo.savehistory == "N" ? (
-              <FormControlLabel control={<Checkbox />} label="검색 기록 저장" />
+              <FormControlLabel
+                control={<Checkbox onClick={handleChangeHistory} />}
+                label="검색 기록 저장"
+              />
             ) : (
-              <FormControlLabel control={<Checkbox defaultChecked />} label="검색 기록 저장" />
+              <FormControlLabel
+                control={<Checkbox defaultChecked onClick={handleChangeHistory} />}
+                label="검색 기록 저장"
+              />
             )}
           </FormGroup>
         </div>
+
         <div className="input-form">
           <InputLabel>성인인증 </InputLabel>
           <TextField
@@ -135,13 +189,13 @@ function UserSet() {
           />
           <Button variant="contained">인증요청</Button>
         </div>
-
-        <Button variant="contained">저장</Button>
+        <Button variant="contained" onClick={SaveEventHandler}>
+          저장
+        </Button>
       </>
     )
   }
 }
-const cssWidth = { width: "100%" }
 
 const Leftbtn = {
   "font-size": "1.3rem",

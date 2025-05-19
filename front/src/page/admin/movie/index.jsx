@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { fetchMovieList } from "@/api/admin"
 import { css } from "@emotion/react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router"
 
 const PAGE_SIZE = 10
 
@@ -9,8 +9,13 @@ export default function Movie() {
   const [list, setList] = useState([])
   const [movieName, setMovieName] = useState("")
   const [total, setTotal] = useState(0)
-  const [page, setPage] = useState(1)
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // 쿼리스트링에서 page 읽기
+  const params = new URLSearchParams(location.search)
+  const initialPage = parseInt(params.get("page") || "1", 10)
+  const [page, setPage] = useState(initialPage)
 
   const getList = async (name = "", pageNum = 1) => {
     const res = await fetchMovieList({ movieName: name, page: pageNum, size: PAGE_SIZE })
@@ -24,12 +29,26 @@ export default function Movie() {
     // eslint-disable-next-line
   }, [page])
 
+  // page 변경 시 쿼리스트링도 변경
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    if (page !== parseInt(params.get("page") || "1", 10)) {
+      params.set("page", String(page))
+      navigate({ search: params.toString() }, { replace: true })
+    }
+    // eslint-disable-next-line
+  }, [page])
+
   const handleSearch = () => {
     setPage(1)
     getList(movieName, 1)
   }
 
   const totalPages = Math.ceil(total / PAGE_SIZE)
+  const pageGroupSize = 10
+  const groupIndex = Math.floor((page - 1) / pageGroupSize)
+  const groupStart = groupIndex * pageGroupSize + 1
+  const groupEnd = Math.min(groupStart + pageGroupSize - 1, totalPages)
 
   return (
     <div>
@@ -53,7 +72,7 @@ export default function Movie() {
         <button
           css={registerBtn}
           style={{ float: "right" }}
-          onClick={() => navigate("/admin/movie/edit")}
+          onClick={() => navigate("/admin/movie/edit?page=" + page)}
         >
           등록
         </button>
@@ -64,7 +83,7 @@ export default function Movie() {
           <dt>영화명</dt>
           <dt>포스터</dt>
           <dt>DVD 금액</dt>
-          <dt>DVD 할인금액</dt>
+          <dt>DVD 할인율</dt> {/* 여기만 "할인율"로 변경 */}
         </dl>
         {list.length === 0 ? (
           <div css={emptyRow}>영화가 없습니다.</div>
@@ -73,7 +92,7 @@ export default function Movie() {
             <dl
               css={listRow}
               key={row.movieCode}
-              onClick={() => navigate(`/admin/movie/${row.movieCode}`)}
+              onClick={() => navigate(`/admin/movie/${row.movieCode}?page=${page}`)}
               style={{ cursor: "pointer" }}
             >
               <dd>{row.movieCode}</dd>
@@ -112,29 +131,25 @@ export default function Movie() {
                 )}
               </dd>
               <dd>{row.dvdPrice?.toLocaleString()} 원</dd>
-              <dd>{row.dvdDiscount?.toLocaleString()} 원</dd>
+              <dd>
+                {row.dvdDiscount != null ? `${row.dvdDiscount}%` : "-"}
+                {/* 할인율로 표기, 값이 없으면 "-" */}
+              </dd>
             </dl>
           ))
         )}
       </div>
       {totalPages > 1 && (
         <div css={paginationStyle}>
-          <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
+          <button onClick={() => setPage(groupStart - 1)} disabled={groupStart === 1}>
             &lt;
           </button>
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i + 1}
-              className={page === i + 1 ? "active" : ""}
-              onClick={() => setPage(i + 1)}
-            >
-              {i + 1}
+          {Array.from({ length: groupEnd - groupStart + 1 }, (_, i) => groupStart + i).map((p) => (
+            <button key={p} className={page === p ? "active" : ""} onClick={() => setPage(p)}>
+              {p}
             </button>
           ))}
-          <button
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-          >
+          <button onClick={() => setPage(groupEnd + 1)} disabled={groupEnd === totalPages}>
             &gt;
           </button>
         </div>

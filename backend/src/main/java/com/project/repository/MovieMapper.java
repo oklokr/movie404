@@ -36,6 +36,8 @@ public interface MovieMapper {
                @Param("startDate") String startDate,
                @Param("endDate") String endDate,
                @Param("discount") int discount);
+               
+    MovieDto selectUserVod(String id);
     void insertRunSchedule(Map<String, Object> param);
     List<Map<String, Object>> selectRunScheduleList(@Param("runDate") String runDate, @Param("theaterCode") String theaterCode);
 

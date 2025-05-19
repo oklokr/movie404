@@ -32,6 +32,9 @@ function mypage() {
   const [Email, setEmail] = useState("")
   const [PW, setPW] = useState("")
   const [RPW, setRPW] = useState("")
+  const [termA, setTermA] = useState("")
+  const [termB, setTermB] = useState("")
+  const [termC, setTermC] = useState("")
 
   function handlePath(e) {
     if (e.target.id == "1") setPath("1")
@@ -110,11 +113,11 @@ function mypage() {
           ) : path == "4" && subpath_orderlist == "2" ? (
             <Payment />
           ) : path == "5" && subpath_terms == "1" ? (
-            <TermsA />
+            <TermsA termA={termA} setTermA={setTermA} />
           ) : path == "5" && subpath_terms == "2" ? (
-            <TermsB />
+            <TermsB termB={termB} setTermB={setTermB} />
           ) : path == "5" && subpath_terms == "3" ? (
-            <TermsC />
+            <TermsC termC={termC} setTermC={setTermC} />
           ) : (
             <></>
           )}

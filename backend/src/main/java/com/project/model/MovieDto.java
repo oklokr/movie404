@@ -19,7 +19,7 @@ public class MovieDto {
     private String actorCodeD;
     private String actorCodeE;
     private String synopsis;
-    private String runtime;      // "HH:mm:ss" 형식 문자열로 받음
+    private Integer runtime;        // 분 단위 정수로 받음
     private String ratingTpcd;
     private String movieRelease; // "yyyy-MM-dd"
     private String poster;

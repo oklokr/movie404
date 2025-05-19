@@ -18,12 +18,26 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
 import { useSelector } from "react-redux"
 import { selectUser } from "@/store/selectors"
+import { updateUserTerms } from "@/api/admin"
 
 const userinfo = {
   id: "",
   adult: "",
   savehistory: "",
-  terms: [],
+  terms: "",
+}
+
+const updateTerms = () => {
+  alert(userinfo.terms + userinfo.id)
+  updateUserTerms({
+    id: userinfo.id,
+    terms: userinfo.terms,
+  }).then((res) => {
+    if (res.code === 200) {
+      alert("성공적으로 저장되었습니다.")
+      userinfo.terms = res.data.terms
+    }
+  })
 }
 
 function TermsMenu(props) {
@@ -58,6 +72,23 @@ function TermsMenu(props) {
 }
 
 function TermsA() {
+  function TermsASaveEvent(e) {
+    if (userinfo.terms[0] == "0") {
+      alert("동의하지 않으실 경우 서비스 이용이 불가합니다.")
+    } else {
+      updateTerms()
+    }
+  }
+
+  function TermsAChangeEvent(e) {
+    if (e.target.value == 0) {
+      alert("필수약관으로 동의하지 않을 경우 서비스 이용이 불가합니다.")
+    }
+    var terms = userinfo.terms.substring(1, userinfo.terms.length)
+    terms = e.target.value + terms
+    userinfo.terms = terms
+  }
+
   return (
     <>
       <div>
@@ -121,21 +152,40 @@ function TermsA() {
             aria-labelledby="demo-row-radio-buttons-group-label"
             name="row-radio-buttons-group"
             css={cssJust}
-            value={userinfo.terms[0] == "1" ? 1 : 0}
-
-            //  onChange={handleTermA}
+            defaultValue={userinfo.terms[0] == "1" ? 1 : 0}
+            onChange={TermsAChangeEvent}
           >
             <FormControlLabel value="0" control={<Radio />} label="동의하지 않음" />
             <FormControlLabel value="1" control={<Radio />} label="동의함" />
           </RadioGroup>
         </FormControl>
 
-        <Button variant="contained">저장</Button>
+        <Button variant="contained" onClick={TermsASaveEvent}>
+          저장
+        </Button>
       </div>
     </>
   )
 }
 function TermsB() {
+  function TermsBSaveEvent(e) {
+    if (userinfo.terms[1] == "0") {
+      alert("동의하지 않으실 경우 서비스 이용이 불가합니다.")
+    } else {
+      updateTerms()
+    }
+  }
+
+  function TermsBChangeEvent(e) {
+    if (e.target.value == 0) {
+      alert("필수약관으로 동의하지 않을 경우 서비스 이용이 불가합니다.")
+    }
+    var terms =
+      userinfo.terms.substring(0, 1) +
+      e.target.value +
+      userinfo.terms.substring(2, userinfo.terms.length)
+    userinfo.terms = terms
+  }
   return (
     <>
       <div>
@@ -195,21 +245,34 @@ function TermsB() {
             aria-labelledby="demo-row-radio-buttons-group-label"
             name="row-radio-buttons-group"
             css={cssJust}
-            value={userinfo.terms[1] == "1" ? 1 : 0}
-            // onChange={handleTermA}
+            defaultValue={userinfo.terms[1] == "1" ? 1 : 0}
+            onChange={TermsBChangeEvent}
           >
             <FormControlLabel value="0" control={<Radio />} label="동의하지 않음" />
             <FormControlLabel value="1" control={<Radio />} label="동의함" />
           </RadioGroup>
         </FormControl>
 
-        <Button variant="contained">저장</Button>
+        <Button variant="contained" onClick={TermsBSaveEvent}>
+          저장
+        </Button>
       </div>
     </>
   )
 }
 
-function TermsC() {
+function TermsC(props) {
+  function TermsCSaveEvent(e) {
+    updateTerms()
+  }
+
+  function TermsCChangeEvent(e) {
+    var terms =
+      userinfo.terms.substring(0, 2) +
+      e.target.value +
+      userinfo.terms.substring(3, userinfo.terms.length)
+    userinfo.terms = terms
+  }
   return (
     <>
       <div>
@@ -235,16 +298,17 @@ function TermsC() {
             aria-labelledby="demo-row-radio-buttons-group-label"
             name="row-radio-buttons-group"
             css={cssJust}
-            value={userinfo.terms[2] == "1" ? 1 : 0}
-
-            // onChange={handleTermA}
+            defaultValue={userinfo.terms[2] == "1" ? 1 : 0}
+            onChange={TermsCChangeEvent}
           >
             <FormControlLabel value="0" control={<Radio />} label="동의하지 않음" />
             <FormControlLabel value="1" control={<Radio />} label="동의함" />
           </RadioGroup>
         </FormControl>
 
-        <Button variant="contained">저장</Button>
+        <Button variant="contained" onClick={TermsCSaveEvent}>
+          저장
+        </Button>
       </div>
     </>
   )
@@ -252,7 +316,6 @@ function TermsC() {
 
 const cssJust = { "justify-content": "right" }
 const cssWidth = { width: "100%" }
-const cssAlign = { float: "right" }
 const cssAccordion = { "max-height": "400px", "overflow-y": "scroll" }
 const Leftbtn = {
   "font-size": "1.3rem",
