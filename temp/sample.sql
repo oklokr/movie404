@@ -107,31 +107,13 @@ select * from creator where `CREATOR_CODE`="60279"
 select * from vod;
 select * from members;
 
-select * from order_history;
-select mv.`POSTER`, mv.`MOVIE_NAME`, mv.`SYNOPSIS`, 
-wh.`WATCH_DATE`, wh.`WATCH_TIME`, ca.`CREATOR_NAME` as director,cb.`CREATOR_NAME` as actora, cc.`CREATOR_NAME` as actorb, cd.`CREATOR_NAME` as actorc
-from members m 
-left join order_history oh on oh.`MOVIE_CODE`=`MOVIE_CODE`
-left join movie mv on mv.`MOVIE_CODE`= oh.`MOVIE_CODE`
-left join watch_history wh on m.`USER_ID`=wh.`USER_ID` and wh.`MOVIE_CODE`=mv.`MOVIE_CODE`
-left join creator ca on mv.`DIRECT_CODEA`=ca.`CREATOR_CODE`
-left join creator cb on mv.`ACTOR_CODEA`=cb.`CREATOR_CODE`
-left join creator cc on mv.`ACTOR_CODEB`=cc.`CREATOR_CODE`
-left join creator cd on mv.`ACTOR_CODEC`=cd.`CREATOR_CODE`
-where m.`USER_ID`="user"
-;
+select ORDER_CODE, MOVIE_NAME, PRICE, ORDER_DATE, CARD_NUM 
+from order_history oh, movie m 
+where `USER_ID`="user" and oh.`MOVIE_CODE`=m.`MOVIE_CODE`;
 
-  select mv.`POSTER` as poster, mv.`MOVIE_NAME` as movieName, mv.`SYNOPSIS`as synopsis, 
-wh.`WATCH_DATE` as watchdate, wh.`WATCH_TIME` as watchtime, ca.`CREATOR_NAME` as directorA,
-cb.`CREATOR_NAME` as actorA, cc.`CREATOR_NAME` as actorB, cd.`CREATOR_NAME` as actorC
-from members m 
-left join order_history oh on oh.`MOVIE_CODE`=`MOVIE_CODE`
-left join movie mv on mv.`MOVIE_CODE`= oh.`MOVIE_CODE`
-left join watch_history wh on m.`USER_ID`=wh.`USER_ID` and wh.`MOVIE_CODE`=mv.`MOVIE_CODE`
-left join creator ca on mv.`DIRECT_CODEA`=ca.`CREATOR_CODE`
-left join creator cb on mv.`ACTOR_CODEA`=cb.`CREATOR_CODE`
-left join creator cc on mv.`ACTOR_CODEB`=cc.`CREATOR_CODE`
-left join creator cd on mv.`ACTOR_CODEC`=cd.`CREATOR_CODE`
-where m.`USER_ID`="user"
 
 select * from watch_history
+
+SELECT oh.ORDER_CODE, m.MOVIE_NAME, oh.PRICE, oh.ORDER_DATE, oh.CARD_NUM 
+    FROM ORDER_HISTORY oh, MOVIE m 
+    WHERE oh.USER_ID="user"and oh.MOVIE_CODE=m.MOVIE_CODE

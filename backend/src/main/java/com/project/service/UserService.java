@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.project.model.OrderDto;
 import com.project.model.UserDto;
 import com.project.repository.UserMapper;
 import com.project.util.DateFormatUtil;
@@ -111,5 +112,10 @@ public class UserService {
     public int updateUser(String id, String pwd, String email){
         return userMapper.updateUser(id, pwd, email);
 
+    }
+    public  List<OrderDto> selectOrderList(String id){
+        System.out.println("/userService.java");
+        return userMapper.selectOrderList(id);
+        
     }
 }

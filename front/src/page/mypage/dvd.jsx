@@ -11,53 +11,28 @@ import Box from "@mui/material/Box"
 import { ThemeProvider } from "@mui/material/styles"
 import { selectUserVodList } from "@/api/admin"
 import { autoBatchEnhancer } from "@reduxjs/toolkit"
+import { selectUser } from "@/store/selectors"
+import { useSelector } from "react-redux"
+
+let list = []
+let userid = ""
+
 function DvdMenu() {
+  let state = useSelector(selectUser)
+  userid = state.info.userId
+
   return (
     <Button id="basic-button" href="#dvd#list" size="large" css={Leftbtn}>
       전체
     </Button>
   )
 }
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein }
-}
 
-let list = []
 const selectUserDvdList = () => {
-  selectUserVodList({ id: "user" }).then((res) => {
+  selectUserVodList({ id: userid }).then((res) => {
     console.log(res.data)
     list = res.data
-    console.log(list[0].movieName)
   })
-}
-
-function BoxSx() {
-  return (
-    <ThemeProvider
-      theme={{
-        palette: {
-          primary: {
-            main: "#fffcd8",
-            dark: "#fffac3",
-          },
-        },
-      }}
-    >
-      <Box
-        sx={{
-          width: 400,
-          height: 150,
-          borderRadius: 1,
-          margin: "10px",
-          bgcolor: "primary.main",
-          "&:hover": {
-            bgcolor: "primary.dark",
-          },
-        }}
-        //onClick={() => {}}
-      ></Box>
-    </ThemeProvider>
-  )
 }
 
 function Dvd() {

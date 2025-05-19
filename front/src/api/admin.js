@@ -136,3 +136,11 @@ export function selectUserVodList(data) {
     data,
   }).then((res) => res)
 }
+
+export function selectOrderList(data) {
+  return request({
+    url: "api/admin/user/orderlist",
+    method: "post",
+    data,
+  }).then((res) => res)
+}
