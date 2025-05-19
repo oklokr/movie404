@@ -94,7 +94,17 @@ function Dvd() {
             >
               <div className="input-form">
                 <img src={value.poster} alt="picture1" height="150px" width="200px" />
-                {value.movieName}
+                <span>
+                  영화명: {value.movieName} <br />
+                  감독: {value.directorA}
+                  <br />
+                  배우: {value.actorA} {value.actorB}
+                  {value.actorC}
+                  <br />
+                  시청일: {value.watchdate}
+                  <br />
+                  시청시간: {value.watchtime}
+                </span>
               </div>
             </Box>
           )
