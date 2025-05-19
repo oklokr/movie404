@@ -1,4 +1,5 @@
 import axios from "axios"
+import { useNavigate } from "react-router"
 
 // import {
 //   getToken,
@@ -80,6 +81,7 @@ const serviceInterceptors = setInterceptors(service)
 
 const forbiddenFunc = (code) => {
   if ([401, 403].includes(code)) {
+    console.log("로그인이 필요한 서비스입니다")
     // if (getToken() === null) return true
     // func.toast(i18n.t('MSG.41718'), 'error') //'로그아웃 되었습니다.',
     // removeTokenPrev()
@@ -96,14 +98,16 @@ serviceInterceptors.interceptors.response.use(
   async (response) => {
     delete pendingRequests[response.config.url]
     const { code } = response.data
-    if (forbiddenFunc(parseInt(code))) {
+    if (forbiddenFunc(response)) {
       return Promise.reject(new Error("logout"))
     }
-    console.log(response)
     return response.data
   },
   (error) => {
-    console.log(error)
+    if (error.status === 401) {
+      console.log("로그인이 필요한 서비스입니다")
+      window.location.href = "/login"
+    }
     if (axios.isCancel(error)) {
       delete pendingRequests[error.message]
       return Promise.resolve(error)

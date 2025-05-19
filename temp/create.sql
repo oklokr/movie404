@@ -244,4 +244,4 @@ REPLY VARCHAR(500),
 CONSTRAINT QNA_USERID_FK FOREIGN KEY (USER_ID) REFERENCES MEMBERS(USER_ID)
 );
 
-select * from genre;
+select * from common;
