@@ -1,10 +1,14 @@
 import { css } from "@emotion/react"
 import React, { useState, useEffect } from "react"
 import { useNavigate } from "react-router"
+import { useSelector } from "react-redux"
+import { selectUser } from "@/store/selectors"
 import { communityGetNoticeList } from "@/api/community"
 
 export default function NoticeList() {
   const navigate = useNavigate()
+  const user = useSelector(selectUser)
+  const isAdmin = user.info?.userTpcd === "2"
   const [search, setSearch] = useState({ title: "", writer: "" })
   const [list, setList] = useState([])
   const [filtered, setFiltered] = useState([])
@@ -70,9 +74,11 @@ export default function NoticeList() {
         </button>
       </div>
       <div style={{ textAlign: "right", marginBottom: 10 }}>
-        <button css={btnWrite} onClick={() => navigate("/community/notice/write")}>
-          작성
-        </button>
+        {isAdmin && (
+          <button css={btnWrite} onClick={() => navigate("/community/notice/write")}>
+            작성
+          </button>
+        )}
       </div>
       <div style={{ marginBottom: 10, color: "#888", fontWeight: 500 }}>
         총 {filtered.length.toLocaleString()} 개
