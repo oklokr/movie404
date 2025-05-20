@@ -53,3 +53,11 @@ export function communityGetNoticeDetail(noticeCode) {
     method: "get",
   })
 }
+
+export function communityEditNotice(data) {
+  return request({
+    url: "/api/notice/edit",
+    method: "post",
+    data,
+  })
+}

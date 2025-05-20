@@ -18,4 +18,6 @@ public interface QnaMapper {
     // Notice
     List<QnaDto> selectNoticeList(@Param("title") String title, @Param("writer") String writer);
     QnaDto selectNoticeDetail(@Param("noticeCode") String noticeCode);
+    void insertNotice(QnaDto dto);
+    void updateNotice(QnaDto dto);
 }

@@ -70,7 +70,9 @@ export default function NoticeList() {
         </button>
       </div>
       <div style={{ textAlign: "right", marginBottom: 10 }}>
-        <button css={btnWrite}>작성</button>
+        <button css={btnWrite} onClick={() => navigate("/community/notice/write")}>
+          작성
+        </button>
       </div>
       <div style={{ marginBottom: 10, color: "#888", fontWeight: 500 }}>
         총 {filtered.length.toLocaleString()} 개

@@ -55,4 +55,21 @@ public class QnaService {
     public QnaDto getNoticeDetail(String noticeCode) {
         return qnaMapper.selectNoticeDetail(noticeCode);
     }
+
+    public void insertNotice(QnaDto dto) {
+        if (dto.getNoticeCode() == null || dto.getNoticeCode().isEmpty()) {
+            String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            StringBuilder code = new StringBuilder();
+            java.util.Random rnd = new java.util.Random();
+            for (int i = 0; i < 8; i++) {
+                code.append(chars.charAt(rnd.nextInt(chars.length())));
+            }
+            dto.setNoticeCode(code.toString());
+        }
+        qnaMapper.insertNotice(dto);
+    }
+    
+    public void updateNotice(QnaDto dto) {
+        qnaMapper.updateNotice(dto);
+    }
 }

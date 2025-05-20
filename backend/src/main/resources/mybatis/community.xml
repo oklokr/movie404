@@ -71,4 +71,15 @@
         FROM NOTICE
         WHERE NOTICE_CODE = #{noticeCode}
     </select>
+
+    <insert id="insertNotice" parameterType="com.project.model.QnaDto">
+        INSERT INTO NOTICE (NOTICE_CODE, CATEGORY, TITLE, CONTENT, WRITER, WRITE_DATE)
+        VALUES (#{noticeCode}, #{type}, #{title}, #{content}, #{writer}, NOW())
+    </insert>
+
+    <update id="updateNotice" parameterType="com.project.model.QnaDto">
+        UPDATE NOTICE
+        SET CATEGORY = #{type}, TITLE = #{title}, CONTENT = #{content}
+        WHERE NOTICE_CODE = #{noticeCode}
+    </update>
 </mapper>

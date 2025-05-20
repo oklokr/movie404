@@ -26,4 +26,13 @@ public class NoticeController {
     public QnaDto getNoticeDetail(@PathVariable("noticeCode") String noticeCode) {
         return qnaService.getNoticeDetail(noticeCode);
     }
+
+    @PostMapping("/edit")
+    public void editNotice(@RequestBody QnaDto dto) {
+        if (dto.getNoticeCode() == null || dto.getNoticeCode().isEmpty()) {
+            qnaService.insertNotice(dto);
+        } else {
+            qnaService.updateNotice(dto);
+        }
+    }
 }
