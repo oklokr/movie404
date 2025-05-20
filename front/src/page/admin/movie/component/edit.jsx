@@ -13,14 +13,16 @@ export default function MovieEdit() {
   const navigate = useNavigate()
   const { movieCode } = useParams()
   // 폼 상태
-  const [poster, setPoster] = useState("") // 이미지 URL
-  const [posterInput, setPosterInput] = useState("") // 입력값
+  const [poster, setPoster] = useState("")
+  const [posterInput, setPosterInput] = useState("")
+  const [background, setBackground] = useState("")
+  const [backgroundInput, setBackgroundInput] = useState("")
   const [genreList, setGenreList] = useState([])
-  const [genre, setGenre] = useState("") // 단일 선택
-  const [rating, setRating] = useState("") // "1" or "2" 단일 선택
+  const [genre, setGenre] = useState("")
+  const [rating, setRating] = useState("")
   const [title, setTitle] = useState("")
   const [desc, setDesc] = useState("")
-  const [teaser, setTeaser] = useState("") // 티저 추가
+  const [teaser, setTeaser] = useState("")
   const [directors, setDirectors] = useState([])
   const [directorInput, setDirectorInput] = useState("")
   const [casts, setCasts] = useState([])
@@ -34,7 +36,6 @@ export default function MovieEdit() {
   const [runtime, setRuntime] = useState("")
   const [creatorList, setCreatorList] = useState([])
 
-  // 장르/크리에이터 목록 불러오기
   useEffect(() => {
     fetchGenreList().then((res) => {
       setGenreList(res.data ? res.data : res)
@@ -44,18 +45,19 @@ export default function MovieEdit() {
     })
   }, [])
 
-  // 수정 모드: 기존 데이터 불러오기
   useEffect(() => {
     if (!movieCode) return
     fetchMovieDetail(movieCode).then((res) => {
       const movie = res.data ? res.data : res
       setPoster(movie.poster || "")
       setPosterInput(movie.poster || "")
+      setBackground(movie.background || "")
+      setBackgroundInput(movie.background || "")
       setGenre(movie.genreCodeA || "")
       setRating(movie.ratingTpcd || "")
       setTitle(movie.movieName || "")
       setDesc(movie.synopsis || "")
-      setTeaser(movie.teaser || "") // 티저 값 세팅
+      setTeaser(movie.teaser || "")
       setDirectors([movie.directCodeA, movie.directCodeB].filter(Boolean))
       setCasts(
         [
@@ -101,18 +103,24 @@ export default function MovieEdit() {
     })
   }, [movieCode])
 
-  // 포스터 URL 입력 핸들러
   const handlePosterInputChange = (e) => {
     setPosterInput(e.target.value)
     setPoster(e.target.value)
   }
-  // 포스터 삭제
   const handlePosterRemove = () => {
     setPoster("")
     setPosterInput("")
   }
 
-  // 자동완성 필터
+  const handleBackgroundInputChange = (e) => {
+    setBackgroundInput(e.target.value)
+    setBackground(e.target.value)
+  }
+  const handleBackgroundRemove = () => {
+    setBackground("")
+    setBackgroundInput("")
+  }
+
   const filteredDirectorOptions = creatorList.filter(
     (c) => c.name.includes(directorInput) && !directors.includes(c.code),
   )
@@ -120,7 +128,6 @@ export default function MovieEdit() {
     (c) => c.name.includes(castInput) && !casts.includes(c.code),
   )
 
-  // 감독 추가/삭제 (코드 기반)
   const addDirector = (code) => {
     if (!code) return
     if (directors.length >= 2) {
@@ -136,7 +143,6 @@ export default function MovieEdit() {
     setDirectors(directors.filter((d) => d !== code))
   }
 
-  // 출연진 추가/삭제 (코드 기반)
   const addCast = (code) => {
     if (!code) return
     if (casts.length >= 5) {
@@ -152,31 +158,28 @@ export default function MovieEdit() {
     setCasts(casts.filter((c) => c !== code))
   }
 
-  // chip에 한글 이름 표시
   const getCreatorName = (code) => {
     const c = creatorList.find((c) => c.code === code)
     return c ? c.name : code
   }
 
-  // 장르 카테고리 버튼 핸들러 (단일 선택)
   const handleGenreSelect = (code) => {
     setGenre(code)
   }
 
-  // 관람등급 라디오 핸들러 (1: 전체, 2: 성인)
   const handleRatingChange = (value) => {
     setRating(value)
   }
 
-  // 목록 버튼 클릭 시 작성된 값이 있으면 확인 후 이동
   const handleListClick = () => {
     const hasValue =
       posterInput ||
+      backgroundInput ||
       genre ||
       rating ||
       title ||
       desc ||
-      teaser || // 티저도 값 체크
+      teaser ||
       directors.length > 0 ||
       casts.length > 0 ||
       dvdPrice ||
@@ -193,7 +196,6 @@ export default function MovieEdit() {
     }
   }
 
-  // 제출 버튼 클릭 시
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!genre) return alert("장르를 선택하세요.")
@@ -203,7 +205,6 @@ export default function MovieEdit() {
     if (directors.length === 0) return alert("감독을 1명 이상 등록하세요.")
     if (casts.length === 0) return alert("출연진을 1명 이상 등록하세요.")
 
-    // DVD 시스템 사용 시 필수값 개별 체크
     if (dvdUse) {
       if (!dvdPrice) return alert("DVD 판매금액을 입력하세요.")
       if (!dvdDateFrom) return alert("DVD 시작일을 입력하세요.")
@@ -217,16 +218,15 @@ export default function MovieEdit() {
       formData.append("RATING_TPCD", rating)
       formData.append("MOVIE_NAME", title)
       formData.append("SYNOPSIS", desc)
-      formData.append("TEASER", teaser) // 티저 추가
-      // runtime이 비어있거나 숫자가 아니면 0으로 처리
+      formData.append("TEASER", teaser)
       formData.append(
         "RUNTIME",
         runtime && !isNaN(Number(runtime.trim())) && Number(runtime.trim()) > 0
           ? String(Number(runtime.trim()))
           : "0",
       )
-      // 파일대신 URL 저장
       formData.append("POSTER", posterInput)
+      formData.append("BACKGROUND", backgroundInput)
 
       directors.forEach((d, i) => {
         if (d) formData.append(`DIRECT_CODE${String.fromCharCode(65 + i)}`, d)
@@ -299,12 +299,43 @@ export default function MovieEdit() {
             )}
           </div>
         </div>
+        {/* 배경사진 */}
+        <div css={trStyle}>
+          <div css={thStyle}>배경 이미지 URL</div>
+          <div css={tdStyle}>
+            <input
+              css={inputStyle}
+              type="text"
+              placeholder="배경 이미지 주소를 입력하세요"
+              value={backgroundInput}
+              onChange={handleBackgroundInputChange}
+              style={{ width: 400 }}
+            />
+            {backgroundInput && (
+              <div style={{ marginTop: 12 }}>
+                <img
+                  src={backgroundInput}
+                  alt="배경 미리보기"
+                  style={{ width: 240, borderRadius: 8, background: "#eee" }}
+                />
+                <button
+                  type="button"
+                  css={posterDelBtn}
+                  style={{ position: "absolute", top: 0, right: 0 }}
+                  onClick={handleBackgroundRemove}
+                  title="삭제"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
         {/* 장르/등급 */}
         <div css={trStyle}>
           <div css={thStyle}>장르/관람등급</div>
           <div css={tdStyle}>
             <div css={genreRow} style={{ alignItems: "flex-start" }}>
-              {/* 장르 드롭다운(기본 select) */}
               <div css={genreSelectWrap}>
                 <select css={genreSelect} value={genre} onChange={(e) => setGenre(e.target.value)}>
                   <option value="">장르를 선택하세요</option>
@@ -315,7 +346,6 @@ export default function MovieEdit() {
                   ))}
                 </select>
               </div>
-              {/* 관람등급 라디오 */}
               <div style={{ marginLeft: 32, marginTop: 8 }}>
                 <label style={{ marginRight: 16 }}>
                   <input

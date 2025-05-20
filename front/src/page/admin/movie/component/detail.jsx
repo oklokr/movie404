@@ -48,6 +48,18 @@ export default function MovieDetail() {
             )}
           </div>
         </DetailRow>
+        {/* 배경사진 */}
+        <DetailRow label="배경 이미지">
+          <div css={posterArea}>
+            {movie.background ? (
+              <div css={backgroundThumbWrap}>
+                <img src={movie.background} alt="배경" css={backgroundImg} />
+              </div>
+            ) : (
+              <span>이미지 없음</span>
+            )}
+          </div>
+        </DetailRow>
         <DetailRow label="영화명">{movie.movieName}</DetailRow>
         <DetailRow label="장르">{getGenreName(movie.genreCodeA)}</DetailRow>
         <DetailRow label="관람등급">
@@ -232,6 +244,27 @@ const posterThumbWrap = css`
   }
 `
 const posterImg = css`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`
+const backgroundThumbWrap = css`
+  width: 240px;
+  height: 120px;
+  background: #eee;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border: 1.5px solid #e0e0e0;
+  @media (max-width: 600px) {
+    width: 120px;
+    height: 60px;
+  }
+`
+const backgroundImg = css`
   width: 100%;
   height: 100%;
   object-fit: cover;

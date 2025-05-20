@@ -10,6 +10,7 @@
       m.MOVIE_CODE   AS movieCode,
       m.MOVIE_NAME   AS movieName,
       m.POSTER       AS poster,
+      m.BACKGROUND   AS background,
       m.GENRE_CODEA  AS genreCodeA,
       m.SYNOPSIS     AS synopsis,
       m.DIRECT_CODEA AS directCodeA,
@@ -76,11 +77,12 @@
     </where>
   </select>
 
-<select id="selectMovieDetail" resultType="com.project.model.MovieDto">
+  <select id="selectMovieDetail" resultType="com.project.model.MovieDto">
     SELECT
       m.MOVIE_CODE as movieCode,
       m.MOVIE_NAME as movieName,
       m.POSTER as poster,
+      m.BACKGROUND as background,
       m.GENRE_CODEA as genreCodeA,
       m.DIRECT_CODEA as directCodeA,
       m.DIRECT_CODEB as directCodeB,
@@ -92,7 +94,7 @@
       m.SYNOPSIS as synopsis,
       m.RUNTIME as runtime,
       m.RATING_TPCD as ratingTpcd,
-      m.TEASER as teaser, <!-- 이 줄 추가 -->
+      m.TEASER as teaser,
       v.PRICE as dvdPrice,
       v.START_DATE as dvdDateFrom,
       v.END_DATE as dvdDateTo,
@@ -116,12 +118,12 @@
       MOVIE_CODE, GENRE_CODEA, GENRE_CODEB, GENRE_CODEC,
       MOVIE_NAME, DIRECT_CODEA, DIRECT_CODEB,
       ACTOR_CODEA, ACTOR_CODEB, ACTOR_CODEC, ACTOR_CODED, ACTOR_CODEE,
-      SYNOPSIS, RUNTIME, RATING_TPCD, MOVIE_RELEASE, POSTER, SALES
+      SYNOPSIS, RUNTIME, RATING_TPCD, MOVIE_RELEASE, TEASER, POSTER, BACKGROUND, SALES
     ) VALUES (
       #{movieCode}, #{genreCodeA}, #{genreCodeB}, #{genreCodeC},
       #{movieName}, #{directCodeA}, #{directCodeB},
       #{actorCodeA}, #{actorCodeB}, #{actorCodeC}, #{actorCodeD}, #{actorCodeE},
-      #{synopsis}, #{runtime}, #{ratingTpcd}, #{movieRelease}, #{poster}, #{sales}
+      #{synopsis}, #{runtime}, #{ratingTpcd}, #{movieRelease}, #{teaser}, #{poster}, #{background}, #{sales}
     )
   </insert>
 
@@ -130,7 +132,7 @@
     VALUES (#{movieCode}, #{price}, #{startDate}, #{endDate}, #{discount})
   </insert>
 
-<update id="updateMovie" parameterType="com.project.model.MovieDto">
+  <update id="updateMovie" parameterType="com.project.model.MovieDto">
     UPDATE MOVIE SET
       GENRE_CODEA = #{genreCodeA},
       GENRE_CODEB = #{genreCodeB},
@@ -147,9 +149,10 @@
       RUNTIME = #{runtime},
       RATING_TPCD = #{ratingTpcd},
       MOVIE_RELEASE = #{movieRelease},
+      TEASER = #{teaser},
       POSTER = #{poster},
-      SALES = #{sales},
-      TEASER = #{teaser}
+      BACKGROUND = #{background},
+      SALES = #{sales}
     WHERE MOVIE_CODE = #{movieCode}
   </update>
 
@@ -177,7 +180,6 @@
   <delete id="deleteVodByMovieCode">
     DELETE FROM vod WHERE MOVIE_CODE = #{movieCode}
   </delete>
-
 
   <select id = "selectUserVodList" resultType="com.project.model.VodDto">
   select mv.`POSTER` as poster, mv.`MOVIE_NAME` as movieName, mv.`SYNOPSIS`as synopsis, 
@@ -218,99 +220,97 @@ where m.`USER_ID`=#{id}
     ORDER BY RUN_DATE DESC, START_TIME ASC
   </select>
 
+  <!-- ========================= -->
+  <!-- EXISTS: 중복 확인 쿼리 -->
+  <!-- ========================= -->
 
+  <select id="existsGenre" resultType="boolean">
+      SELECT EXISTS (
+          SELECT 1 FROM GENRE WHERE GENRE_CODE = #{genreCode}
+      )
+  </select>
 
+  <select id="existsCreator" resultType="boolean">
+      SELECT EXISTS (
+          SELECT 1 FROM CREATOR WHERE CREATOR_CODE = #{creatorCode}
+      )
+  </select>
 
+  <select id="existsMovie" resultType="boolean">
+      SELECT EXISTS (
+          SELECT 1 FROM MOVIE WHERE MOVIE_CODE = #{movieCode}
+      )
+  </select>
 
   <!-- ========================= -->
-    <!-- EXISTS: 중복 확인 쿼리 -->
-    <!-- ========================= -->
+  <!-- INSERT: 데이터 삽입 쿼리 -->
+  <!-- ========================= -->
 
-    <select id="existsGenre" resultType="boolean">
-        SELECT EXISTS (
-            SELECT 1 FROM GENRE WHERE GENRE_CODE = #{genreCode}
-        )
-    </select>
+  <insert id="batchInsertGenre">
+      INSERT INTO GENRE (
+          GENRE_CODE,
+          GENRE_NAME
+      ) VALUES (
+          #{genreCode},
+          #{genreName}
+      )
+  </insert>
 
-    <select id="existsCreator" resultType="boolean">
-        SELECT EXISTS (
-            SELECT 1 FROM CREATOR WHERE CREATOR_CODE = #{creatorCode}
-        )
-    </select>
+  <insert id="batchInsertCreator">
+      INSERT INTO CREATOR (
+          CREATOR_CODE,
+          CREATOR_NAME,
+          GENDER
+      ) VALUES (
+          #{creatorCode},
+          #{creatorName},
+          #{gender}
+      )
+  </insert>
 
-    <select id="existsMovie" resultType="boolean">
-        SELECT EXISTS (
-            SELECT 1 FROM MOVIE WHERE MOVIE_CODE = #{movieCode}
-        )
-    </select>
-
-    <!-- ========================= -->
-    <!-- INSERT: 데이터 삽입 쿼리 -->
-    <!-- ========================= -->
-
-    <insert id="batchInsertGenre">
-        INSERT INTO GENRE (
-            GENRE_CODE,
-            GENRE_NAME
-        ) VALUES (
-            #{genreCode},
-            #{genreName}
-        )
-    </insert>
-
-    <insert id="batchInsertCreator">
-        INSERT INTO CREATOR (
-            CREATOR_CODE,
-            CREATOR_NAME,
-            GENDER
-        ) VALUES (
-            #{creatorCode},
-            #{creatorName},
-            #{gender}
-        )
-    </insert>
-
-    <insert id="batchInsertMovie">
-        INSERT INTO MOVIE (
-            MOVIE_CODE,
-            GENRE_CODEA,
-            GENRE_CODEB,
-            GENRE_CODEC,
-            MOVIE_NAME,
-            DIRECT_CODEA,
-            DIRECT_CODEB,
-            ACTOR_CODEA,
-            ACTOR_CODEB,
-            ACTOR_CODEC,
-            ACTOR_CODED,
-            ACTOR_CODEE,
-            SYNOPSIS,
-            RUNTIME,
-            RATING_TPCD,
-            MOVIE_RELEASE,
-            TEASER,
-            POSTER,
-            SALES
-        ) VALUES (
-            #{movieCode},
-            #{genreCodeA},
-            #{genreCodeB},
-            #{genreCodeC},
-            #{movieName},
-            #{directCodeA},
-            #{directCodeB},
-            #{actorCodeA},
-            #{actorCodeB},
-            #{actorCodeC},
-            #{actorCodeD},
-            #{actorCodeE},
-            #{synopsis},
-            #{runtime},
-            #{ratingTpcd},
-            #{movieRelease},
-            #{teaser},
-            #{poster},
-            #{sales}
-        )
-    </insert>
+  <insert id="batchInsertMovie">
+      INSERT INTO MOVIE (
+          MOVIE_CODE,
+          GENRE_CODEA,
+          GENRE_CODEB,
+          GENRE_CODEC,
+          MOVIE_NAME,
+          DIRECT_CODEA,
+          DIRECT_CODEB,
+          ACTOR_CODEA,
+          ACTOR_CODEB,
+          ACTOR_CODEC,
+          ACTOR_CODED,
+          ACTOR_CODEE,
+          SYNOPSIS,
+          RUNTIME,
+          RATING_TPCD,
+          MOVIE_RELEASE,
+          TEASER,
+          POSTER,
+          BACKGROUND,
+          SALES
+      ) VALUES (
+          #{movieCode},
+          #{genreCodeA},
+          #{genreCodeB},
+          #{genreCodeC},
+          #{movieName},
+          #{directCodeA},
+          #{directCodeB},
+          #{actorCodeA},
+          #{actorCodeB},
+          #{actorCodeC},
+          #{actorCodeD},
+          #{actorCodeE},
+          #{synopsis},
+          #{runtime},
+          #{ratingTpcd},
+          #{movieRelease},
+          #{teaser},
+          #{poster},
+          #{background},
+          #{sales}
+      )
+  </insert>
 </mapper>
