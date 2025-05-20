@@ -4,8 +4,33 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.project.repository.UserMapper">
+    <select id="loginUser" resultType="com.project.model.UserDto">
+        SELECT
+            m.USER_ID,
+            m.PASSWD,
+            m.USER_NAME,
+            m.EMAIL,
+            m.TEL,
+            m.AGE,
+            m.SIGNUP_DATE,
+            m.VIEW_ADULT,
+            m.SAVE_HISTORY,
+            m.TERMS,
+            m.USER_TPCD,
+            c1.COMMON_NAME AS USER_TPCD_NAME,
+            m.LANG_TPCD,
+            c2.COMMON_NAME AS LANG_TPCD_NAME,
+            m.DATE_TPCD,
+            c3.COMMON_NAME AS DATE_TPCD_NAME
+        FROM MEMBERS m
+        LEFT JOIN COMMON_CODE c1 ON m.USER_TPCD = c1.COMMON_VALUE AND c1.COMMON_CODE = 'USER_TPCD'
+        LEFT JOIN COMMON_CODE c2 ON m.LANG_TPCD = c2.COMMON_VALUE AND c2.COMMON_CODE = 'LANG_TPCD'
+        LEFT JOIN COMMON_CODE c3 ON m.DATE_TPCD = c3.COMMON_VALUE AND c3.COMMON_CODE = 'DATE_TPCD'
+        WHERE m.USER_ID = #{userId}
+        AND m.PASSWD = #{passwd}
+    </select>
 
-    <!-- 로그인 시 사용자 정보 조회 -->
+    <!-- 사용자 정보 조회 -->
     <select id="getUser" resultType="com.project.model.UserDto">
         SELECT
             m.USER_ID,
@@ -31,14 +56,10 @@
         LEFT JOIN COMMON_CODE c2 ON m.LANG_TPCD = c2.COMMON_VALUE AND c2.COMMON_CODE = 'LANG_TPCD'
         LEFT JOIN COMMON_CODE c3 ON m.DATE_TPCD = c3.COMMON_VALUE AND c3.COMMON_CODE = 'DATE_TPCD'
         WHERE 1=1
-        <if test="userId != null and passwd != null">
-            AND m.USER_ID = #{userId}
-            AND m.PASSWD = #{passwd}
-        </if>
-        <if test="userId != null and (passwd == null or token == null)">
+        <if test="userId != null and token == null">
             AND m.USER_ID = #{userId}
         </if>
-        <if test="token != null and (userId == null or passwd == null)">
+        <if test="token != null and userId == null">
             AND m.TOKEN = #{token}
         </if>
     </select>

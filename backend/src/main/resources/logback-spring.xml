@@ -31,8 +31,17 @@
         </encoder>
     </appender>
 
-    <!-- ========== 루트 로거 ========== -->
-    <root level="INFO">
+    <!-- MyBatis SQL, 파라미터 로그 상세 -->
+    <logger name="org.mybatis" level="DEBUG"/>
+
+    <!-- 프로젝트 mapper 위치 -->
+    <logger name="com.project.mapper" level="DEBUG"/>
+
+    <!-- API 호출 로그 (예시) -->
+    <logger name="com.project.api" level="DEBUG"/>
+    
+    <!-- ========== 루트 로거 (전체 로그 레벨 DEBUG) ========== -->
+    <root level="DEBUG">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </root>

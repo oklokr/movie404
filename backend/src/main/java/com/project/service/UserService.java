@@ -19,32 +19,42 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    public UserDto getUser(String userId, String passwd, String token, Boolean isLogin) {
-    	userId = (userId != null && !userId.isEmpty()) ? userId : null;
-        passwd = (passwd != null && !passwd.isEmpty()) ? passwd : null;
-        token  = (token  != null && !token.isEmpty())  ? token  : null;
-        if (isLogin == null) isLogin = false;
-        
-        UserDto user = userMapper.getUser(userId, passwd, token);
-
-        if(user != null) {
-            String signupDateConvert = DateFormatUtil.formatDate(user.getSignupDate(), user.getDateTpcdName());
-            user.setSignupDateStr(signupDateConvert);
-            
-            if(isLogin) {
-                LocalDateTime validity = LocalDateTime.now().plusHours(1);
-                UUID uuid = UUID.randomUUID();
-                Date validityDate = Date.from(validity.atZone(ZoneId.systemDefault()).toInstant());
-                String toeknDateConvert = DateFormatUtil.formatDate(validityDate, user.getDateTpcdName() + " HH:mm:ss");
-                user.setTokenValidity(validityDate);
-                user.setTokenValidityStr(toeknDateConvert);
-                userMapper.updateToken(uuid.toString(), validity, userId);
-                user.setToken(uuid.toString());
-            } else {
-                String toeknDateConvert = DateFormatUtil.formatDate(user.getTokenValidity(), user.getDateTpcdName() + " HH:mm:ss");
-                user.setTokenValidityStr(toeknDateConvert);
-            }
+    public UserDto loginUser(String userId, String passwd) {
+        UserDto user = userMapper.loginUser(userId, passwd);
+        if (user != null) {
+            // 가입일 변환
+            String signupDateStr = DateFormatUtil.formatDate(user.getSignupDate(), user.getDateTpcdName());
+            user.setSignupDateStr(signupDateStr);
+            // 토큰 발급
+            LocalDateTime validity = LocalDateTime.now().plusHours(1);
+            UUID uuid = UUID.randomUUID();
+            Date validityDate = Date.from(validity.atZone(ZoneId.systemDefault()).toInstant());
+            String tokenValidityStr = DateFormatUtil.formatDate(validityDate, user.getDateTpcdName() + " HH:mm:ss");
+    
+            user.setToken(uuid.toString());
+            user.setTokenValidity(validityDate);
+            user.setTokenValidityStr(tokenValidityStr);
+    
+            // DB 업데이트
+            userMapper.updateToken(uuid.toString(), validity, userId);
         }
+        return user;
+    }
+
+    public UserDto getUser(String userId, String token) {
+        userId = (userId != null && !userId.isEmpty()) ? userId : null;
+        token  = (token  != null && !token.isEmpty())  ? token  : null;
+    
+        UserDto user = userMapper.getUser(userId, token);
+    
+        if (user != null) {
+            String signupDateStr = DateFormatUtil.formatDate(user.getSignupDate(), user.getDateTpcdName());
+            user.setSignupDateStr(signupDateStr);
+    
+            String tokenValidityStr = DateFormatUtil.formatDate(user.getTokenValidity(), user.getDateTpcdName() + " HH:mm:ss");
+            user.setTokenValidityStr(tokenValidityStr);
+        }
+    
         return user;
     }
     

@@ -12,7 +12,9 @@ import com.project.model.UserDto;
 @Mapper
 public interface UserMapper {
     // 로그인 회원정보 조회
-    UserDto getUser(@Param("userId") String userId, @Param("passwd") String passwd, @Param("token") String token);
+    UserDto loginUser(@Param("userId") String userId, @Param("passwd") String passwd);
+    // 회원정보 조회
+    UserDto getUser(@Param("userId") String userId, @Param("token") String token);
     // 토큰 갱신
     void updateToken(@Param("token") String token, @Param("tokenValidity") LocalDateTime tokenValidity, @Param("userId") String userId);
     // 토큰 무효화 (로그아웃 시 또는 만료된 토큰 처리)
