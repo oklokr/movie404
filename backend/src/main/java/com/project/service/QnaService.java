@@ -13,6 +13,7 @@ public class QnaService {
     @Autowired
     private QnaMapper qnaMapper;
 
+    // QnA
     public List<QnaDto> getQnaList(String userId, boolean isAdmin) {
         return qnaMapper.selectQnaList(userId, isAdmin);
     }
@@ -26,7 +27,6 @@ public class QnaService {
     }
 
     public void insertQna(QnaDto dto) {
-        // QNA_CODE가 없으면 8자리 랜덤 영숫자 생성 (표준 자바만 사용)
         if (dto.getQnaCode() == null || dto.getQnaCode().isEmpty()) {
             String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             StringBuilder code = new StringBuilder();
@@ -45,5 +45,14 @@ public class QnaService {
 
     public void deleteQna(String qnaCode) {
         qnaMapper.deleteQna(qnaCode);
+    }
+
+    // Notice
+    public List<QnaDto> getNoticeList(String title, String writer) {
+        return qnaMapper.selectNoticeList(title, writer);
+    }
+
+    public QnaDto getNoticeDetail(String noticeCode) {
+        return qnaMapper.selectNoticeDetail(noticeCode);
     }
 }

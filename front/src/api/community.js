@@ -38,3 +38,11 @@ export function communityDeleteQna(data) {
     data,
   })
 }
+
+export function communityGetNoticeList(params) {
+  return request({
+    url: "/api/notice",
+    method: "get",
+    params,
+  })
+}

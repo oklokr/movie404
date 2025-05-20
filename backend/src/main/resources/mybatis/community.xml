@@ -39,4 +39,36 @@
     <delete id="deleteQna">
         DELETE FROM QNA WHERE QNA_CODE = #{qnaCode}
     </delete>
+
+    <select id="selectNoticeList" resultType="com.project.model.QnaDto">
+    SELECT 
+        NOTICE_CODE as noticeCode,
+        CATEGORY as type,
+        TITLE as title,
+        CONTENT as content,
+        WRITER as writer,
+        WRITE_DATE as writeDate
+    FROM NOTICE
+    <where>
+        <if test="title != null and title != ''">
+            AND TITLE LIKE CONCAT('%', #{title}, '%')
+        </if>
+        <if test="writer != null and writer != ''">
+            AND WRITER LIKE CONCAT('%', #{writer}, '%')
+        </if>
+    </where>
+    ORDER BY WRITE_DATE DESC
+</select>
+
+<select id="selectNoticeDetail" resultType="com.project.model.QnaDto">
+    SELECT 
+        NOTICE_CODE as noticeCode,
+        CATEGORY as type,
+        TITLE as title,
+        CONTENT as content,
+        WRITER as writer,
+        WRITE_DATE as writeDate
+    FROM NOTICE
+    WHERE NOTICE_CODE = #{noticeCode}
+</select>
 </mapper>
