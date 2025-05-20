@@ -103,6 +103,9 @@ public class MovieService {
         // 포스터 URL만 저장
         movie.setPoster(allParams.get("POSTER"));
 
+        // 티저 URL 저장
+        movie.setTeaser(allParams.get("TEASER"));
+
         return movie;
     }
 

@@ -55,6 +55,15 @@ export default function MovieDetail() {
         </DetailRow>
         <DetailRow label="상영시간">{movie.runtime}</DetailRow>
         <DetailRow label="설명">{movie.synopsis}</DetailRow>
+        <DetailRow label="티저 URL">
+          {movie.teaser ? (
+            <a href={movie.teaser} target="_blank" rel="noopener noreferrer">
+              {movie.teaser}
+            </a>
+          ) : (
+            <span>없음</span>
+          )}
+        </DetailRow>
         <DetailRow label="감독">
           {[movie.directCodeA, movie.directCodeB].filter(Boolean).map(getCreatorName).join(", ")}
         </DetailRow>

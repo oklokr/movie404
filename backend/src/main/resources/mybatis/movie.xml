@@ -76,7 +76,7 @@
     </where>
   </select>
 
-  <select id="selectMovieDetail" resultType="com.project.model.MovieDto">
+<select id="selectMovieDetail" resultType="com.project.model.MovieDto">
     SELECT
       m.MOVIE_CODE as movieCode,
       m.MOVIE_NAME as movieName,
@@ -92,6 +92,7 @@
       m.SYNOPSIS as synopsis,
       m.RUNTIME as runtime,
       m.RATING_TPCD as ratingTpcd,
+      m.TEASER as teaser, <!-- 이 줄 추가 -->
       v.PRICE as dvdPrice,
       v.START_DATE as dvdDateFrom,
       v.END_DATE as dvdDateTo,
@@ -129,7 +130,7 @@
     VALUES (#{movieCode}, #{price}, #{startDate}, #{endDate}, #{discount})
   </insert>
 
-  <update id="updateMovie" parameterType="com.project.model.MovieDto">
+<update id="updateMovie" parameterType="com.project.model.MovieDto">
     UPDATE MOVIE SET
       GENRE_CODEA = #{genreCodeA},
       GENRE_CODEB = #{genreCodeB},
@@ -147,7 +148,8 @@
       RATING_TPCD = #{ratingTpcd},
       MOVIE_RELEASE = #{movieRelease},
       POSTER = #{poster},
-      SALES = #{sales}
+      SALES = #{sales},
+      TEASER = #{teaser}
     WHERE MOVIE_CODE = #{movieCode}
   </update>
 

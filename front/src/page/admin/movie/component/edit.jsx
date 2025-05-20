@@ -20,6 +20,7 @@ export default function MovieEdit() {
   const [rating, setRating] = useState("") // "1" or "2" 단일 선택
   const [title, setTitle] = useState("")
   const [desc, setDesc] = useState("")
+  const [teaser, setTeaser] = useState("") // 티저 추가
   const [directors, setDirectors] = useState([])
   const [directorInput, setDirectorInput] = useState("")
   const [casts, setCasts] = useState([])
@@ -54,6 +55,7 @@ export default function MovieEdit() {
       setRating(movie.ratingTpcd || "")
       setTitle(movie.movieName || "")
       setDesc(movie.synopsis || "")
+      setTeaser(movie.teaser || "") // 티저 값 세팅
       setDirectors([movie.directCodeA, movie.directCodeB].filter(Boolean))
       setCasts(
         [
@@ -66,17 +68,14 @@ export default function MovieEdit() {
       )
       if (movie.runtime) {
         if (typeof movie.runtime === "string" && movie.runtime.includes(":")) {
-          // "01:50:00" 같은 문자열이면 분 단위로 변환
           const [h, m] = movie.runtime.split(":")
           setRuntime(String(parseInt(h) * 60 + parseInt(m)))
         } else {
-          // 정수(분)로 들어오면 그대로 사용
           setRuntime(String(movie.runtime))
         }
       } else {
         setRuntime("")
       }
-      // DVD 시스템 사용여부 및 값 세팅
       const hasDvd =
         (movie.dvdPrice && movie.dvdPrice !== "") ||
         (movie.dvdDiscount && movie.dvdDiscount !== "" && movie.dvdDiscount !== "0") ||
@@ -177,6 +176,7 @@ export default function MovieEdit() {
       rating ||
       title ||
       desc ||
+      teaser || // 티저도 값 체크
       directors.length > 0 ||
       casts.length > 0 ||
       dvdPrice ||
@@ -217,6 +217,7 @@ export default function MovieEdit() {
       formData.append("RATING_TPCD", rating)
       formData.append("MOVIE_NAME", title)
       formData.append("SYNOPSIS", desc)
+      formData.append("TEASER", teaser) // 티저 추가
       // runtime이 비어있거나 숫자가 아니면 0으로 처리
       formData.append(
         "RUNTIME",
@@ -378,6 +379,20 @@ export default function MovieEdit() {
               maxLength={300}
             />
             <div css={descCount}>{desc.length}/300자</div>
+          </div>
+        </div>
+        {/* 티저 */}
+        <div css={trStyle}>
+          <div css={thStyle}>티저 URL</div>
+          <div css={tdStyle}>
+            <input
+              css={inputStyle}
+              value={teaser}
+              onChange={(e) => setTeaser(e.target.value)}
+              maxLength={300}
+              placeholder="티저(예고편) 영상 URL을 입력하세요"
+              style={{ width: 400 }}
+            />
           </div>
         </div>
         {/* 감독 */}
@@ -546,7 +561,6 @@ export default function MovieEdit() {
                   placeholder="할인율"
                   value={dvdDiscount}
                   onChange={(e) => {
-                    // 1~100 사이로 제한
                     let value = e.target.value.replace(/[^0-9]/g, "")
                     if (value === "") value = ""
                     else if (Number(value) < 1) value = "1"
