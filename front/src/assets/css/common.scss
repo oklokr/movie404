@@ -12,7 +12,9 @@ body {
 }
 
 header {
+  background: #ffffff24;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+  z-index: 10;
 }
 .header {
   min-width: 1200px;
@@ -54,5 +56,20 @@ header {
     align-items: initial;
     flex-direction: column;
     gap: 6px;
+  }
+}
+
+.movie-poster {
+  min-width: 240px;
+  min-height: 340px;
+  border-radius: 4px;
+  background: #fff;
+
+  .card {
+    opacity: 0;
+    transition: 0.3s;
+  }
+  &:hover .card {
+    opacity: 1;
   }
 }

@@ -12,11 +12,20 @@ import SearchIcon from "@mui/icons-material/Search"
 import PermIdentityIcon from "@mui/icons-material/PermIdentity"
 import SearchForm from "./component/searchForm"
 import { useState } from "react"
+import { useLocation, useNavigate } from "react-router"
+import MyMenu from "./component/myMenu"
+import { useSelector } from "react-redux"
+import { selectUser } from "@/store/selectors"
 
 export default function Header() {
+  const { pathname } = useLocation()
   const { code } = useCommon()
   const [searchState, setSearchState] = useState(false)
   const [openSearch, setOpenSearch] = useState(false)
+  const [myMenuState, setMyMenuState] = useState(false)
+  const [openMyMenu, setOpenMyMenu] = useState(false)
+  const user = useSelector(selectUser)
+  const navigate = useNavigate()
   const genreTpcd = code.GENRE_TPCD
   const gnbMenu = []
   for (let i = 0; i < genreTpcd.length; i += 10) {
@@ -34,8 +43,27 @@ export default function Header() {
     }
   }
 
+  const handleOpenMyMenu = () => {
+    if (!user.info) {
+      alert("로그인이 필요한 서비스입니다.")
+      return navigate("/login")
+    }
+    setTimeout(
+      () => {
+        setMyMenuState(!myMenuState)
+      },
+      !myMenuState ? 200 : 0,
+    )
+    setTimeout(
+      () => {
+        setOpenMyMenu(!openMyMenu)
+      },
+      !openMyMenu ? 0 : 200,
+    )
+  }
+
   return (
-    <header css={headerWrap}>
+    <header className={pathname === "/main" ? "main-page" : ""} css={headerWrap}>
       <div className="header" css={headerStyle}>
         <h1 className="logo">
           <a href="/main">
@@ -52,7 +80,7 @@ export default function Header() {
           ))}
         </Swiper>
 
-        {openSearch && <SearchForm state={searchState} fn_HandleOepnSearch={handleOepnSearch} />}
+        {openSearch && <SearchForm state={searchState} fn_handleOepnSearch={handleOepnSearch} />}
 
         <ul className="user-btns">
           <li>
@@ -61,9 +89,10 @@ export default function Header() {
             </IconButton>
           </li>
           <li>
-            <IconButton aria-label="user" className="user">
+            <IconButton aria-label="user" className="user" onClick={() => handleOpenMyMenu()}>
               <PermIdentityIcon />
             </IconButton>
+            {openMyMenu && <MyMenu state={myMenuState} />}
           </li>
         </ul>
       </div>
@@ -71,12 +100,14 @@ export default function Header() {
   )
 }
 const headerWrap = css`
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
 `
 const headerStyle = css`
   display: flex;
   align-items: center;
-  position: sticky;
   .logo {
     margin: 0;
     a {
@@ -99,6 +130,7 @@ const headerStyle = css`
   .gnb {
     max-width: 760px;
     padding: 0 40px;
+    margin: 0 auto;
     .swiper-button-prev,
     .swiper-button-next {
       --swiper-navigation-size: 20px;
@@ -114,6 +146,11 @@ const headerStyle = css`
 
     .MuiButton-text {
       color: #212529;
+
+      .main-page & {
+        color: #fff;
+      }
+
       &:hover {
         color: #007aff;
       }
@@ -126,7 +163,7 @@ const headerStyle = css`
     width: 88px;
     list-style: none;
     gap: 24px;
-    margin: 0 0 0 auto;
+    margin: 0;
     padding: 0;
 
     .search,
@@ -136,6 +173,10 @@ const headerStyle = css`
       svg {
         width: 32px;
         height: 32px;
+
+        .main-page & {
+          color: #fff;
+        }
       }
     }
   }

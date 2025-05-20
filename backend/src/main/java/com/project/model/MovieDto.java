@@ -28,4 +28,5 @@ public class MovieDto {
     private String dvdDateTo;
     private Integer dvdPrice;
     private Integer dvdDiscount;
+    private String teaser;
 }
