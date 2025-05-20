@@ -76,4 +76,30 @@ public class QnaService {
     public void deleteNotice(String noticeCode) {
         qnaMapper.deleteNotice(noticeCode);
     }
+
+    // FAQ
+    public List<QnaDto> getFaqList() {
+        return qnaMapper.selectFaqList();
+    }
+    public QnaDto getFaqDetail(String faqCode) {
+        return qnaMapper.selectFaqDetail(faqCode);
+    }
+    public void insertFaq(QnaDto dto) {
+        if (dto.getFaqCode() == null || dto.getFaqCode().isEmpty()) {
+            String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            StringBuilder code = new StringBuilder();
+            java.util.Random rnd = new java.util.Random();
+            for (int i = 0; i < 8; i++) {
+                code.append(chars.charAt(rnd.nextInt(chars.length())));
+            }
+            dto.setFaqCode(code.toString());
+        }
+        qnaMapper.insertFaq(dto);
+    }
+    public void updateFaq(QnaDto dto) {
+        qnaMapper.updateFaq(dto);
+    }
+    public void deleteFaq(String faqCode) {
+        qnaMapper.deleteFaq(faqCode);
+    }
 }

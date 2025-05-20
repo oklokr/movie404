@@ -86,4 +86,30 @@
     <delete id="deleteNotice">
         DELETE FROM NOTICE WHERE NOTICE_CODE = #{noticeCode}
     </delete>
+
+    <select id="selectFaqList" resultType="com.project.model.QnaDto">
+        SELECT FAQ_CODE as faqCode, QUESTION as question, ANSWER as answer
+        FROM FAQ
+        ORDER BY FAQ_CODE
+    </select>
+
+    <select id="selectFaqDetail" resultType="com.project.model.QnaDto">
+        SELECT FAQ_CODE as faqCode, QUESTION as question, ANSWER as answer
+        FROM FAQ
+        WHERE FAQ_CODE = #{faqCode}
+    </select>
+
+    <insert id="insertFaq" parameterType="com.project.model.QnaDto">
+        INSERT INTO FAQ (FAQ_CODE, QUESTION, ANSWER)
+        VALUES (#{faqCode}, #{question}, #{answer})
+    </insert>
+
+    <update id="updateFaq" parameterType="com.project.model.QnaDto">
+        UPDATE FAQ SET QUESTION = #{question}, ANSWER = #{answer}
+        WHERE FAQ_CODE = #{faqCode}
+    </update>
+
+    <delete id="deleteFaq">
+        DELETE FROM FAQ WHERE FAQ_CODE = #{faqCode}
+    </delete>
 </mapper>

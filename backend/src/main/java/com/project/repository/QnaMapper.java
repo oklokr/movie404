@@ -21,4 +21,11 @@ public interface QnaMapper {
     void insertNotice(QnaDto dto);
     void updateNotice(QnaDto dto);
     void deleteNotice(@Param("noticeCode") String noticeCode);
+
+    // FAQ
+    List<QnaDto> selectFaqList();
+    QnaDto selectFaqDetail(@Param("faqCode") String faqCode);
+    void insertFaq(QnaDto dto);
+    void updateFaq(QnaDto dto);
+    void deleteFaq(@Param("faqCode") String faqCode);
 }

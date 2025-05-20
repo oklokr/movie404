@@ -18,4 +18,9 @@ public class QnaDto {
     private String noticeCode;
     private String writer;
     private String type; // 구분(시스템/이벤트 등)
+
+    // FAQ용
+    private String faqCode;
+    private String question;
+    private String answer;
 }

@@ -69,3 +69,10 @@ export function communityDeleteNotice(data) {
     data,
   })
 }
+
+export function communityGetFaqList() {
+  return request({
+    url: "/api/faq",
+    method: "get",
+  })
+}
