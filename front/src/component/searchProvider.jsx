@@ -18,6 +18,8 @@ export function SearchProvider({ children }) {
     setSearchListVisible(false)
   }
 
+  console.log(searchGenre)
+
   return (
     <SearchContext.Provider
       value={{ searchListVisible, searchGenre, showSearchList, hideSearchList }}

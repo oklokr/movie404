@@ -15,7 +15,7 @@ import logoImg from "@/assets/images/logo/logo.png"
 import { useDispatch } from "react-redux"
 import { setUserInfo } from "@/store/slices/user"
 import { Link, useNavigate } from "react-router"
-import { useModal } from "@/component/ModalProvider"
+import { useModal } from "@/component/modalProvider"
 
 function Login() {
   const dispatch = useDispatch()
