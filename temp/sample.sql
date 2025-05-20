@@ -100,3 +100,20 @@ VALUES
 SELECT m.MOVIE_NAME, m.SYNOPSIS, w.WATCH_DATE, w.WATCH_TIME 
 FROM ORDER_HISTORY oh, WATCH_HISTORY w, MOVIE m 
 where oh.MOVIE_CODE = m.MOVIE_CODE and oh.MOVIE_CODE = w.MOVIE_CODE 
+
+select * from movie;
+select * from creator where `CREATOR_CODE`="60279"
+
+select * from vod;
+select * from members;
+
+select ORDER_CODE, MOVIE_NAME, PRICE, ORDER_DATE, CARD_NUM 
+from order_history oh, movie m 
+where `USER_ID`="user" and oh.`MOVIE_CODE`=m.`MOVIE_CODE`;
+
+
+select * from watch_history
+
+SELECT oh.ORDER_CODE, m.MOVIE_NAME, oh.PRICE, oh.ORDER_DATE, oh.CARD_NUM 
+    FROM ORDER_HISTORY oh, MOVIE m 
+    WHERE oh.USER_ID="user"and oh.MOVIE_CODE=m.MOVIE_CODE

@@ -113,11 +113,11 @@ function mypage() {
           ) : path == "4" && subpath_orderlist == "2" ? (
             <Payment />
           ) : path == "5" && subpath_terms == "1" ? (
-            <TermsA termA={termA} setTermA={setTermA} />
+            <TermsA />
           ) : path == "5" && subpath_terms == "2" ? (
-            <TermsB termB={termB} setTermB={setTermB} />
+            <TermsB />
           ) : path == "5" && subpath_terms == "3" ? (
-            <TermsC termC={termC} setTermC={setTermC} />
+            <TermsC />
           ) : (
             <></>
           )}
@@ -128,31 +128,31 @@ function mypage() {
 }
 
 const Topcontainer = {
-  "align-content": "center",
-  "border-style": "solid",
+  alignContent: "center",
+  bordborderStyle: "solid",
   display: "flex",
-  "justify-content": "center",
+  justifyContent: "center",
   gap: "80px",
-  "min-width": "1200px",
-  "max-width": "1400px",
+  minWidth: "1200px",
+  maxWidth: "1400px",
 }
 const Topbtn = {
-  "font-size": "1.5rem",
+  fontSize: "1.5rem",
   align: "center",
 }
 const Leftbtn = {
-  "font-size": "1.3rem",
+  fontSize: "1.3rem",
   align: "center",
 }
 const Leftcontainer = {
-  "border-style": "solid",
-  "max-width": "600px",
+  borderStyle: "solid",
+  maxWidth: "600px",
 
   height: "700px",
 }
 const Rightcontainer = {
-  "border-style": "solid",
-  "max-width": "910px",
+  borderStyle: "solid",
+  maxWidth: "910px",
 
   height: "700px",
 }

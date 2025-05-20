@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.project.model.OrderDto;
 import com.project.model.UserDto;
 
 @Mapper
@@ -28,4 +29,7 @@ public interface UserMapper {
     String selectIdbyEmail(String email);
     int checkUserByIdEmail(String email, String id);
     int updateUserTerms(String id, String terms);
+    int updateUserSet(String id, String adult, String lang, String dateformat, String savehistory);
+    int updateUser(String id, String pwd, String email);
+     List<OrderDto> selectOrderList(String id);
 }

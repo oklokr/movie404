@@ -149,4 +149,16 @@
     <update id="updateUserTerms">
     UPDATE MEMBERS SET TERMS=#{terms} WHERE USER_ID=#{id}
     </update>
+
+    <update id="updateUserSet">
+    UPDATE MEMBERS SET VIEW_ADULT=#{adult}, LANG_TPCD=#{lang}, DATE_TPCD=#{dateformat}, SAVE_HISTORY=#{savehistory} WHERE USER_ID=#{id}
+    </update>
+  <update id="updateUser">
+    UPDATE MEMBERS SET PASSWD=#{pwd}, EMAIL=#{email} WHERE USER_ID=#{id}
+    </update>
+    <select id="selectOrderList" resultType="OrderDto">
+SELECT oh.ORDER_CODE, m.MOVIE_NAME, oh.PRICE, oh.ORDER_DATE, oh.CARD_NUM 
+    FROM ORDER_HISTORY oh, MOVIE m 
+    WHERE oh.USER_ID="user" and oh.MOVIE_CODE=m.MOVIE_CODE
+    </select>
 </mapper>

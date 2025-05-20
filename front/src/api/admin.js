@@ -99,7 +99,20 @@ export function updateUserTerms(data) {
     data,
   }).then((res) => res)
 }
-
+export function updateUserSet(data) {
+  return request({
+    url: "/api/admin/user/set",
+    method: "post",
+    data,
+  }).then((res) => res)
+}
+export function updateUser(data) {
+  return request({
+    url: "/api/admin/user/info",
+    method: "post",
+    data,
+  }).then((res) => res)
+}
 export function createSchedule(data) {
   return request({
     url: "/api/admin/movie/schedule",
@@ -114,4 +127,36 @@ export function fetchRunScheduleList(params) {
     method: "get",
     params,
   }).then((res) => res)
+}
+
+export function selectUserVodList(data) {
+  return request({
+    url: "/api/admin/movie/uservodlist",
+    method: "post",
+    data,
+  }).then((res) => res)
+}
+
+export function selectOrderList(data) {
+  return request({
+    url: "api/admin/user/orderlist",
+    method: "post",
+    data,
+  }).then((res) => res)
+}
+
+export function authUser(data) {
+  return request({
+    url: "api/admin/authuser",
+    method: "post",
+    data,
+  }).then((res) => res)
+}
+
+export function authVerify(data) {
+  return request({
+    url: data.url,
+    method: "get",
+    data,
+  }).then((res) => console.log(res))
 }

@@ -1,6 +1,7 @@
 package com.project.repository;
 
 import com.project.model.MovieDto;
+import com.project.model.VodDto;
 import com.project.scheduler.dto.insert.InsertCreatorDto;
 import com.project.scheduler.dto.insert.InsertGenreDto;
 import com.project.scheduler.dto.insert.InsertMovieDto;
@@ -58,4 +59,5 @@ public interface MovieMapper {
     void batchInsertGenre(InsertGenreDto genre);
     void batchInsertCreator(InsertCreatorDto creator);
     void batchInsertMovie(InsertMovieDto movie);
+    List<VodDto> selectUserVodList(String id);
 }
