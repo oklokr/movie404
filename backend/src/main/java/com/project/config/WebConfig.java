@@ -32,7 +32,8 @@ public class WebConfig implements WebMvcConfigurer {
             "/api/login",
             "/api/signup/*",
             "/api/common/commonCodeList",
-            "https://api.portone.io/identity-verifications/*",
+            "/api/main/movieList",
+            "/api/main/movie/detail",
            // "/api/checkId",
         };
 

@@ -19,6 +19,7 @@
       m.ACTOR_CODEC  AS actorCodeC,
       v.PRICE        AS dvdPrice,
       v.DISCOUNT     AS dvdDiscount,
+      m.TEASER       AS teaser,
       CASE WHEN rs.MOVIE_CODE IS NULL THEN 0 ELSE 1 END AS theater
     FROM MOVIE m
       LEFT JOIN VOD v ON v.MOVIE_CODE  = m.MOVIE_CODE
