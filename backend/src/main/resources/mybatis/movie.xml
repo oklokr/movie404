@@ -47,7 +47,7 @@
       </if>
     </where>
 
-    ORDER BY m.MOVIE_RELEASE DESC, m.MOVIE_CODE DESC
+    ORDER BY m.MOVIE_RELEASE DESC
     LIMIT #{size} OFFSET #{offset}
   </select>
 

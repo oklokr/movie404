@@ -1,12 +1,11 @@
 import { selectUser } from "@/store/selectors"
 import { resetUserInfo } from "@/store/slices/user"
 import { css } from "@emotion/react"
-import { Button } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Link } from "react-router"
 
-export default function MyMenu({ state }) {
+export default function MyMenu({ state, fn_handleOpenMyMenu }) {
   const [activeState, setActiveState] = useState(false)
   const user = useSelector(selectUser)
   const dispatch = useDispatch()
@@ -22,23 +21,35 @@ export default function MyMenu({ state }) {
     <div className={state ? "active" : ""} css={myMenuStyle}>
       <ul>
         <li>
-          <Link to="/mypage">MY</Link>
+          <Link to="/mypage" onClick={fn_handleOpenMyMenu}>
+            MY
+          </Link>
         </li>
         <li>
-          <Link to="/mypage/dvd">나의 DVD</Link>
+          <Link to="/mypage/dvd" onClick={fn_handleOpenMyMenu}>
+            나의 DVD
+          </Link>
         </li>
         <li>
-          <Link to="/mypage/order">결제내역</Link>
+          <Link to="/mypage/order" onClick={fn_handleOpenMyMenu}>
+            결제내역
+          </Link>
         </li>
         <li>
-          <Link to="/community/qna">고객센터</Link>
+          <Link to="/community/qna" onClick={fn_handleOpenMyMenu}>
+            고객센터
+          </Link>
         </li>
         <li>
-          <Link to="/mypage/set">설정</Link>
+          <Link to="/mypage/set" onClick={fn_handleOpenMyMenu}>
+            설정
+          </Link>
         </li>
         {user?.info.userTpcd === "2" && (
           <li>
-            <Link to="/admin">관리자</Link>
+            <Link to="/admin" onClick={fn_handleOpenMyMenu}>
+              관리자
+            </Link>
           </li>
         )}
         <li>
@@ -63,12 +74,22 @@ const myMenuStyle = css`
     gap: 12px;
     padding: 26px 32px;
     background: #ffffff24;
+    border: 1px solid #00000024;
     transition: 0.2s;
     transform: translateY(-100%);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+
+    main-page & {
+      border: initial;
+      background: #ffffff24;
+    }
   }
   li {
-    color: #fff;
+    color: #212529;
     text-align: center;
+    .main-page & {
+      color: #fff;
+    }
     &:nth-of-type(1) {
       transform: translateY(calc(-100% - 12px));
       transition: transform 0.2s 0.12s;
@@ -109,7 +130,10 @@ const myMenuStyle = css`
 
   a,
   button {
-    color: #fff;
+    color: #212529;
+    .main-page & {
+      color: #fff;
+    }
     text-decoration: none;
     position: relative;
     &:after {
