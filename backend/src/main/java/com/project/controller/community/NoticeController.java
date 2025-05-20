@@ -23,7 +23,7 @@ public class NoticeController {
     }
 
     @GetMapping("/{noticeCode}")
-    public QnaDto getNoticeDetail(@PathVariable String noticeCode) {
+    public QnaDto getNoticeDetail(@PathVariable("noticeCode") String noticeCode) {
         return qnaService.getNoticeDetail(noticeCode);
     }
 }

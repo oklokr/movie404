@@ -46,3 +46,10 @@ export function communityGetNoticeList(params) {
     params,
   })
 }
+
+export function communityGetNoticeDetail(noticeCode) {
+  return request({
+    url: `/api/notice/${noticeCode}`,
+    method: "get",
+  })
+}
