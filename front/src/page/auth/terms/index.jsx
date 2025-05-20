@@ -7,17 +7,19 @@ import Radio from "@mui/material/Radio"
 import RadioGroup from "@mui/material/RadioGroup"
 import FormControlLabel from "@mui/material/FormControlLabel"
 import FormControl from "@mui/material/FormControl"
-import { useState } from "react"
+import { useEffect, useLayoutEffect, useState } from "react"
 import { Button } from "@mui/material"
 import { useNavigate } from "react-router"
 import { signupTerms } from "@/api/signup"
-let list = []
 
 function terms() {
   const [TermA, setTermA] = useState("")
   const [TermB, setTermB] = useState("")
   const [TermC, setTermC] = useState("")
-
+  let list = []
+  signupTerms().then((res) => {
+    list = res.data
+  })
   function handleTermA(e) {
     if (e.target.value == "0") {
       alert("필수약관으로 동의하지 않으시면 서비스 이용이 불가합니다.")
@@ -49,13 +51,6 @@ function terms() {
   function previousPage(e) {
     navigate("/main")
   }
-
-  const getterms = () => {
-    signupTerms().then((res) => {
-      list = res.data
-    })
-  }
-  getterms()
 
   return (
     <div>
