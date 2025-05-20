@@ -13,6 +13,7 @@ import { Provider } from "react-redux"
 import store from "./store"
 import { CommonProvider, useCommon } from "@/store/commonContext"
 import { ModalProvider } from "@/component/ModalProvider"
+import { SearchProvider } from "@/component/searchProvider"
 import "swiper/css"
 import "swiper/css/pagination"
 import "swiper/css/navigation"
@@ -29,7 +30,9 @@ createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       <CommonProvider>
         <ModalProvider>
-          <AppLoader />
+          <SearchProvider>
+            <AppLoader />
+          </SearchProvider>
         </ModalProvider>
       </CommonProvider>
     </Provider>
