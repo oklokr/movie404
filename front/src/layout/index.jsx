@@ -27,26 +27,34 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (!code) dispatch(setCommonCode(commonCode))
-    if (!isPublic) {
-      if (!token) {
-        navigate("/login", { replace: true })
-        return
-      }
-      if (token && !user.info) {
-        commonGetUserInfo().then((res) => {
-          if (res.code === 200) dispatch(setUserInfo(res.data))
-          else navigate("/login", { replace: true })
-        })
-      }
-    } else {
-      // public 페이지에서 토큰이 있으면 무조건 /main으로 이동
-      if (token) {
-        navigate("/main", { replace: true })
-      }
-      if (token && location.pathname === "/") {
-        navigate("/main", { replace: true })
-      }
+    if (token && !user.info) {
+      commonGetUserInfo().then((res) => {
+        if (res.code === 200) dispatch(setUserInfo(res.data))
+        else navigate("/login", { replace: true })
+      })
     }
+    if (isPublic && token) navigate("/main", { replace: true })
+
+    // if (!isPublic) {
+    //   if (!token) {
+    //     navigate("/login", { replace: true })
+    //     return
+    //   }
+    //   if (token && !user.info) {
+    //     commonGetUserInfo().then((res) => {
+    //       if (res.code === 200) dispatch(setUserInfo(res.data))
+    //       else navigate("/login", { replace: true })
+    //     })
+    //   }
+    // } else {
+    //   // public 페이지에서 토큰이 있으면 무조건 /main으로 이동
+    //   if (token) {
+    //     navigate("/main", { replace: true })
+    //   }
+    //   if (token && location.pathname === "/") {
+    //     navigate("/main", { replace: true })
+    //   }
+    // }
     window.scrollTo(0, 0)
   }, [location.pathname])
   return (

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { fetchMovieList } from "@/api/admin"
 import { css } from "@emotion/react"
-import { useNavigate, useLocation } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router"
 
 const PAGE_SIZE = 10
 
@@ -83,7 +83,7 @@ export default function Movie() {
           <dt>영화명</dt>
           <dt>포스터</dt>
           <dt>DVD 금액</dt>
-          <dt>DVD 할인금액</dt>
+          <dt>DVD 할인율</dt> {/* 여기만 "할인율"로 변경 */}
         </dl>
         {list.length === 0 ? (
           <div css={emptyRow}>영화가 없습니다.</div>
@@ -131,7 +131,10 @@ export default function Movie() {
                 )}
               </dd>
               <dd>{row.dvdPrice?.toLocaleString()} 원</dd>
-              <dd>{row.dvdDiscount?.toLocaleString()} 원</dd>
+              <dd>
+                {row.dvdDiscount != null ? `${row.dvdDiscount}%` : "-"}
+                {/* 할인율로 표기, 값이 없으면 "-" */}
+              </dd>
             </dl>
           ))
         )}

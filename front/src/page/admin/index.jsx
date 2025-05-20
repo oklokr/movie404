@@ -1,5 +1,8 @@
-import { Outlet, NavLink, useLocation } from "react-router"
+import { Outlet, NavLink, useLocation, useNavigate } from "react-router"
+import { useEffect } from "react"
 import { css } from "@emotion/react"
+import { useSelector } from "react-redux"
+import { selectUser } from "@/store/selectors"
 
 const tabList = [
   { to: "/admin/user", label: "회원관리" },
@@ -9,6 +12,19 @@ const tabList = [
 
 export default function AdminLayout() {
   const location = useLocation()
+  const navigate = useNavigate()
+  const user = useSelector(selectUser)
+
+  useEffect(() => {
+    // user.info가 undefined 또는 null이면 아무 처리도 하지 않음
+    if (user.info === undefined || user.info === null) return
+    // userId 없거나, userTpcd가 "2"(문자열) 또는 2(숫자)가 아니면 차단
+    if (!user.info?.userId || String(user.info?.userTpcd) !== "2") {
+      alert("관리자 권한이 없습니다.")
+      navigate("/", { replace: true })
+    }
+  }, [navigate, user.info])
+
   return (
     <div css={wrapStyle}>
       <h2 css={titleStyle}>관리자</h2>

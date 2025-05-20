@@ -4,13 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.project.repository.CommonMapper;
 import com.project.repository.MovieMapper;
 import com.project.scheduler.dto.TMDBCreditDto;
 import com.project.scheduler.dto.TMDBDiscoverIdListDto;
@@ -31,144 +30,157 @@ public class MovieBatchService {
 
     private final TMDBClient tmdbClient;
     private final MovieMapper movieMapper;
+    private final CommonMapper commonMapper;
 
+    private static final String GENRE_TPCD = "GENRE_TPCD";
     private static final String GENRE_UNKNOWN = "GENRE_UNKNOWN";
     private static final String CREATOR_UNKNOWN = "CREATOR_UNKNOWN";
 
-
+    /**
+     * 메인 배치 진입점
+     */
     @Transactional
     public void updateMovies() {
-        log.info("==== 배치 시작 ====");
+        log.info("==== TMDB 영화 배치 시작 ====");
 
-        // 1. 장르 Fetch 및 삽입
+        // 0. 공통코드(장르) 선처리 ---------------------------------------------------------
+        int genreCommonId = ensureCommonAndGetId(GENRE_TPCD);
+        syncGenresWithCommonCode(genreCommonId);
+
+        // 1. TMDB 최신 영화 ID 목록 -------------------------------------------------------
+        List<TMDBDiscoverIdListDto> tmdbIds = tmdbClient.getMovieIdList(10);
+        for (TMDBDiscoverIdListDto idDto : tmdbIds) {
+            processSingleMovie(idDto.getId());
+        }
+
+        log.info("==== TMDB 영화 배치 완료 ====");
+    }
+
+    /**
+     * COMMON / COMMON_CODE 테이블에 GENRE_TPCD 기본 행을 보장하고 ID 반환
+     */
+    private int ensureCommonAndGetId(String commonCode) {
+        if (!commonMapper.existsCommon(commonCode)) {
+            commonMapper.insertCommon(commonCode); // useGeneratedKeys
+        }
+        return commonMapper.selectCommonId(commonCode);
+    }
+
+    /**
+     * TMDB 장르 -> COMMON_CODE & GENRE 테이블 동기화
+     */
+    private void syncGenresWithCommonCode(int commonId) {
         List<TMDBGenreDto> tmdbGenres = tmdbClient.getGenreList();
-        List<InsertGenreDto> insertGenres = tmdbGenres.stream()
-            .map(InsertGenreDto::fromTMDB)
-            .filter(genre -> !movieMapper.existsGenre(genre.getGenreCode()))
-            .toList();
-        insertGenres.forEach(movieMapper::batchInsertGenre);
 
-        // 2. 영화 ID 목록 가져오기
-        List<TMDBDiscoverIdListDto> movieIdList = tmdbClient.getMovieIdList(10);
-        for (TMDBDiscoverIdListDto movieIdDto : movieIdList) {
-            int movieId = movieIdDto.getId();
+        // COMMON_CODE & GENRE 테이블 모두 체크
+        for (TMDBGenreDto g : tmdbGenres) {
+            String value = String.valueOf(g.getId());
+            String name  = g.getName();
 
-            // 2-1. 영화 상세 정보 조회
-            TMDBMovieDetailDto movieDetail = tmdbClient.getMovieDetailById(movieId);
-            if (movieDetail == null || movieMapper.existsMovie(movieDetail.getId())) continue;
+            if (!commonMapper.existsCommonValue(value)) {
+                commonMapper.insertCommonCode(commonId, name, value);
+                log.info("✅ COMMON_CODE 추가: [{}] {}", value, name);
+            }
+            if (!movieMapper.existsGenre(value)) {
+                movieMapper.batchInsertGenre(InsertGenreDto.fromTMDB(g));
+                log.info("✅ GENRE 추가: [{}] {}", value, name);
+            }
+        }
+    }
 
-            // 2-2. 출연진/감독 정보 조회
-            TMDBCreditResponseDto creditResponseDto = tmdbClient.getCreditByMovieId(movieId);
-            List<TMDBCreditDto> crewList = creditResponseDto.getCrew();
-            List<TMDBCreditDto> castList = creditResponseDto.getCast();
-            List<TMDBCreditDto> directors = crewList.stream()
+    /**
+     * 개별 영화 처리
+     */
+    private void processSingleMovie(int movieId) {
+        // 영화 상세 조회 & 중복 체크
+        TMDBMovieDetailDto detail = tmdbClient.getMovieDetailById(movieId);
+        if (detail == null || movieMapper.existsMovie(detail.getId())) return;
+
+        // 감독·배우·비디오 --------------------------------------------------------------
+        TMDBCreditResponseDto credits = tmdbClient.getCreditByMovieId(movieId);
+        List<TMDBCreditDto> directors = credits.getCrew().stream()
                 .filter(c -> "Director".equalsIgnoreCase(c.getJob()))
                 .toList();
-            List<TMDBCreditDto> topActors = castList.stream()
+        List<TMDBCreditDto> actors = credits.getCast().stream()
                 .filter(c -> "Acting".equalsIgnoreCase(c.getKnown_for_department()))
                 .limit(5)
                 .toList();
+        insertCreatorsIfNeeded(directors);
+        insertCreatorsIfNeeded(actors);
 
-            // 2-3. 비디오 정보 조회
-            List<TMDBVideoDto> videoList = tmdbClient.getVideoListByMovieId(movieId);
-            String teaser = videoList.stream()
+        List<TMDBVideoDto> videos = tmdbClient.getVideoListByMovieId(movieId);
+        String teaser = videos.stream()
                 .filter(v -> "Teaser".equalsIgnoreCase(v.getType()))
                 .findFirst()
-                .or(() -> videoList.stream().findFirst())  // Teaser 없으면 첫 번째 영상 가져오기
+                .or(() -> videos.stream().findFirst())
                 .map(v -> "https://www.youtube.com/watch?v=" + v.getKey())
                 .orElse(null);
 
-            // 2-4. 감독 및 배우를 CREATOR로 삽입 (중복 방지)
-            Set<String> creatorCodes = new HashSet<>();
-            for (TMDBCreditDto director : directors) {
-                String creatorCode = String.valueOf(director.getId());
-                if (!movieMapper.existsCreator(creatorCode)) {
-                    movieMapper.batchInsertCreator(InsertCreatorDto.builder()
-                        .creatorCode(creatorCode)
-                        .creatorName(director.getName())
-                        .gender(String.valueOf(director.getGender()))
-                        .build());
-                }
-                creatorCodes.add(creatorCode);
-            }
-            for (TMDBCreditDto actor : topActors) {
-                String creatorCode = String.valueOf(actor.getId());
-                if (!movieMapper.existsCreator(creatorCode)) {
-                    movieMapper.batchInsertCreator(InsertCreatorDto.builder()
-                        .creatorCode(creatorCode)
-                        .creatorName(actor.getName())
-                        .gender(String.valueOf(actor.getGender()))
-                        .build());
-                }
-                creatorCodes.add(creatorCode);
-            }
-
-            // 2-5. 장르 코드 최대 3개 추출
-            List<String> genreCodes = movieDetail.getGenres().stream()
+        // 장르 코드 ---------------------------------------------------------------
+        List<String> genreCodes = detail.getGenres().stream()
                 .map(g -> String.valueOf(g.getId()))
                 .limit(3)
                 .toList();
+        String genreA = getFromList(genreCodes, 0, GENRE_UNKNOWN);
+        if (GENRE_UNKNOWN.equals(genreA) || !movieMapper.existsGenre(genreA)) {
+            log.warn("⚠️ 영화 {} 저장 스킵: 유효한 장르 없음", detail.getTitle());
+            return;
+        }
 
-            // 2-6. 영화 Insert DTO 생성
-            InsertMovieDto movieDto = InsertMovieDto.builder()
-                .movieCode(movieDetail.getId())
-                .genreCodeA(getFromList(genreCodes, 0, GENRE_UNKNOWN))
+        // 영화 DTO ----------------------------------------------------------------
+        InsertMovieDto movieDto = InsertMovieDto.builder()
+                .movieCode(detail.getId())
+                .genreCodeA(genreA)
                 .genreCodeB(getFromList(genreCodes, 1, null))
                 .genreCodeC(getFromList(genreCodes, 2, null))
-                .movieName(movieDetail.getTitle() != null ? movieDetail.getTitle() : "제목없음")
-                .directCodeA(getIdFromCastList(directors, 0, CREATOR_UNKNOWN))
-                .directCodeB(getIdFromCastList(directors, 1, null))
-                .actorCodeA(getIdFromCastList(topActors, 0, CREATOR_UNKNOWN))
-                .actorCodeB(getIdFromCastList(topActors, 1, null))
-                .actorCodeC(getIdFromCastList(topActors, 2, null))
-                .actorCodeD(getIdFromCastList(topActors, 3, null))
-                .actorCodeE(getIdFromCastList(topActors, 4, null))
-                .synopsis(movieDetail.getOverview() != null ? movieDetail.getOverview() : "정보없음")
-                .runtime(movieDetail.getRuntime() != null ? movieDetail.getRuntime() : 0)
-                .ratingTpcd(movieDetail.getAdult() ? "1" : "2")
-                .movieRelease(parseDate(movieDetail.getRelease_date()))
+                .movieName(detail.getTitle() != null ? detail.getTitle() : "제목없음")
+                .directCodeA(getIdFromList(directors, 0, CREATOR_UNKNOWN))
+                .directCodeB(getIdFromList(directors, 1, null))
+                .actorCodeA(getIdFromList(actors, 0, CREATOR_UNKNOWN))
+                .actorCodeB(getIdFromList(actors, 1, null))
+                .actorCodeC(getIdFromList(actors, 2, null))
+                .actorCodeD(getIdFromList(actors, 3, null))
+                .actorCodeE(getIdFromList(actors, 4, null))
+                .synopsis(detail.getOverview() != null ? detail.getOverview() : "정보없음")
+                .runtime(detail.getRuntime() != null ? detail.getRuntime() : 0)
+                .ratingTpcd(detail.getAdult() ? "1" : "2")
+                .movieRelease(parseDate(detail.getRelease_date()))
                 .teaser(teaser)
-                .poster("https://image.tmdb.org/t/p/w500" + movieDetail.getPoster_path())
+                .poster("https://image.tmdb.org/t/p/w500" + detail.getPoster_path())
                 .sales(0)
                 .build();
 
-            // 장르가 없거나 DB에 존재하지 않으면 영화 저장하지 않음
-            if (GENRE_UNKNOWN.equals(movieDto.getGenreCodeA())) {
-                log.warn("⚠️ 영화 {} 저장 불가: 장르 없음 (GENRE_UNKNOWN)", movieDto.getMovieName());
-                continue;
-            }
-            if (!movieMapper.existsGenre(movieDto.getGenreCodeA())) {
-                log.warn("⚠️ 영화 {} 저장 불가: 장르 코드 {} DB에 없음", movieDto.getMovieName(), movieDto.getGenreCodeA());
-                continue;
-            }
+        movieMapper.batchInsertMovie(movieDto);
 
-            // 2-7. 영화 삽입
-            movieMapper.batchInsertMovie(movieDto);
-
-            // 2-8. 로그 출력
-            String genreNames = movieDetail.getGenres().stream()
-                .map(g -> g.getName())
-                .collect(Collectors.joining(", "));
-            log.info("🎬 영화: {} | 개봉일: {} | 장르: {}", movieDetail.getTitle(), movieDetail.getRelease_date(), genreNames);
-            log.info("🎞 비디오 수: {}, 🎭 배우 수: {}", videoList.size(), castList.size());
-        }
-
-        log.info("TMDB 영화 배치 완료");
+        log.info("🎬 저장 완료: {} | 개봉 {} | 장르 {}", detail.getTitle(), detail.getRelease_date(),
+                detail.getGenres().stream().map(TMDBGenreDto::getName).collect(Collectors.joining(", ")));
     }
 
-    // 유틸 메서드
-    private String getFromList(List<String> list, int index, String defaultCode) {
-        return (list != null && list.size() > index && list.get(index) != null) ? list.get(index) : defaultCode;
-    }
-    private String getIdFromCastList(List<TMDBCreditDto> list, int index, String defaultCode) {
-        if (list != null && list.size() > index) {
-            TMDBCreditDto dto = list.get(index);
-            if (dto != null && dto.getId() != 0) {
-                return String.valueOf(dto.getId());
+    /**
+     * CREATOR 중복 검사 후 일괄 INSERT
+     */
+    private void insertCreatorsIfNeeded(List<TMDBCreditDto> people) {
+        for (TMDBCreditDto p : people) {
+            String code = String.valueOf(p.getId());
+            if (!movieMapper.existsCreator(code)) {
+                movieMapper.batchInsertCreator(InsertCreatorDto.builder()
+                        .creatorCode(code)
+                        .creatorName(p.getName())
+                        .gender(String.valueOf(p.getGender()))
+                        .build());
             }
         }
-        return defaultCode;
     }
+
+    // ------------------ 유틸 ------------------
+    private String getFromList(List<String> list, int idx, String def) {
+        return (list != null && list.size() > idx && list.get(idx) != null) ? list.get(idx) : def;
+    }
+
+    private String getIdFromList(List<TMDBCreditDto> list, int idx, String def) {
+        return (list != null && list.size() > idx && list.get(idx) != null) ? String.valueOf(list.get(idx).getId()) : def;
+    }
+
     private LocalDate parseDate(String dateStr) {
         try {
             return (dateStr != null && !dateStr.isBlank()) ? LocalDate.parse(dateStr) : null;

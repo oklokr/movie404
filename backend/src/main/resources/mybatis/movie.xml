@@ -7,36 +7,70 @@
 
   <select id="selectMovieList" resultType="com.project.model.MovieDto">
     SELECT
-      m.MOVIE_CODE as movieCode,
-      m.MOVIE_NAME as movieName,
-      m.POSTER as poster,
-      m.GENRE_CODEA as genreCodeA,
-      m.SYNOPSIS as synopsis,
-      m.DIRECT_CODEA as directCodeA,
-      m.DIRECT_CODEB as directCodeB,
-      m.ACTOR_CODEA as actorCodeA,
-      m.ACTOR_CODEB as actorCodeB,
-      m.ACTOR_CODEC as actorCodeC,
-      v.PRICE as dvdPrice,
-      v.DISCOUNT as dvdDiscount
+      m.MOVIE_CODE   AS movieCode,
+      m.MOVIE_NAME   AS movieName,
+      m.POSTER       AS poster,
+      m.GENRE_CODEA  AS genreCodeA,
+      m.SYNOPSIS     AS synopsis,
+      m.DIRECT_CODEA AS directCodeA,
+      m.DIRECT_CODEB AS directCodeB,
+      m.ACTOR_CODEA  AS actorCodeA,
+      m.ACTOR_CODEB  AS actorCodeB,
+      m.ACTOR_CODEC  AS actorCodeC,
+      v.PRICE        AS dvdPrice,
+      v.DISCOUNT     AS dvdDiscount,
+      CASE WHEN rs.MOVIE_CODE IS NULL THEN 0 ELSE 1 END AS theater
     FROM MOVIE m
-    LEFT JOIN VOD v ON m.MOVIE_CODE = v.MOVIE_CODE
+      LEFT JOIN VOD v ON v.MOVIE_CODE  = m.MOVIE_CODE
+      LEFT JOIN (
+          SELECT DISTINCT MOVIE_CODE
+          FROM RUN_SCHEDULE
+      ) rs ON rs.MOVIE_CODE = m.MOVIE_CODE
+
     <where>
-      <if test="movieName != null and movieName != ''">
-        AND m.MOVIE_NAME LIKE CONCAT('%', #{movieName}, '%')
+      <!-- 장르 필터 -->
+      <if test="genreTpcd != null and genreTpcd != ''">
+        ( m.GENRE_CODEA = #{genreTpcd}
+          OR m.GENRE_CODEB = #{genreTpcd}
+          OR m.GENRE_CODEC = #{genreTpcd} )
+      </if>
+
+      <!-- 제목 검색 -->
+      <if test="keyword != null and keyword != ''">
+        AND m.MOVIE_NAME LIKE CONCAT('%', #{keyword}, '%')
+      </if>
+
+      <!-- 상영 스케줄 여부 -->
+      <if test="schedule != null">
+        AND (CASE WHEN rs.MOVIE_CODE IS NULL THEN 0 ELSE 1 END) = #{schedule}
       </if>
     </where>
-    GROUP BY m.MOVIE_CODE
-    ORDER BY m.MOVIE_CODE DESC
+
+    ORDER BY m.MOVIE_RELEASE DESC, m.MOVIE_CODE DESC
     LIMIT #{size} OFFSET #{offset}
   </select>
 
   <select id="countMovieList" resultType="int">
     SELECT COUNT(*)
     FROM MOVIE m
+    LEFT JOIN (
+      SELECT DISTINCT MOVIE_CODE
+      FROM RUN_SCHEDULE
+    ) rs ON rs.MOVIE_CODE = m.MOVIE_CODE
+
     <where>
-      <if test="movieName != null and movieName != ''">
-        AND m.MOVIE_NAME LIKE CONCAT('%', #{movieName}, '%')
+      <if test="genreTpcd != null and genreTpcd != ''">
+        ( m.GENRE_CODEA = #{genreTpcd}
+          OR m.GENRE_CODEB = #{genreTpcd}
+          OR m.GENRE_CODEC = #{genreTpcd} )
+      </if>
+
+      <if test="keyword != null and keyword != ''">
+        AND m.MOVIE_NAME LIKE CONCAT('%', #{keyword}, '%')
+      </if>
+
+      <if test="schedule != null">
+        AND (CASE WHEN rs.MOVIE_CODE IS NULL THEN 0 ELSE 1 END) = #{schedule}
       </if>
     </where>
   </select>
