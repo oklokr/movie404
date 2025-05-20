@@ -3,13 +3,14 @@ import React, { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router"
 import { useSelector } from "react-redux"
 import { selectUser } from "@/store/selectors"
-import { communityGetNoticeDetail } from "@/api/community"
+import { communityGetNoticeDetail, communityDeleteNotice } from "@/api/community"
 
 export default function NoticeDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [deleting, setDeleting] = useState(false)
   const user = useSelector(selectUser)
   const isAdmin = user.info?.userTpcd === "2"
 
@@ -25,6 +26,18 @@ export default function NoticeDetail() {
         setLoading(false)
       })
   }, [id])
+
+  const handleDelete = () => {
+    if (window.confirm("정말 삭제하시겠습니까?")) {
+      setDeleting(true)
+      communityDeleteNotice({ noticeCode: id })
+        .then(() => {
+          setDeleting(false)
+          navigate("/community/notice")
+        })
+        .catch(() => setDeleting(false))
+    }
+  }
 
   if (loading) return null
   if (!data) return <div css={emptyStyle}>존재하지 않는 공지입니다.</div>
@@ -59,18 +72,15 @@ export default function NoticeDetail() {
                 css={[btnStyle, btnGray]}
                 style={{ marginLeft: 8 }}
                 onClick={() => navigate(`/community/notice/${id}/edit`)}
+                disabled={deleting}
               >
                 수정
               </button>
               <button
                 css={[btnStyle, btnRed]}
                 style={{ marginLeft: 8 }}
-                onClick={() => {
-                  if (window.confirm("정말 삭제하시겠습니까?")) {
-                    // communityDeleteNotice({ noticeCode: id }).then(() => navigate("/community/notice"))
-                    alert("삭제 기능은 구현 필요")
-                  }
-                }}
+                onClick={handleDelete}
+                disabled={deleting}
               >
                 삭제
               </button>

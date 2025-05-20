@@ -61,3 +61,11 @@ export function communityEditNotice(data) {
     data,
   })
 }
+
+export function communityDeleteNotice(data) {
+  return request({
+    url: "/api/notice/delete",
+    method: "post",
+    data,
+  })
+}

@@ -20,4 +20,5 @@ public interface QnaMapper {
     QnaDto selectNoticeDetail(@Param("noticeCode") String noticeCode);
     void insertNotice(QnaDto dto);
     void updateNotice(QnaDto dto);
+    void deleteNotice(@Param("noticeCode") String noticeCode);
 }

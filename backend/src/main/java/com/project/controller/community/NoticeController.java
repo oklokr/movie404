@@ -35,4 +35,10 @@ public class NoticeController {
             qnaService.updateNotice(dto);
         }
     }
+
+    @PostMapping("/delete")
+    public void deleteNotice(@RequestBody Map<String, String> param) {
+        String noticeCode = param.get("noticeCode");
+        qnaService.deleteNotice(noticeCode);
+    }
 }

@@ -82,4 +82,8 @@
         SET CATEGORY = #{type}, TITLE = #{title}, CONTENT = #{content}
         WHERE NOTICE_CODE = #{noticeCode}
     </update>
+
+    <delete id="deleteNotice">
+        DELETE FROM NOTICE WHERE NOTICE_CODE = #{noticeCode}
+    </delete>
 </mapper>

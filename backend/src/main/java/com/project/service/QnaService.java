@@ -72,4 +72,8 @@ public class QnaService {
     public void updateNotice(QnaDto dto) {
         qnaMapper.updateNotice(dto);
     }
+
+    public void deleteNotice(String noticeCode) {
+        qnaMapper.deleteNotice(noticeCode);
+    }
 }
