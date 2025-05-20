@@ -65,7 +65,7 @@ export default function Header() {
   }
 
   return (
-    <header className={pathname === "/main" ? "main-page" : ""} css={headerWrap}>
+    <header className={pathname === "/main" ? "main-page" : ""}>
       <div className="header" css={headerStyle}>
         <h1 className="logo">
           <a href="/main">
@@ -101,12 +101,6 @@ export default function Header() {
     </header>
   )
 }
-const headerWrap = css`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-`
 const headerStyle = css`
   display: flex;
   align-items: center;
