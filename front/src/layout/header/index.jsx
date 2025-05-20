@@ -16,7 +16,8 @@ import { useLocation, useNavigate } from "react-router"
 import MyMenu from "./component/myMenu"
 import { useSelector } from "react-redux"
 import { selectUser } from "@/store/selectors"
-import { useModal } from "@/component/ModalProvider"
+import { useModal } from "@/component/modalProvider"
+import { useSearch } from "@/component/searchProvider"
 
 export default function Header() {
   const { pathname } = useLocation()
@@ -27,6 +28,7 @@ export default function Header() {
   const [openMyMenu, setOpenMyMenu] = useState(false)
   const user = useSelector(selectUser)
   const { openModal, showAlert } = useModal()
+  const { showSearchList } = useSearch()
   const navigate = useNavigate()
   const genreTpcd = code.GENRE_TPCD
   const gnbMenu = []
@@ -76,7 +78,9 @@ export default function Header() {
           {gnbMenu.map((wrap, idx) => (
             <SwiperSlide key={idx}>
               {wrap.map((item) => (
-                <Button key={item.commonValue}>{item.commonName}</Button>
+                <Button key={item.commonValue} onClick={() => showSearchList(item.commonValue)}>
+                  {item.commonName}
+                </Button>
               ))}
             </SwiperSlide>
           ))}
