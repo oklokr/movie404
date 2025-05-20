@@ -1,10 +1,11 @@
 import { css } from "@emotion/react"
-import { Outlet } from "react-router"
+import { Outlet, useLocation } from "react-router"
 
 export default function content() {
+  const { pathname } = useLocation()
   return (
     <>
-      <div className="container" css={containerStyle}>
+      <div className={`container ${pathname === "/main" ? "main-page" : ""}`} css={containerStyle}>
         <Outlet />
       </div>
     </>

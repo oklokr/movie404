@@ -36,7 +36,7 @@ public class MainMovieController {
         return new ApiResponse(result);
     }
 
-    @PostMapping("/movie/detail")
+    @PostMapping("/main/movie/detail")
     public ApiResponse getMovieDetail(@RequestBody Map<String, Object> requestBody) {
         // String movieCode = (String) requestBody.get("movieCode");
 

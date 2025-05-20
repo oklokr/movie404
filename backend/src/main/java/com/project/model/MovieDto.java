@@ -28,4 +28,6 @@ public class MovieDto {
     private String dvdDateTo;
     private Integer dvdPrice;
     private Integer dvdDiscount;
+    private String teaser;
+    private String background; // 배경사진 URL 추가
 }

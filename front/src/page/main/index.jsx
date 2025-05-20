@@ -1,15 +1,281 @@
+/** @jsxImportSource @emotion/react */
+import { css, keyframes } from "@emotion/react"
+import { useEffect, useRef, useState } from "react"
+import { Autoplay, Navigation } from "swiper/modules"
+import { Swiper, SwiperSlide } from "swiper/react"
+import "swiper/css"
+import "swiper/css/navigation"
 import { mainGetMovieList } from "@/api/main"
+import { useModal } from "@/component/ModalProvider"
+import { Button } from "@mui/material"
 
-function main() {
-  mainGetMovieList({
-    schedule: "1",
-  }).then((res) => {
-    const { code, data } = res
-    if (code !== 200) return console.log("test")
-    console.log(data)
+function MainPage() {
+  const [fetchData, setFetchData] = useState({
+    showMovies: [],
+    allMovie: [],
+    latest: [],
+    randomPoster: null,
   })
+  const [openFAQ, setOpenFAQ] = useState(null)
+  const [bgY, setBgY] = useState(0)
+  const rafRef = useRef()
+  const { openModal, showAlert } = useModal()
 
-  return <div>main</div>
+  useEffect(() => {
+    const handleScroll = () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      rafRef.current = requestAnimationFrame(() => {
+        setBgY(window.scrollY * 0.4)
+      })
+    }
+    window.addEventListener("scroll", handleScroll)
+
+    // showAlert({ message: "성공적으로 처리되었습니다!", type: "error" })
+    // openModal({ content: "이건 모달입니다.", type: "confirm" })
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    }
+  }, [])
+
+  useEffect(() => {
+    const fetchMovie = async () => {
+      const showMovie = await mainGetMovieList({ schedule: "1" })
+      const allMovie = await mainGetMovieList({ size: 28 })
+
+      // 최신순 5개만 추출 (리스트 앞에서 5개)
+      const latestMovie = allMovie.data.list.slice(0, 5)
+      const filteredAllMovie = allMovie.data.list.slice(5)
+
+      setFetchData({
+        showMovies: showMovie.data.list,
+        allMovie: filteredAllMovie,
+        latest: latestMovie,
+        randomPoster: latestMovie[Math.floor(Math.random() * latestMovie.length)].poster,
+      })
+    }
+
+    fetchMovie()
+  }, [])
+
+  // FAQ 더미 데이터
+  const faqList = [
+    { q: "프로젝트 큰일났을 때 어떻게 해야함", a: "빨리 빨리 해야져" },
+    { q: "선장은 undefined입니다", a: "타입을 지정해야 합니다." },
+    { q: "const undefined=승주행님;", a: "???" },
+  ]
+
+  const mainStyle = css`
+    padding: 98px 40px 0;
+    position: relative;
+    min-height: 100vh;
+    overflow-x: hidden;
+    &:before {
+      content: "";
+      background: url(${fetchData.randomPoster}) no-repeat;
+      background-size: cover;
+      background-position: center ${-bgY}px;
+      filter: blur(2px) brightness(0.7);
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: -2;
+    }
+    &:after {
+      content: "";
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: linear-gradient(180deg, #000000b5 60%, #000 100%);
+      z-index: -1;
+      pointer-events: none;
+    }
+    section {
+      & + section {
+        margin-top: 140px;
+      }
+      > h3 {
+        color: #fff;
+        font-size: 36px;
+
+        + * {
+          margin-top: 40px;
+        }
+      }
+    }
+
+    .banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin: 0 -40px;
+      position: relative;
+      background: linear-gradient(135deg, #444, #000);
+
+      .swiper {
+        height: 340px;
+      }
+
+      h3 {
+        width: 1px;
+        height: 1px;
+        text-indent: -9999px;
+        color: transparent;
+      }
+    }
+  `
+
+  const rankingGrid = css`
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  `
+
+  const rankingItem = css`
+    background: #ddd;
+    padding: 40px;
+    font-size: 24px;
+    text-align: center;
+    border-radius: 10px;
+  `
+
+  const gridBox = css`
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  `
+
+  const gridItem = css`
+    height: 180px;
+    background: #333;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    &::after {
+      content: "더보기 →";
+      position: absolute;
+      bottom: -40px;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      text-align: center;
+      padding: 10px;
+      transition: bottom 0.3s ease;
+    }
+
+    &:hover::after {
+      bottom: 0;
+    }
+  `
+
+  const faqBox = css`
+    border-top: 1px solid #ccc;
+  `
+
+  const faqQuestion = css`
+    padding: 15px;
+    cursor: pointer;
+    background: #f1f1f1;
+    &:hover {
+      background: #e0e0e0;
+    }
+  `
+
+  const faqAnswer = css`
+    padding: 15px;
+    background: #fff;
+    border-top: 1px solid #ccc;
+  `
+
+  return (
+    <div css={mainStyle}>
+      <section className="banner">
+        <h3>최신순 영화</h3>
+        <Swiper
+          navigation={true}
+          modules={[Navigation, Autoplay]}
+          autoplay={{ delay: 5000, disableOnInteraction: false }}
+          loop
+        >
+          {fetchData.latest.map((item) => (
+            <SwiperSlide key={item.movieCode}>
+              <span>
+                <img src={item.poster} alt={item.movieName} />
+              </span>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </section>
+
+      <section className="show-movie">
+        <h3>상영중인 영화</h3>
+        <Swiper slidesPerView={5} spaceBetween={10} navigation modules={[Navigation]}>
+          {fetchData.showMovies.map((item) => (
+            <SwiperSlide key={item.movieCode}>
+              <div className="movie-poster">
+                <span>
+                  <img src={item.poster} alt={item.movieName} />
+                </span>
+                <div className="info">
+                  <p>{item.movieName}</p>
+                  <Button variant="contained">상세보기</Button>
+                </div>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </section>
+
+      <section className="lank-movie">
+        <h3>인기순위</h3>
+        <div css={rankingGrid}>
+          {fetchData.allMovie.slice(0, 5).map((item, idx) => (
+            <div key={item.movieCode} css={rankingItem}>
+              {idx + 1}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="all-movie">
+        <h3>이런 영화도 있어요!</h3>
+        <div css={gridBox}>
+          {fetchData.allMovie.slice(5, 21).map((item) => (
+            <div key={item.movieCode} css={gridItem}>
+              🎞️
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="qna">
+        <h3>자주 묻는 질문</h3>
+        <div css={faqBox}>
+          {faqList.map((faq, idx) => (
+            <div key={idx}>
+              <div css={faqQuestion} onClick={() => setOpenFAQ(openFAQ === idx ? null : idx)}>
+                Q. {faq.q}
+              </div>
+              {openFAQ === idx && <div css={faqAnswer}>A. {faq.a}</div>}
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  )
 }
 
-export default main
+export default MainPage

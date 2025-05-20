@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import SearchIcon from "@mui/icons-material/Search"
 import CloseIcon from "@mui/icons-material/Close"
 
-export default function SearchForm({ state, fn_HandleOepnSearch }) {
+export default function SearchForm({ state, fn_handleOepnSearch }) {
   const [keyword, setKeyword] = useState("")
   const [activeState, setActiveState] = useState(false)
   useEffect(() => setActiveState(state))
@@ -30,7 +30,7 @@ export default function SearchForm({ state, fn_HandleOepnSearch }) {
         <IconButton
           sx={{ p: "10px" }}
           aria-label="directions"
-          onClick={() => fn_HandleOepnSearch()}
+          onClick={() => fn_handleOepnSearch()}
         >
           <CloseIcon />
         </IconButton>
@@ -46,7 +46,6 @@ const searchStyle = css`
   height: 100%;
   position: absolute;
   right: 88px;
-  background: #fff;
   transition: 0.3s;
   z-index: 2;
 

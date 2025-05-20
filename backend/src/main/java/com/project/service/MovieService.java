@@ -100,8 +100,14 @@ public class MovieService {
             movie.setRuntime(0);
         }
 
-        // 포스터 URL만 저장
+        // 포스터 URL 저장
         movie.setPoster(allParams.get("POSTER"));
+
+        // 티저 URL 저장
+        movie.setTeaser(allParams.get("TEASER"));
+
+        // 배경사진 URL 저장 (여기 추가)
+        movie.setBackground(allParams.get("BACKGROUND"));
 
         return movie;
     }

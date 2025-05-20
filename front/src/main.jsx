@@ -1,4 +1,4 @@
-import { StrictMode, Suspense } from "react"
+import { Suspense } from "react"
 import { createRoot } from "react-dom/client"
 import "@/locales/i18n"
 
@@ -12,6 +12,7 @@ import { router } from "@/routes"
 import { Provider } from "react-redux"
 import store from "./store"
 import { CommonProvider, useCommon } from "@/store/commonContext"
+import { ModalProvider } from "@/component/ModalProvider"
 import "swiper/css"
 import "swiper/css/pagination"
 import "swiper/css/navigation"
@@ -27,7 +28,9 @@ createRoot(document.getElementById("root")).render(
   <Suspense fallback={<Loading />}>
     <Provider store={store}>
       <CommonProvider>
-        <AppLoader />
+        <ModalProvider>
+          <AppLoader />
+        </ModalProvider>
       </CommonProvider>
     </Provider>
   </Suspense>,

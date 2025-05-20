@@ -26,5 +26,6 @@ public class InsertMovieDto {
     private LocalDate movieRelease;         // 개봉일
     private String teaser;                  // 티저영상 URL
     private String poster;                  // 포스터 URL
+    private String background;              // 배경사진 URL
     private Integer sales;                  // 매출
 }
