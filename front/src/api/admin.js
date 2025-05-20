@@ -144,3 +144,19 @@ export function selectOrderList(data) {
     data,
   }).then((res) => res)
 }
+
+export function authUser(data) {
+  return request({
+    url: "api/admin/authuser",
+    method: "post",
+    data,
+  }).then((res) => res)
+}
+
+export function authVerify(data) {
+  return request({
+    url: data.url,
+    method: "get",
+    data,
+  }).then((res) => console.log(res))
+}

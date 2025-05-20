@@ -14,10 +14,11 @@ import TableContainer from "@mui/material/TableContainer"
 import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
 import Paper from "@mui/material/Paper"
-import { selectOrderList } from "@/api/admin"
+import { authUser, authVerify, selectOrderList } from "@/api/admin"
 import { selectUser } from "@/store/selectors"
 import { useSelector } from "react-redux"
 import * as PortOne from "@portone/browser-sdk/v2"
+import header from "@/layout/header"
 
 let userid = ""
 function OrderListMenu(props) {
@@ -113,7 +114,7 @@ function requestIssueBillingKey() {
 function requestPayment() {
   PortOne.requestPayment({
     storeId: "store-56e4a946-8aac-456d-a3f9-5d7749040500", // 고객사 storeId로 변경해주세요.
-    channelKey: "channel-key-33088424-0132-4b0d-b1fe-b1a8cfc8f071", // 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키를 입력해주세요.
+    channelKey: "channel-key-b703b5fa-ca19-4e5e-91d6-a2ba75a95574", // 콘솔 결제 연동 화면에서 채널 연동 시 생성된 채널 키를 입력해주세요.
     paymentId: `payment${crypto.randomUUID()}`,
     orderName: "나이키 와플 트레이너 2 SD",
     totalAmount: 1000,
@@ -126,17 +127,39 @@ function requestPayment() {
     },
   })
 }
-function test() {
-  PortOne.requestIdentityVerification({
-    // 고객사 storeId로 변경해주세요.
+async function test() {
+  let identityVerificationId = `identity-verification-${crypto.randomUUID()}`
+  await PortOne.requestIdentityVerification({
     storeId: "store-56e4a946-8aac-456d-a3f9-5d7749040500",
-    identityVerificationId: `identity-verification-${crypto.randomUUID()}`,
+    identityVerificationId: identityVerificationId,
     // 연동 정보 메뉴의 채널 관리 탭에서 확인 가능합니다.
     channelKey: "channel-key-33088424-0132-4b0d-b1fe-b1a8cfc8f071",
+  }).then((res) => {
+    console.log(identityVerificationId)
   })
+
+  authUser({
+    body: JSON.stringify({
+      identityVerificationId,
+    }),
+  })
+    .then((res) => {
+      console.log(res)
+      const PORTONE_API_SECRET =
+        "ojxCqrJqyr2I7F33MMOL4lgvlq0VPXaqXANDSYpfUiVYzEEkwP0YWpA4YBdl2JogGqhEwwP1teH07hLk"
+      authVerify({
+        url: `https://api.portone.io/identity-verifications/${identityVerificationId}`,
+        headers: { Authorization: `PortOne ${PORTONE_API_SECRET}` },
+      })
+    })
+    .then((res) => {
+      console.log(res)
+    })
 }
 function Payment() {
   test()
+  //requestPayment()
+  //requestIssueBillingKey()
   return (
     <>
       <h1>카드관리</h1>

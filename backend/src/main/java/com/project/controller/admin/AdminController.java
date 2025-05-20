@@ -114,5 +114,11 @@ public class AdminController {
 
         }    
     }
-    
+
+        @PostMapping("/authuser")
+    public void authUser(@RequestBody Map<String, Object> body) {
+System.out.println("authuser들어옴");
+
+
+}
 }
