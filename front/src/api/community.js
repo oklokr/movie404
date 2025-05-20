@@ -76,3 +76,26 @@ export function communityGetFaqList() {
     method: "get",
   })
 }
+
+export function communityGetFaqDetail(faqCode) {
+  return request({
+    url: `/api/faq/${faqCode}`,
+    method: "get",
+  })
+}
+
+export function communityEditFaq(data) {
+  return request({
+    url: "/api/faq/edit",
+    method: "post",
+    data,
+  })
+}
+
+export function communityDeleteFaq(data) {
+  return request({
+    url: "/api/faq/delete",
+    method: "post",
+    data,
+  })
+}
