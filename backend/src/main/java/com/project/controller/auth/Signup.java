@@ -3,10 +3,12 @@ package com.project.controller.auth;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.model.ApiResponse;
+import com.project.model.OrderDto;
+import com.project.model.TermDto;
 import com.project.model.UserDto;
 import com.project.service.UserService;
 
-
+import java.util.List;
 import java.util.Map;
 import org.springframework.mail.javamail.JavaMailSender;
 import jakarta.mail.MessagingException;
@@ -93,9 +95,21 @@ public class Signup {
         userdto.setEmail((String) requestBody.get("email"));
 
         
-        userService.insertUser(userdto); //잘 들어가면 리턴타입 null임 참나ㅋㅋㅋ
+        userService.insertUser(userdto);
             return new ApiResponse(200,"success",null);
         
+    }
+    @PostMapping("/signupterms")
+    public ApiResponse signupTerms(@RequestBody Map<String, Object> requestBody) {
+
+        try{
+        List<TermDto> list = userService.selectTermsList();        
+             return new ApiResponse(200,"success",list);
+
+        }catch(Exception e){
+            System.out.println(e);
+            return new ApiResponse(404,"fail",null);
+        }
     }
 
 }

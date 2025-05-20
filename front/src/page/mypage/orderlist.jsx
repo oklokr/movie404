@@ -127,34 +127,29 @@ function requestPayment() {
     },
   })
 }
+const PORTONE_API_SECRET =
+  "HAScg24us1bOISHDyTXYY3IWugf79CESXMqOWAOWl5ZX5tvR6jrIrDNtbWkaL8pnAaw6qSYLX3vSym71"
+const identityVerification = `identity-verification-${crypto.randomUUID()}`
+
 async function test() {
-  let identityVerificationId = `identity-verification-${crypto.randomUUID()}`
-  await PortOne.requestIdentityVerification({
+  console.log("호출됨")
+  PortOne.requestIdentityVerification({
     storeId: "store-56e4a946-8aac-456d-a3f9-5d7749040500",
-    identityVerificationId: identityVerificationId,
+    identityVerificationId: identityVerification,
     // 연동 정보 메뉴의 채널 관리 탭에서 확인 가능합니다.
     channelKey: "channel-key-33088424-0132-4b0d-b1fe-b1a8cfc8f071",
   }).then((res) => {
-    console.log(identityVerificationId)
-  })
-
-  authUser({
-    body: JSON.stringify({
-      identityVerificationId,
-    }),
-  })
-    .then((res) => {
-      console.log(res)
-      const PORTONE_API_SECRET =
-        "ojxCqrJqyr2I7F33MMOL4lgvlq0VPXaqXANDSYpfUiVYzEEkwP0YWpA4YBdl2JogGqhEwwP1teH07hLk"
-      authVerify({
-        url: `https://api.portone.io/identity-verifications/${identityVerificationId}`,
-        headers: { Authorization: `PortOne ${PORTONE_API_SECRET}` },
-      })
+    console.log(encodeURIComponent(res.identityVerificationId))
+    if (res.code !== undefined) {
+      return alert(res.message)
+    }
+    fetch({
+      url: `https://api.portone.io/identity-verifications/${identityVerification}`,
+      headers: { Authorization: `PortOne ${PORTONE_API_SECRET}` },
+    }).then((response) => {
+      console.log(response.json.verifiedCustomer)
     })
-    .then((res) => {
-      console.log(res)
-    })
+  })
 }
 function Payment() {
   test()

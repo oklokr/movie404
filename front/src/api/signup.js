@@ -39,3 +39,11 @@ export function login(data) {
     data,
   })
 }
+
+export function signupTerms(data) {
+  return request({
+    url: "api/signup/signupterms",
+    method: "post",
+    data,
+  })
+}

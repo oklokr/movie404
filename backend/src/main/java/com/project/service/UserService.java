@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.model.OrderDto;
+import com.project.model.TermDto;
 import com.project.model.UserDto;
 import com.project.repository.UserMapper;
 import com.project.util.DateFormatUtil;
@@ -117,5 +118,9 @@ public class UserService {
         System.out.println("/userService.java");
         return userMapper.selectOrderList(id);
         
+    }
+
+    public List<TermDto> selectTermsList(){
+        return userMapper.selectTermsList();
     }
 }

@@ -97,7 +97,7 @@ function Login() {
 
         <ul className="link-list">
           <li>
-            <Link to="/signup">회원가입</Link>
+            <Link to="/terms">회원가입</Link>
           </li>
           <li>
             <Link to="/findId">아이디 찾기</Link>
