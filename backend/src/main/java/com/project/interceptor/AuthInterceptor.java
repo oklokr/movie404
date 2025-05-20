@@ -41,7 +41,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        UserDto user = userMapper.getUser(null, null, token);
+        UserDto user = userMapper.getUser(null, token);
         if (user == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;

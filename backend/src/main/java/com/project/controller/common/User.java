@@ -27,7 +27,7 @@ public class User {
 
     @PostMapping("/common/userInfo")
     public ApiResponse getUserInfo(HttpServletRequest request) {
-        UserDto userInfo = userService.getUser(null, null, request.getHeader("Authorization"), false);
+        UserDto userInfo = userService.getUser(null, request.getHeader("Authorization"));
         if (userInfo == null) return new ApiResponse(500, "일치하는 회원정보가 없습니다.", null);
         return new ApiResponse(userInfo);
     }
