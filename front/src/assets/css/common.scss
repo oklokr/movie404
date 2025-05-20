@@ -15,6 +15,11 @@ header {
   background: #ffffff24;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
   z-index: 10;
+  transition: 0.3s;
+
+  &.main-page:hover {
+    background: #fff;
+  }
 }
 .header {
   min-width: 1200px;
@@ -40,7 +45,7 @@ header {
   margin: 0 auto;
 }
 
-.MuiButton-root {
+.MuiButton-sizeLarge {
   height: 48px;
 }
 
@@ -60,16 +65,72 @@ header {
 }
 
 .movie-poster {
+  display: flex;
+  align-items: center;
+  height: 100%;
   min-width: 240px;
-  min-height: 340px;
+  height: 340px;
+  position: relative;
   border-radius: 4px;
   background: #fff;
+  overflow: hidden;
 
-  .card {
+  span {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+    img {
+      width: 100%;
+      transform: scale(1);
+      transition: 0.3s;
+    }
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     opacity: 0;
     transition: 0.3s;
+
+    p {
+      color: #fff;
+      text-align: center;
+      padding: 0 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    button {
+      width: fit-content;
+      position: relative;
+      z-index: 1;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: #000000a8;
+    }
   }
-  &:hover .card {
-    opacity: 1;
+  &:hover {
+    .info {
+      opacity: 1;
+    }
+
+    span img {
+      transform: scale(1.2);
+    }
   }
 }

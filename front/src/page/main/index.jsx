@@ -6,6 +6,8 @@ import { Swiper, SwiperSlide } from "swiper/react"
 import "swiper/css"
 import "swiper/css/navigation"
 import { mainGetMovieList } from "@/api/main"
+import { useModal } from "@/component/ModalProvider"
+import { Button } from "@mui/material"
 
 function MainPage() {
   const [fetchData, setFetchData] = useState({
@@ -17,6 +19,7 @@ function MainPage() {
   const [openFAQ, setOpenFAQ] = useState(null)
   const [bgY, setBgY] = useState(0)
   const rafRef = useRef()
+  const { openModal, showAlert } = useModal()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,6 +29,10 @@ function MainPage() {
       })
     }
     window.addEventListener("scroll", handleScroll)
+
+    // showAlert({ message: "성공적으로 처리되었습니다!", type: "error" })
+    // openModal({ content: "이건 모달입니다.", type: "confirm" })
+
     return () => {
       window.removeEventListener("scroll", handleScroll)
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
@@ -89,11 +96,16 @@ function MainPage() {
       pointer-events: none;
     }
     section {
-      margin-bottom: 50px;
-
-      h3 {
+      & + section {
+        margin-top: 140px;
+      }
+      > h3 {
         color: #fff;
         font-size: 36px;
+
+        + * {
+          margin-top: 40px;
+        }
       }
     }
 
@@ -213,7 +225,15 @@ function MainPage() {
         <Swiper slidesPerView={5} spaceBetween={10} navigation modules={[Navigation]}>
           {fetchData.showMovies.map((item) => (
             <SwiperSlide key={item.movieCode}>
-              <div className="movie-poster">{item.movieName}</div>
+              <div className="movie-poster">
+                <span>
+                  <img src={item.poster} alt={item.movieName} />
+                </span>
+                <div className="info">
+                  <p>{item.movieName}</p>
+                  <Button variant="contained">상세보기</Button>
+                </div>
+              </div>
             </SwiperSlide>
           ))}
         </Swiper>

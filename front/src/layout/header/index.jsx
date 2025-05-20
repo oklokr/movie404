@@ -16,6 +16,7 @@ import { useLocation, useNavigate } from "react-router"
 import MyMenu from "./component/myMenu"
 import { useSelector } from "react-redux"
 import { selectUser } from "@/store/selectors"
+import { useModal } from "@/component/ModalProvider"
 
 export default function Header() {
   const { pathname } = useLocation()
@@ -25,6 +26,7 @@ export default function Header() {
   const [myMenuState, setMyMenuState] = useState(false)
   const [openMyMenu, setOpenMyMenu] = useState(false)
   const user = useSelector(selectUser)
+  const { openModal, showAlert } = useModal()
   const navigate = useNavigate()
   const genreTpcd = code.GENRE_TPCD
   const gnbMenu = []
@@ -45,7 +47,7 @@ export default function Header() {
 
   const handleOpenMyMenu = () => {
     if (!user.info) {
-      alert("로그인이 필요한 서비스입니다.")
+      showAlert({ message: "로그인이 필요한 서비스입니다.", type: "error" })
       return navigate("/login")
     }
     setTimeout(
@@ -92,7 +94,7 @@ export default function Header() {
             <IconButton aria-label="user" className="user" onClick={() => handleOpenMyMenu()}>
               <PermIdentityIcon />
             </IconButton>
-            {openMyMenu && <MyMenu state={myMenuState} />}
+            {openMyMenu && <MyMenu state={myMenuState} fn_handleOpenMyMenu={handleOpenMyMenu} />}
           </li>
         </ul>
       </div>
@@ -151,6 +153,13 @@ const headerStyle = css`
         color: #fff;
       }
 
+      .main-page:hover & {
+        &:hover {
+          color: #007aff;
+        }
+        color: #212529;
+      }
+
       &:hover {
         color: #007aff;
       }
@@ -176,6 +185,10 @@ const headerStyle = css`
 
         .main-page & {
           color: #fff;
+        }
+
+        .main-page:hover & {
+          color: #212529;
         }
       }
     }
