@@ -13,6 +13,9 @@ export default defineConfig({
   server: {
     port: 9090,
   },
+  preview: {
+    port: 9090,
+  },
   resolve: {
     alias: {
       "@": "/src", // '@'를 '/src'로 매핑
