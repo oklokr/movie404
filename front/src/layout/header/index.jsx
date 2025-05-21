@@ -17,7 +17,7 @@ import MyMenu from "./component/myMenu"
 import { useSelector } from "react-redux"
 import { selectUser } from "@/store/selectors"
 import { useModal } from "@/component/modalProvider"
-import { useSearch, useSearchVisible } from "@/component/searchProvider"
+import { useSearch } from "@/component/searchProvider"
 
 export default function Header() {
   const { pathname } = useLocation()
@@ -29,8 +29,7 @@ export default function Header() {
   const [activeGenre, setActiveGenre] = useState(null)
   const user = useSelector(selectUser)
   const { openModal, showAlert } = useModal()
-  const { showSearchList } = useSearch()
-  const searchVisible = useSearchVisible()
+  const { showSearchList, searchListVisible } = useSearch()
   const navigate = useNavigate()
   const genreTpcd = code.GENRE_TPCD
   const gnbMenu = []
@@ -74,8 +73,8 @@ export default function Header() {
   }
 
   useEffect(() => {
-    if (!searchVisible) setActiveGenre(null)
-  }, [searchVisible])
+    if (!searchListVisible) setActiveGenre(null)
+  }, [searchListVisible])
 
   return (
     <header className={pathname === "/main" ? "main-page" : ""}>

@@ -10,6 +10,8 @@ import { setCommonCode } from "@/store/slices/common"
 import { useCommon } from "@/store/commonContext"
 import { SearchProvider } from "@/component/searchProvider"
 import { ModalProvider } from "@/component/modalProvider"
+import { PopupProvider } from "@/component/popupProvider"
+import PopupContainer from "@/component/popupContainer"
 
 const publicPaths = ["/login", "/signup", "/findId", "/findPw", "/404"]
 
@@ -42,11 +44,14 @@ export default function RootLayout() {
   }, [location.pathname])
   return (
     <ModalProvider>
-      <SearchProvider>
-        {!isPublic && <Header />}
-        <Outlet />
-        {!isPublic && <Footer />}
-      </SearchProvider>
+      <PopupProvider>
+        <SearchProvider>
+          {!isPublic && <Header />}
+          <Outlet />
+          {!isPublic && <Footer />}
+        </SearchProvider>
+        <PopupContainer />
+      </PopupProvider>
     </ModalProvider>
   )
 }

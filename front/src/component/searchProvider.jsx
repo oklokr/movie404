@@ -5,13 +5,10 @@ import { useLocation } from "react-router"
 import CloseIcon from "@mui/icons-material/Close"
 import { mainGetMovieList } from "@/api/main"
 import { useModal } from "@/component/modalProvider"
+import { usePopup } from "@/component/popupProvider"
 
-// ✅ Context 정의
 const SearchContext = createContext()
-const SearchVisibleContext = createContext()
-
 export const useSearch = () => useContext(SearchContext)
-export const useSearchVisible = () => useContext(SearchVisibleContext)
 
 export function SearchProvider({ children }) {
   const [searchListVisible, setSearchListVisible] = useState(false)
@@ -35,6 +32,7 @@ export function SearchProvider({ children }) {
 
   const { pathname } = useLocation()
   const { openModal, showAlert } = useModal()
+  const { openPopup } = usePopup()
 
   useEffect(() => {
     pageRef.current = page
@@ -144,6 +142,25 @@ export function SearchProvider({ children }) {
     }
   }, [fetchMovie, searchListVisible, active])
 
+  // 커스텀 컴포넌트(폼 등)
+  const openForm = () => {
+    console.log("test")
+    openPopup({
+      content: ({ close }) => (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            close()
+          }}
+        >
+          <h3>폼 팝업</h3>
+          <input placeholder="입력" />
+          <button type="submit">확인</button>
+        </form>
+      ),
+    })
+  }
+
   const searchProviderStyle = css`
     width: 100vw;
     height: 100vh;
@@ -217,54 +234,53 @@ export function SearchProvider({ children }) {
     <SearchContext.Provider
       value={{ searchListVisible, searchPostForm, showSearchList, hideSearchList }}
     >
-      <SearchVisibleContext.Provider value={searchListVisible}>
-        {children}
-        {searchListVisible && (
-          <div
-            className={`${pathname === "/main" ? "main-page" : ""} ${active ? "active" : ""}`}
-            css={searchProviderStyle}
-            ref={movieWrapRef}
-          >
-            <div className="movie-wrap" tabIndex={0} role="region" aria-live="polite">
-              <IconButton css={closeBtnStyle} onClick={hideSearchList} aria-label="검색 닫기">
-                <CloseIcon />
-              </IconButton>
-              <ul>
-                {movieList.map((item) => (
-                  <li key={item.movieCode}>
-                    <div className="movie-poster">
-                      <span>
-                        <img src={item.poster} alt={item.movieName} loading="lazy" />
-                      </span>
-                      <div className="info">
-                        <p>{item.movieName}</p>
-                        <Button
-                          variant="contained"
-                          size="small"
-                          aria-label={`${item.movieName} 상세보기`}
-                        >
-                          상세보기
-                        </Button>
-                      </div>
+      {children}
+      {searchListVisible && (
+        <div
+          className={`${pathname === "/main" ? "main-page" : ""} ${active ? "active" : ""}`}
+          css={searchProviderStyle}
+          ref={movieWrapRef}
+        >
+          <div className="movie-wrap" tabIndex={0} role="region" aria-live="polite">
+            <IconButton css={closeBtnStyle} onClick={hideSearchList} aria-label="검색 닫기">
+              <CloseIcon />
+            </IconButton>
+            <ul>
+              {movieList.map((item) => (
+                <li key={item.movieCode}>
+                  <div className="movie-poster">
+                    <span>
+                      <img src={item.poster} alt={item.movieName} loading="lazy" />
+                    </span>
+                    <div className="info">
+                      <p>{item.movieName}</p>
+                      <Button
+                        variant="contained"
+                        size="small"
+                        aria-label={`${item.movieName} 상세보기`}
+                        onClick={() => openForm()}
+                      >
+                        상세보기
+                      </Button>
                     </div>
-                  </li>
-                ))}
-              </ul>
-              {loading && (
-                <div style={{ textAlign: "center", padding: "16px" }}>
-                  <CircularProgress size={24} />
-                </div>
-              )}
-              {!hasMore && !loading && (
-                <div style={{ color: "#888", textAlign: "center", margin: "24px 0" }}>
-                  더 이상 결과가 없습니다.
-                </div>
-              )}
-              <div ref={loaderRef} style={{ height: "1px" }} />
-            </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            {loading && (
+              <div style={{ textAlign: "center", padding: "16px" }}>
+                <CircularProgress size={24} />
+              </div>
+            )}
+            {!hasMore && !loading && (
+              <div style={{ color: "#888", textAlign: "center", margin: "24px 0" }}>
+                더 이상 결과가 없습니다.
+              </div>
+            )}
+            <div ref={loaderRef} style={{ height: "1px" }} />
           </div>
-        )}
-      </SearchVisibleContext.Provider>
+        </div>
+      )}
     </SearchContext.Provider>
   )
 }
