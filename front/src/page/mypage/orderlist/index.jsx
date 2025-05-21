@@ -9,10 +9,10 @@ import { authUser, authVerify, selectOrderList } from "@/api/admin"
 import { selectUser } from "@/store/selectors"
 import { useSelector } from "react-redux"
 import * as PortOne from "@portone/browser-sdk/v2"
-import header from "@/layout/header"
 import { NavLink } from "react-router"
 import { useEffect, useState } from "react"
-
+import Box from "@mui/material/Box"
+import Input from "@mui/material/Input"
 let userid = ""
 function OrderListMenu(props) {
   let state = useSelector(selectUser)
@@ -141,6 +141,8 @@ async function test() {
     })
   })
 }*/
+const ariaLabel = { "aria-label": "description" }
+
 function Payment() {
   // test()
   //requestPayment()
@@ -148,6 +150,20 @@ function Payment() {
   return (
     <>
       <h1>카드관리</h1>
+      <Box component="form" sx={{ "& > :not(style)": { m: 1 } }} autoComplete="off">
+        카드번호 :
+        <Input css={css} inputProps={ariaLabel} />
+        ㅡ
+        <Input css={css} inputProps={ariaLabel} />
+        ㅡ
+        <Input css={css} inputProps={ariaLabel} />
+        ㅡ
+        <Input css={css} inputProps={ariaLabel} />
+      </Box>
+      <Box component="form" sx={{ "& > :not(style)": { m: 1 } }} autoComplete="off">
+        유효기간 :
+        <Input css={css} inputProps={ariaLabel} />
+      </Box>
     </>
   )
 }
@@ -157,5 +173,8 @@ const Leftbtn = {
   textDecoration: "none",
   padding: "20px",
   display: "flex",
+}
+const css = {
+  width: "5em",
 }
 export { OrderList, Payment, OrderListMenu }
