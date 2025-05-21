@@ -179,3 +179,18 @@ export function deleteTheater({ code }) {
     data: { code },
   }).then((res) => res)
 }
+
+export function sendSMS(data) {
+  return request({
+    url: "api/send-one",
+    method: "post",
+    data,
+  }).then((res) => res)
+}
+export function smsAuth(data) {
+  return request({
+    url: "api/sms-auth",
+    method: "post",
+    data,
+  }).then((res) => res)
+}
