@@ -4,21 +4,36 @@ import { Button, Divider, IconButton, InputBase, Paper, TextField } from "@mui/m
 import { useEffect, useState } from "react"
 import SearchIcon from "@mui/icons-material/Search"
 import CloseIcon from "@mui/icons-material/Close"
+import { useSearch } from "@/component/searchProvider"
 
 export default function SearchForm({ state, fn_handleOepnSearch }) {
   const [keyword, setKeyword] = useState("")
   const [activeState, setActiveState] = useState(false)
   useEffect(() => setActiveState(state))
+  const { showSearchList, searchPostForm } = useSearch()
+
+  const handleEnter = (e) => {
+    if (e.key === "Enter") {
+      showSearchList({ keyword: keyword, genreTpcd: searchPostForm.genreTpcd })
+    }
+  }
+
   return (
     <div className={`search-wrap ${activeState ? "active" : ""}`} css={searchStyle}>
-      <Paper component="form" sx={{ p: "2px 0", display: "flex", alignItems: "center" }}>
+      <Paper sx={{ p: "2px 0", display: "flex", alignItems: "center" }}>
         <InputBase
           sx={{ ml: 1, flex: 1 }}
           placeholder="검색어를 입력해주세요."
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
+          onKeyDown={handleEnter}
         />
-        <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
+        <IconButton
+          type="button"
+          sx={{ p: "10px" }}
+          aria-label="search"
+          onClick={() => showSearchList({ keyword: keyword })}
+        >
           <SearchIcon />
         </IconButton>
         <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
