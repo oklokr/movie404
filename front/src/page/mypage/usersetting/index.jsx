@@ -63,8 +63,6 @@ function UserSet() {
     userinfo.lang = state.info.langTpcd
     userinfo.dateformat = state.info.dateTpcd
     userinfo.savehistory = state.info.saveHistory
-    //userinfo.age = state.info.age
-    if (userinfo.age >= 19) setAuthAdult(1)
 
     function SaveEventHandler(e) {
       if (userchange.adult != "") userinfo.adult = userchange.adult
@@ -222,7 +220,7 @@ function UserSet() {
 
         <div className="input-form">
           <InputLabel>성인인증 </InputLabel>
-          {authadult == 1 ? (
+          {authadult == 1 || age >= 19 ? (
             <Button variant="contained" disabled>
               성인인증완료
             </Button>
