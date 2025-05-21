@@ -11,6 +11,6 @@ public class OrderDto{
     private String orderCode;
     private String movieName;
     private Long price;
-    private Date orderDate;
+    private String orderDate;
     private String cardNum;
 }
