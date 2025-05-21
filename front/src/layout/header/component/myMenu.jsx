@@ -21,17 +21,17 @@ export default function MyMenu({ state, fn_handleOpenMyMenu }) {
     <div className={state ? "active" : ""} css={myMenuStyle}>
       <ul>
         <li>
-          <Link to="/mypage" onClick={fn_handleOpenMyMenu}>
+          <Link to="/mypage" state={{ path: "1" }} onClick={fn_handleOpenMyMenu}>
             MY
           </Link>
         </li>
         <li>
-          <Link to="/mypage/dvd" onClick={fn_handleOpenMyMenu}>
+          <Link to="/mypage/dvd" state={{ path: "2" }} onClick={fn_handleOpenMyMenu}>
             나의 DVD
           </Link>
         </li>
         <li>
-          <Link to="/mypage/order" onClick={fn_handleOpenMyMenu}>
+          <Link to="/mypage/order" state={{ path: "4" }} onClick={fn_handleOpenMyMenu}>
             결제내역
           </Link>
         </li>
@@ -41,7 +41,7 @@ export default function MyMenu({ state, fn_handleOpenMyMenu }) {
           </Link>
         </li>
         <li>
-          <Link to="/mypage/set" onClick={fn_handleOpenMyMenu}>
+          <Link to="/mypage/set" state={{ path: "3" }} onClick={fn_handleOpenMyMenu}>
             설정
           </Link>
         </li>

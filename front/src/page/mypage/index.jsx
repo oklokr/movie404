@@ -10,13 +10,13 @@ import {
   OutlinedInput,
   TextField,
 } from "@mui/material"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { User, UserMenu } from "./userinfo"
 import { Dvd, DvdMenu } from "./dvd"
 import { UserSet, UserSetMenu } from "./usersetting"
 import { OrderList, OrderListMenu, Payment } from "./orderlist"
 import { TermsA, TermsB, TermsC, TermsMenu } from "./terms"
-import { NavLink } from "react-router"
+import { NavLink, useLocation } from "react-router"
 
 function mypage() {
   const [subpath_orderlist, setSubpath_orderlist] = useState("1")
@@ -33,10 +33,8 @@ function mypage() {
   const [Email, setEmail] = useState("")
   const [PW, setPW] = useState("")
   const [RPW, setRPW] = useState("")
-  const [termA, setTermA] = useState("")
-  const [termB, setTermB] = useState("")
-  const [termC, setTermC] = useState("")
 
+  const location = useLocation()
   function handlePath(e) {
     if (e.target.id == "1") setPath("1")
     else if (e.target.id == "2") setPath("2")
@@ -44,6 +42,15 @@ function mypage() {
     else if (e.target.id == "4") setPath("4")
     else if (e.target.id == "5") setPath("5")
   }
+  useEffect(() => {
+    if (location.state != null) {
+      if (location.state.path == "1") setPath("1")
+      else if (location.state.path == "2") setPath("2")
+      else if (location.state.path == "3") setPath("3")
+      else if (location.state.path == "4") setPath("4")
+      else if (location.state.path == "5") setPath("5")
+    }
+  }, [location])
   return (
     <>
       <div>마이페이지</div>
