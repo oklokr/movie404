@@ -11,13 +11,13 @@ import logoImg from "@/assets/images/logo/logo2.png"
 import SearchIcon from "@mui/icons-material/Search"
 import PermIdentityIcon from "@mui/icons-material/PermIdentity"
 import SearchForm from "./component/searchForm"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router"
 import MyMenu from "./component/myMenu"
 import { useSelector } from "react-redux"
 import { selectUser } from "@/store/selectors"
 import { useModal } from "@/component/modalProvider"
-import { useSearch } from "@/component/searchProvider"
+import { useSearch, useSearchVisible } from "@/component/searchProvider"
 
 export default function Header() {
   const { pathname } = useLocation()
@@ -26,9 +26,11 @@ export default function Header() {
   const [openSearch, setOpenSearch] = useState(false)
   const [myMenuState, setMyMenuState] = useState(false)
   const [openMyMenu, setOpenMyMenu] = useState(false)
+  const [activeGenre, setActiveGenre] = useState(null)
   const user = useSelector(selectUser)
   const { openModal, showAlert } = useModal()
   const { showSearchList } = useSearch()
+  const searchVisible = useSearchVisible()
   const navigate = useNavigate()
   const genreTpcd = code.GENRE_TPCD
   const gnbMenu = []
@@ -66,6 +68,15 @@ export default function Header() {
     )
   }
 
+  const handleOepnSearchList = (val) => {
+    setActiveGenre(val)
+    showSearchList({ genreTpcd: val })
+  }
+
+  useEffect(() => {
+    if (!searchVisible) setActiveGenre(null)
+  }, [searchVisible])
+
   return (
     <header className={pathname === "/main" ? "main-page" : ""}>
       <div className="header" css={headerStyle}>
@@ -78,7 +89,11 @@ export default function Header() {
           {gnbMenu.map((wrap, idx) => (
             <SwiperSlide key={idx}>
               {wrap.map((item) => (
-                <Button key={item.commonValue} onClick={() => showSearchList(item.commonValue)}>
+                <Button
+                  key={item.commonValue}
+                  className={activeGenre === item.commonValue ? "active" : ""}
+                  onClick={() => handleOepnSearchList(item.commonValue)}
+                >
                   {item.commonName}
                 </Button>
               ))}
@@ -151,7 +166,11 @@ const headerStyle = css`
         color: #fff;
       }
 
-      .main-page:hover & {
+      &.active {
+        color: #007aff;
+      }
+
+      .main-page:hover &:not(.active) {
         &:hover {
           color: #007aff;
         }

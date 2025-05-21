@@ -18,11 +18,6 @@ export default function SearchForm({ state, fn_handleOepnSearch }) {
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
         />
-        {/* <TextField
-          sx={{ ml: 1, flex: 1 }}
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-        /> */}
         <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
           <SearchIcon />
         </IconButton>

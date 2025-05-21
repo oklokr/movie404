@@ -8,6 +8,8 @@ import { commonGetUserInfo } from "@/api/common"
 import { setUserInfo } from "@/store/slices/user"
 import { setCommonCode } from "@/store/slices/common"
 import { useCommon } from "@/store/commonContext"
+import { SearchProvider } from "@/component/searchProvider"
+import { ModalProvider } from "@/component/modalProvider"
 
 const publicPaths = ["/login", "/signup", "/findId", "/findPw", "/404"]
 
@@ -39,10 +41,12 @@ export default function RootLayout() {
     window.scrollTo(0, 0)
   }, [location.pathname])
   return (
-    <>
-      {!isPublic && <Header />}
-      <Outlet />
-      {!isPublic && <Footer />}
-    </>
+    <ModalProvider>
+      <SearchProvider>
+        {!isPublic && <Header />}
+        <Outlet />
+        {!isPublic && <Footer />}
+      </SearchProvider>
+    </ModalProvider>
   )
 }
