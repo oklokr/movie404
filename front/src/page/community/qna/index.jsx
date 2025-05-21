@@ -6,6 +6,7 @@ import { selectUser } from "@/store/selectors"
 import { commonGetUserInfo } from "@/api/common"
 import { setUserInfo } from "@/store/slices/user"
 import { communityGetQnaList } from "@/api/community"
+import Button from "@mui/material/Button"
 
 export default function QnaList() {
   const navigate = useNavigate()
@@ -24,17 +25,15 @@ export default function QnaList() {
     setLoading(true)
     let params = {
       userId: user.info.userId,
-      isAdmin: user.info.userTpcd === "2", // 가공 없이 바로 비교
+      isAdmin: user.info.userTpcd === "2",
     }
-    console.log("QnA API 호출 파라미터:", params)
     communityGetQnaList(params)
       .then((res) => {
         setList(res.data)
         setFiltered(res.data)
         setLoading(false)
       })
-      .catch((err) => {
-        console.error("QnA API 에러:", err)
+      .catch(() => {
         setList([])
         setFiltered([])
         setLoading(false)
@@ -65,7 +64,13 @@ export default function QnaList() {
             type="text"
             value={search.title}
             onChange={(e) => setSearch({ ...search, title: e.target.value })}
-            css={inputStyle}
+            style={{
+              marginLeft: 8,
+              padding: "6px 10px",
+              border: "1px solid #ccc",
+              borderRadius: 4,
+              background: "#fff",
+            }}
           />
         </label>
         <label style={{ fontWeight: 500 }}>
@@ -74,17 +79,39 @@ export default function QnaList() {
             type="text"
             value={search.writer}
             onChange={(e) => setSearch({ ...search, writer: e.target.value })}
-            css={inputStyle}
+            style={{
+              marginLeft: 8,
+              padding: "6px 10px",
+              border: "1px solid #ccc",
+              borderRadius: 4,
+              background: "#fff",
+            }}
           />
         </label>
-        <button onClick={handleSearch} css={btnSearch}>
+        <Button
+          variant="contained"
+          sx={{ minWidth: 90, fontWeight: 600, fontSize: 15, height: 40 }}
+          onClick={handleSearch}
+        >
           검색
-        </button>
+        </Button>
       </div>
       <div style={{ textAlign: "right", marginBottom: 10 }}>
-        <button onClick={() => navigate("/community/qna/write")} css={btnWrite}>
+        <Button
+          variant="contained"
+          sx={{
+            minWidth: 90,
+            fontWeight: 600,
+            fontSize: 15,
+            height: 40,
+            background: undefined,
+            color: undefined,
+            borderColor: undefined,
+          }}
+          onClick={() => navigate("/community/qna/write")}
+        >
           작성
-        </button>
+        </Button>
       </div>
       {loading ? (
         <div style={{ padding: 40 }}>로딩중...</div>
@@ -117,22 +144,22 @@ export default function QnaList() {
           </table>
           <div style={{ marginTop: 16, textAlign: "center" }}>
             {Array.from({ length: totalPages }, (_, i) => (
-              <button
+              <Button
                 key={i + 1}
-                onClick={() => setCurrentPage(i + 1)}
-                style={{
-                  margin: "0 4px",
-                  padding: "4px 10px",
-                  border: "1px solid #ccc",
-                  background: currentPage === i + 1 ? "#0078d4" : "#fff",
-                  color: currentPage === i + 1 ? "#fff" : "#333",
-                  borderRadius: 4,
-                  cursor: "pointer",
+                variant={currentPage === i + 1 ? "contained" : "outlined"}
+                sx={{
+                  minWidth: 40,
                   fontWeight: currentPage === i + 1 ? 700 : 400,
+                  fontSize: 15,
+                  mx: 0.5,
+                  background: currentPage === i + 1 ? undefined : undefined,
+                  color: currentPage === i + 1 ? undefined : undefined,
+                  borderColor: currentPage === i + 1 ? undefined : undefined,
                 }}
+                onClick={() => setCurrentPage(i + 1)}
               >
                 {i + 1}
-              </button>
+              </Button>
             ))}
           </div>
         </>
@@ -151,31 +178,6 @@ const tdStyle = css`
   border: 1px solid #e0e0e0;
   padding: 10px 8px;
   background: #fff;
-`
-const inputStyle = css`
-  margin-left: 8px;
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #fff;
-`
-const btnSearch = css`
-  padding: 7px 20px;
-  border: none;
-  border-radius: 4px;
-  background: #0078d4;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-`
-const btnWrite = css`
-  padding: 7px 20px;
-  border: none;
-  border-radius: 4px;
-  background: #28a745;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
 `
 const tableStyle = css`
   width: 100%;

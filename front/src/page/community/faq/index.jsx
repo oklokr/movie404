@@ -15,7 +15,6 @@ function Faq() {
   useEffect(() => {
     communityGetFaqList()
       .then((res) => {
-        // res가 AxiosResponse인지 배열인지 확인
         if (Array.isArray(res)) {
           setFaqList(res)
         } else if (Array.isArray(res.data)) {
@@ -57,7 +56,10 @@ function Faq() {
         ))}
         <div css={bottomAreaStyle}>
           {isAdmin && (
-            <button css={btnEdit} onClick={handleWriteOrEdit}>
+            <button
+              css={openIndex === null ? btnContained : btnOutlined}
+              onClick={handleWriteOrEdit}
+            >
               {openIndex === null ? "작성" : "수정"}
             </button>
           )}
@@ -133,17 +135,32 @@ const bottomAreaStyle = css`
   margin-top: 24px;
   padding-right: 12px;
 `
-const btnEdit = css`
+const btnContained = css`
   padding: 7px 20px;
-  background: #6c757d;
+  background: #1976d2;
   color: #fff;
   border: none;
   border-radius: 4px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
+  min-width: 90px;
   &:hover {
-    background: #495057;
+    background: #1565c0;
+  }
+`
+const btnOutlined = css`
+  padding: 7px 20px;
+  background: #fff;
+  color: #1976d2;
+  border: 2px solid #1976d2;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 90px;
+  &:hover {
+    background: #e6f2ff;
   }
 `
 

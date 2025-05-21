@@ -6,6 +6,7 @@ import { selectUser } from "@/store/selectors"
 import { commonGetUserInfo } from "@/api/common"
 import { setUserInfo } from "@/store/slices/user"
 import { communityGetQnaDetail, communityEditQna } from "@/api/community"
+import Button from "@mui/material/Button"
 
 export default function QnaEdit() {
   const navigate = useNavigate()
@@ -29,7 +30,6 @@ export default function QnaEdit() {
         ?.split("=")[1]
       if (token) {
         commonGetUserInfo().then((res) => {
-          // res.data.code 또는 res.status 등 실제 응답 구조에 맞게 수정
           if (res.data?.code === 200) dispatch(setUserInfo(res.data.data))
         })
       }
@@ -125,7 +125,14 @@ export default function QnaEdit() {
             name="title"
             value={form.title}
             onChange={handleChange}
-            css={inputStyle}
+            style={{
+              width: "100%",
+              boxSizing: "border-box",
+              padding: 8,
+              border: "1px solid #ccc",
+              borderRadius: 4,
+              fontSize: 16,
+            }}
             maxLength={100}
             disabled={loading}
             placeholder="제목을 입력하세요"
@@ -139,7 +146,16 @@ export default function QnaEdit() {
             name="content"
             value={form.content}
             onChange={handleChange}
-            css={textareaStyle}
+            style={{
+              width: "100%",
+              boxSizing: "border-box",
+              minHeight: 180,
+              padding: 10,
+              border: "1px solid #ccc",
+              borderRadius: 4,
+              fontSize: 15,
+              resize: "vertical",
+            }}
             maxLength={3000}
             disabled={loading}
             placeholder="내용을 입력하세요"
@@ -150,22 +166,22 @@ export default function QnaEdit() {
         </dd>
       </dl>
       <div style={{ marginTop: 40, textAlign: "right" }}>
-        <button
-          css={btnStyle}
-          style={{ marginRight: 8 }}
+        <Button
+          variant="outlined"
+          sx={{ minWidth: 90, fontWeight: 600, fontSize: 15, mr: 1 }}
           onClick={handleListClick}
           disabled={loading}
         >
           목록
-        </button>
-        <button
-          css={btnStyle}
-          style={{ background: "#0078d4", color: "#fff" }}
+        </Button>
+        <Button
+          variant="contained"
+          sx={{ minWidth: 90, fontWeight: 600, fontSize: 15 }}
           onClick={handleSubmit}
           disabled={loading}
         >
           {isEdit ? "수정" : "작성"}
-        </button>
+        </Button>
       </div>
     </div>
   )
@@ -181,30 +197,4 @@ const tdStyle = css`
   border: 1px solid #e0e0e0;
   padding: 10px 8px;
   background: #fff;
-`
-const inputStyle = css`
-  width: 100%;
-  box-sizing: border-box;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-`
-const textareaStyle = css`
-  width: 100%;
-  box-sizing: border-box;
-  min-height: 180px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 15px;
-  resize: vertical;
-`
-const btnStyle = css`
-  padding: 8px 24px;
-  background: #f5f5f5;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 600;
 `

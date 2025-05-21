@@ -1,9 +1,10 @@
-import { css } from "@emotion/react"
 import React, { useState, useEffect } from "react"
 import { useNavigate } from "react-router"
 import { useSelector } from "react-redux"
 import { selectUser } from "@/store/selectors"
 import { communityGetNoticeList } from "@/api/community"
+import Button from "@mui/material/Button"
+import { css } from "@emotion/react"
 
 export default function NoticeList() {
   const navigate = useNavigate()
@@ -20,7 +21,6 @@ export default function NoticeList() {
     setLoading(true)
     communityGetNoticeList()
       .then((res) => {
-        // res가 배열이거나 res.data가 배열인 경우 모두 대응
         const arr = Array.isArray(res) ? res : Array.isArray(res.data) ? res.data : []
         setList(arr)
         setFiltered(arr)
@@ -57,7 +57,13 @@ export default function NoticeList() {
             type="text"
             value={search.title}
             onChange={(e) => setSearch({ ...search, title: e.target.value })}
-            css={inputStyle}
+            style={{
+              marginLeft: 8,
+              padding: "6px 10px",
+              border: "1px solid #ccc",
+              borderRadius: 4,
+              background: "#fff",
+            }}
           />
         </label>
         <label style={{ fontWeight: 500 }}>
@@ -66,18 +72,37 @@ export default function NoticeList() {
             type="text"
             value={search.writer}
             onChange={(e) => setSearch({ ...search, writer: e.target.value })}
-            css={inputStyle}
+            style={{
+              marginLeft: 8,
+              padding: "6px 10px",
+              border: "1px solid #ccc",
+              borderRadius: 4,
+              background: "#fff",
+            }}
           />
         </label>
-        <button onClick={handleSearch} css={btnSearch}>
+        <Button
+          variant="contained"
+          sx={{ minWidth: 90, fontWeight: 600, fontSize: 15, height: 40 }}
+          onClick={handleSearch}
+        >
           검색
-        </button>
+        </Button>
       </div>
       <div style={{ textAlign: "right", marginBottom: 10 }}>
         {isAdmin && (
-          <button css={btnWrite} onClick={() => navigate("/community/notice/write")}>
+          <Button
+            variant="contained"
+            sx={{
+              minWidth: 90,
+              fontWeight: 600,
+              fontSize: 15,
+              height: 40,
+            }}
+            onClick={() => navigate("/community/notice/write")}
+          >
             작성
-          </button>
+          </Button>
         )}
       </div>
       <div style={{ marginBottom: 10, color: "#888", fontWeight: 500 }}>
@@ -125,22 +150,19 @@ export default function NoticeList() {
           </table>
           <div style={{ marginTop: 16, textAlign: "center" }}>
             {Array.from({ length: totalPages }, (_, i) => (
-              <button
+              <Button
                 key={i + 1}
-                onClick={() => setCurrentPage(i + 1)}
-                style={{
-                  margin: "0 4px",
-                  padding: "4px 10px",
-                  border: "1px solid #ccc",
-                  background: currentPage === i + 1 ? "#0078d4" : "#fff",
-                  color: currentPage === i + 1 ? "#fff" : "#333",
-                  borderRadius: 4,
-                  cursor: "pointer",
+                variant={currentPage === i + 1 ? "contained" : "outlined"}
+                sx={{
+                  minWidth: 40,
                   fontWeight: currentPage === i + 1 ? 700 : 400,
+                  fontSize: 15,
+                  mx: 0.5,
                 }}
+                onClick={() => setCurrentPage(i + 1)}
               >
                 {i + 1}
-              </button>
+              </Button>
             ))}
           </div>
         </>
@@ -159,31 +181,6 @@ const tdStyle = css`
   border: 1px solid #e0e0e0;
   padding: 10px 8px;
   background: #fff;
-`
-const inputStyle = css`
-  margin-left: 8px;
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #fff;
-`
-const btnSearch = css`
-  padding: 7px 20px;
-  border: none;
-  border-radius: 4px;
-  background: #0078d4;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-`
-const btnWrite = css`
-  padding: 7px 20px;
-  border: none;
-  border-radius: 4px;
-  background: #28a745;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
 `
 const tableStyle = css`
   width: 100%;
