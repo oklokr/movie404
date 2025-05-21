@@ -29,6 +29,17 @@ export default function FaqEdit() {
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
+  // 작성된 내용이 있을 때 확인 후 이동
+  const handleLeave = (callback) => {
+    if (form.question.trim() || form.answer.trim()) {
+      if (window.confirm("작성 중인 내용이 있습니다. 정말 나가시겠습니까?")) {
+        callback()
+      }
+    } else {
+      callback()
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!form.question.trim() || !form.answer.trim()) {
@@ -42,11 +53,17 @@ export default function FaqEdit() {
   }
 
   const handleDelete = async () => {
-    if (!window.confirm("정말 삭제하시겠습니까?")) return
-    setLoading(true)
-    await communityDeleteFaq({ faqCode })
-    setLoading(false)
-    navigate("/community/faq")
+    handleLeave(async () => {
+      if (!window.confirm("정말 삭제하시겠습니까?")) return
+      setLoading(true)
+      await communityDeleteFaq({ faqCode })
+      setLoading(false)
+      navigate("/community/faq")
+    })
+  }
+
+  const handleCancel = () => {
+    handleLeave(() => navigate(-1))
   }
 
   return (
@@ -76,7 +93,7 @@ export default function FaqEdit() {
           />
         </label>
         <div css={btnAreaStyle}>
-          <button type="button" css={btnGray} onClick={() => navigate(-1)} disabled={loading}>
+          <button type="button" css={btnOutlined} onClick={handleCancel} disabled={loading}>
             취소
           </button>
           {isEdit && (
@@ -90,7 +107,7 @@ export default function FaqEdit() {
               삭제
             </button>
           )}
-          <button type="submit" css={btnGreen} disabled={loading}>
+          <button type="submit" css={btnContained} disabled={loading}>
             저장
           </button>
         </div>
@@ -150,30 +167,32 @@ const btnAreaStyle = css`
   gap: 12px;
   margin-top: 16px;
 `
-const btnGray = css`
+const btnContained = css`
   padding: 8px 24px;
-  background: #6c757d;
+  background: #1976d2;
   color: #fff;
   border: none;
   border-radius: 4px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
+  min-width: 90px;
   &:hover {
-    background: #495057;
+    background: #1565c0;
   }
 `
-const btnGreen = css`
+const btnOutlined = css`
   padding: 8px 24px;
-  background: #28a745;
-  color: #fff;
-  border: none;
+  background: #fff;
+  color: #1976d2;
+  border: 2px solid #1976d2;
   border-radius: 4px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
+  min-width: 90px;
   &:hover {
-    background: #218838;
+    background: #e6f2ff;
   }
 `
 const btnRed = css`
@@ -185,6 +204,7 @@ const btnRed = css`
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
+  min-width: 90px;
   &:hover {
     background: #b52a37;
   }

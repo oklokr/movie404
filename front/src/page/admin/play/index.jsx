@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { css } from "@emotion/react"
+import Button from "@mui/material/Button"
 import {
   fetchMovieList,
   fetchCreatorList,
@@ -27,7 +28,6 @@ export default function Play() {
   ])
   const [selectedTheater, setSelectedTheater] = useState(1)
   const [selectedHours, setSelectedHours] = useState({ 1: [], 2: [] })
-  const [deleteTarget, setDeleteTarget] = useState(null)
   const [goStep2, setGoStep2] = useState(false)
 
   const [reservedHours, setReservedHours] = useState({})
@@ -257,7 +257,6 @@ export default function Play() {
 
   // Step2 화면
   if (step === 2 && goStep2) {
-    // 실제 등록 함수
     const doApply = async () => {
       try {
         const selectedTheaterObj = theaters.find((t) => t.id === selectedTheater)
@@ -268,7 +267,7 @@ export default function Play() {
           startHour: selectedHourArr[0],
           endHour: selectedHourArr[selectedHourArr.length - 1] + 1,
           price: Number(price),
-          discount: discount ? Number(discount) : null, // 할인율(%)로 저장
+          discount: discount ? Number(discount) : null,
           movieCode: selectedMovieInfo.movieCode,
         }
         await createSchedule(payload)
@@ -284,7 +283,6 @@ export default function Play() {
       }
     }
 
-    // 적용 버튼 클릭 시
     const handleApply = () => {
       if (!selectedMovieInfo) {
         alert("영화를 등록해주세요.")
@@ -347,7 +345,6 @@ export default function Play() {
                     min={1}
                     max={100}
                     onChange={(e) => {
-                      // 1~100 사이만 허용
                       let value = e.target.value.replace(/[^0-9]/g, "")
                       if (value === "") value = ""
                       else if (Number(value) < 1) value = "1"
@@ -411,17 +408,18 @@ export default function Play() {
                           : "영화를 등록해주세요."}
                       </div>
                     </div>
-                    <button
-                      css={movieRegBtn}
+                    <Button
+                      variant="outlined"
                       onClick={() => {
                         setMovieModalOpen(true)
                         setMoviePage(1)
                         setMovieSearch("")
                         setSelectedMovieId(selectedMovieInfo?.movieCode ?? null)
                       }}
+                      sx={{ ml: "auto", minWidth: 60, minHeight: 40 }}
                     >
                       등록
-                    </button>
+                    </Button>
                   </div>
                 </td>
               </tr>
@@ -429,37 +427,43 @@ export default function Play() {
           </table>
         </div>
         <div css={footerWrap}>
-          <button
-            css={prevBtn}
+          <Button
+            variant="outlined"
             onClick={() => {
               setStep(1)
               setGoStep2(false)
             }}
           >
             이전
-          </button>
-          <button css={nextBtn} onClick={handleApply}>
+          </Button>
+          <Button variant="contained" onClick={handleApply}>
             적용
-          </button>
+          </Button>
         </div>
-        {/* 최종 등록 확인 모달 */}
         {confirmApplyOpen && (
           <div css={modalOverlay}>
             <div css={modalBox}>
               <div css={modalMsg}>정말로 상영스케줄을 등록하시겠습니까?</div>
               <div css={modalBtnWrap}>
-                <button
-                  css={modalBtn}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{ minWidth: 90, fontWeight: 600, fontSize: 16 }}
                   onClick={() => {
                     setConfirmApplyOpen(false)
                     doApply()
                   }}
                 >
                   확인
-                </button>
-                <button css={modalBtnCancel} onClick={() => setConfirmApplyOpen(false)}>
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  sx={{ minWidth: 90, fontWeight: 600, fontSize: 16 }}
+                  onClick={() => setConfirmApplyOpen(false)}
+                >
                   취소
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -469,9 +473,14 @@ export default function Play() {
             <div css={movieModalBox}>
               <div css={movieModalHeader}>
                 <span>영화선택</span>
-                <button css={movieModalCloseBtn} onClick={() => setMovieModalOpen(false)}>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => setMovieModalOpen(false)}
+                  sx={{ minWidth: 32, minHeight: 32, fontSize: 22, p: 0 }}
+                >
                   ×
-                </button>
+                </Button>
               </div>
               <div css={movieModalBody}>
                 <div css={movieModalFilterWrap}>
@@ -484,9 +493,9 @@ export default function Play() {
                       setMoviePage(1)
                     }}
                   />
-                  <button css={movieModalSearchBtn} onClick={() => setMoviePage(1)}>
+                  <Button variant="contained" onClick={() => setMoviePage(1)}>
                     검색
-                  </button>
+                  </Button>
                 </div>
                 <div css={movieModalCount}>총 {movieTotal} 개</div>
                 <div css={movieModalTableWrap}>
@@ -532,41 +541,36 @@ export default function Play() {
                   </table>
                 </div>
                 <div css={movieModalPaging}>
-                  <button
-                    css={movieModalPageBtn}
-                    disabled={startPage === 1}
-                    onClick={handlePrevBlock}
-                  >
+                  <Button variant="outlined" disabled={startPage === 1} onClick={handlePrevBlock}>
                     &lt;
-                  </button>
+                  </Button>
                   {Array.from({ length: endPage - startPage + 1 }, (_, i) => (
-                    <button
+                    <Button
                       key={startPage + i}
-                      css={movieModalPageBtn}
-                      style={{
-                        background: moviePage === startPage + i ? "#ff9800" : "#fff",
-                        color: moviePage === startPage + i ? "#fff" : "#888",
+                      variant={moviePage === startPage + i ? "contained" : "outlined"}
+                      onClick={() => setMoviePage(startPage + i)}
+                      sx={{
+                        mx: 0.5,
                         fontWeight: moviePage === startPage + i ? 700 : 400,
                       }}
-                      onClick={() => setMoviePage(startPage + i)}
                     >
                       {startPage + i}
-                    </button>
+                    </Button>
                   ))}
-                  <button
-                    css={movieModalPageBtn}
+                  <Button
+                    variant="outlined"
                     disabled={endPage === totalPages}
                     onClick={handleNextBlock}
                   >
                     &gt;
-                  </button>
+                  </Button>
                 </div>
                 <div css={movieModalFooter}>
-                  <button css={movieModalCancelBtn} onClick={() => setMovieModalOpen(false)}>
+                  <Button variant="outlined" onClick={() => setMovieModalOpen(false)}>
                     취소
-                  </button>
-                  <button
-                    css={movieModalApplyBtn}
+                  </Button>
+                  <Button
+                    variant="contained"
                     disabled={selectedMovieId === null}
                     onClick={() => {
                       const movie = movieList.find((m) => m.movieCode === selectedMovieId)
@@ -577,7 +581,7 @@ export default function Play() {
                     }}
                   >
                     적용
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -607,7 +611,6 @@ export default function Play() {
         />
       </div>
       <div>
-        {/* 상영관을 id 오름차순(1관, 2관, 3관...)으로 정렬해서 출력 */}
         {theaters
           .slice()
           .sort((a, b) => a.id - b.id)
@@ -619,8 +622,20 @@ export default function Play() {
               >
                 {theater.name}
                 {theaters.length > 1 && (
-                  <button
-                    css={deleteBtn}
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    size="small"
+                    sx={{
+                      minWidth: 32,
+                      minHeight: 32,
+                      fontWeight: 700,
+                      fontSize: 20,
+                      ml: 1,
+                      p: 0,
+                      borderRadius: "50%",
+                      lineHeight: 1,
+                    }}
                     onClick={async (e) => {
                       e.stopPropagation()
                       await handleDeleteTheater(theater.id)
@@ -628,7 +643,7 @@ export default function Play() {
                     title="상영관 삭제"
                   >
                     ×
-                  </button>
+                  </Button>
                 )}
               </div>
               {selectedTheater === theater.id && (
@@ -640,22 +655,29 @@ export default function Play() {
                     let disabled = reserved || !selectedDate
                     if (!disabled && selectedArr.length > 0 && !selected) {
                       if (selectedArr.length === 1) {
-                        // 선택된 시간대가 1개일 때는 base±2까지 허용
                         const base = selectedArr[0]
                         if (hour < base - 2 || hour > base + 2) disabled = true
                       } else {
-                        // 여러 개일 때는 min/max ±2까지 허용
                         const min = Math.min(...selectedArr)
                         const max = Math.max(...selectedArr)
                         if (hour < min - 2 || hour > max + 2) disabled = true
                       }
                     }
                     return (
-                      <button
+                      <Button
                         key={hour}
-                        css={hourBtn(selected, reserved, disabled)}
-                        onClick={() => handleHourClick(theater.id, hour)}
+                        variant={selected ? "contained" : "outlined"}
+                        color={reserved ? "inherit" : "primary"}
                         disabled={disabled}
+                        onClick={() => handleHourClick(theater.id, hour)}
+                        sx={{
+                          minWidth: 38,
+                          minHeight: 38,
+                          mx: 0.5,
+                          my: 0.5,
+                          fontWeight: 700,
+                          opacity: reserved ? 0.45 : disabled ? 0.35 : 1,
+                        }}
                         title={
                           !selectedDate
                             ? "날짜를 먼저 선택하세요"
@@ -673,7 +695,7 @@ export default function Play() {
                         }
                       >
                         {hour.toString().padStart(2, "0")}
-                      </button>
+                      </Button>
                     )
                   })}
                 </div>
@@ -681,14 +703,14 @@ export default function Play() {
             </div>
           ))}
         <div css={addTheaterWrap}>
-          <button css={addBtn} onClick={handleAddTheater}>
+          <Button variant="contained" onClick={handleAddTheater}>
             상영관 추가하기
-          </button>
+          </Button>
         </div>
       </div>
       <div css={footerWrap}>
-        <button
-          css={nextBtn}
+        <Button
+          variant="contained"
           disabled={!canGoNext}
           onClick={() => {
             setStep(2)
@@ -696,14 +718,13 @@ export default function Play() {
           }}
         >
           다음
-        </button>
+        </Button>
       </div>
     </div>
   )
 }
 
 // --- 스타일 ---
-// (아래 스타일 코드는 기존과 동일)
 const stepWrap = css`
   display: flex;
   align-items: center;
@@ -763,148 +784,24 @@ const theaterHeader = (active) => css`
   align-items: center;
   justify-content: space-between;
 `
-const deleteBtn = css`
-  margin-left: 8px;
-  background: none;
-  border: none;
-  color: #e57373;
-  font-size: 22px;
-  font-weight: bold;
-  cursor: pointer;
-  line-height: 1;
-  padding: 0 4px;
-  &:hover {
-    color: #d32f2f;
-    background: #ffeaea;
-    border-radius: 50%;
-  }
-`
 const hourRow = css`
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 12px 18px;
   flex-wrap: wrap;
-  justify-content: center; // 가운데 정렬 추가
+  justify-content: center;
 `
 const addTheaterWrap = css`
   display: flex;
   justify-content: flex-start;
   margin: 12px 0 0 0;
 `
-const addBtn = css`
-  padding: 8px 18px;
-  border: none;
-  border-radius: 4px;
-  background: #eee;
-  color: #888;
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background 0.2s;
-  &:hover {
-    background: #ff9800;
-    color: #fff;
-  }
-`
 const footerWrap = css`
   display: flex;
   justify-content: flex-end;
   margin-top: 24px;
   gap: 12px;
-`
-const nextBtn = css`
-  padding: 10px 32px;
-  border: none;
-  border-radius: 6px;
-  background: #eee;
-  color: #888;
-  font-weight: 600;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.2s;
-  &:hover:enabled {
-    background: #ff9800;
-    color: #fff;
-  }
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-`
-const prevBtn = css`
-  padding: 10px 32px;
-  border: none;
-  border-radius: 6px;
-  background: #eee;
-  color: #888;
-  font-weight: 600;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.2s;
-  &:hover {
-    background: #bdbdbd;
-    color: #fff;
-  }
-`
-const modalOverlay = css`
-  position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`
-const modalBox = css`
-  background: #fff;
-  border-radius: 10px;
-  padding: 32px 28px 22px 28px;
-  min-width: 260px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`
-const modalMsg = css`
-  font-size: 18px;
-  color: #222;
-  margin-bottom: 22px;
-  font-weight: 500;
-`
-const modalBtnWrap = css`
-  display: flex;
-  gap: 16px;
-`
-const modalBtn = css`
-  padding: 8px 22px;
-  background: #d32f2f;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  &:hover {
-    background: #b71c1c;
-  }
-`
-const modalBtnCancel = css`
-  padding: 8px 22px;
-  background: #eee;
-  color: #888;
-  border: none;
-  border-radius: 5px;
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  &:hover {
-    background: #bdbdbd;
-    color: #fff;
-  }
 `
 const tableWrap = css`
   margin: 0 auto;
@@ -938,7 +835,6 @@ const movieInfoBox = css`
   align-items: flex-start;
   gap: 18px;
   min-height: 100px;
-  /* 버튼이 항상 오른쪽에 가로로 나오도록 */
   width: 100%;
   position: relative;
 `
@@ -948,8 +844,8 @@ const moviePosterBox = css`
   background: #e0e0e0;
   border-radius: 6px;
   margin-right: 12px;
-  flex-shrink: 0; // 사진 크기 고정
-  overflow: hidden; // 혹시 모를 오버플로 방지
+  flex-shrink: 0;
+  overflow: hidden;
 `
 const movieInfoText = css`
   max-width: 340px;
@@ -965,30 +861,6 @@ const movieInfoText = css`
   border-radius: 6px;
   color: #333;
 `
-const movieRegBtn = css`
-  margin-left: auto;
-  align-self: flex-start;
-  padding: 8px 18px;
-  border: none;
-  border-radius: 4px;
-  background: #eee;
-  color: #888;
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background 0.2s;
-  min-width: 60px;
-  min-height: 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  &:hover {
-    background: #ff9800;
-    color: #fff;
-  }
-`
-
-// 영화선택 모달 스타일
 const movieModalBox = css`
   background: #fff;
   border-radius: 12px;
@@ -1006,16 +878,6 @@ const movieModalHeader = css`
   padding: 22px 28px 12px 28px;
   border-bottom: 1px solid #eee;
 `
-const movieModalCloseBtn = css`
-  background: none;
-  border: none;
-  font-size: 28px;
-  color: #888;
-  cursor: pointer;
-  &:hover {
-    color: #d32f2f;
-  }
-`
 const movieModalBody = css`
   padding: 18px 28px 24px 28px;
 `
@@ -1030,20 +892,6 @@ const movieModalInput = css`
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 15px;
-`
-const movieModalSearchBtn = css`
-  padding: 7px 18px;
-  border: none;
-  border-radius: 4px;
-  background: #eee;
-  color: #888;
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  &:hover {
-    background: #ff9800;
-    color: #fff;
-  }
 `
 const movieModalCount = css`
   font-size: 15px;
@@ -1082,50 +930,42 @@ const movieModalPaging = css`
   justify-content: center;
   margin-bottom: 18px;
 `
-const movieModalPageBtn = css`
-  padding: 4px 12px;
-  border: 1px solid #ccc;
-  background: #fff;
-  color: #888;
-  border-radius: 4px;
-  font-size: 15px;
-  cursor: pointer;
-  &:hover {
-    background: #ff9800;
-    color: #fff;
-  }
-`
 const movieModalFooter = css`
   display: flex;
   gap: 18px;
   justify-content: flex-end;
 `
-const movieModalCancelBtn = css`
-  padding: 8px 22px;
-  background: #eee;
-  color: #888;
-  border: none;
-  border-radius: 5px;
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  &:hover {
-    background: #bdbdbd;
-    color: #fff;
-  }
+const modalOverlay = css`
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
-const movieModalApplyBtn = css`
-  padding: 8px 22px;
-  background: #1976d2;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  &:disabled {
-    background: #bdbdbd;
-    color: #fff;
-    cursor: not-allowed;
-  }
+const modalBox = css`
+  background: #fff;
+  border-radius: 10px;
+  padding: 32px 28px 22px 28px;
+  min-width: 260px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+const modalMsg = css`
+  font-size: 18px;
+  color: #222;
+  margin-bottom: 22px;
+  font-weight: 500;
+`
+const modalBtnWrap = css`
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 8px;
 `

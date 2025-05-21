@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { fetchMovieList } from "@/api/admin"
 import { css } from "@emotion/react"
 import { useNavigate, useLocation } from "react-router"
+import Button from "@mui/material/Button"
 
 const PAGE_SIZE = 10
 
@@ -63,19 +64,23 @@ export default function Movie() {
             if (e.key === "Enter") handleSearch()
           }}
         />
-        <button css={btnStyle} onClick={handleSearch}>
+        <Button
+          variant="contained"
+          onClick={handleSearch}
+          sx={{ ml: 2, minWidth: 90, fontWeight: 600 }}
+        >
           검색
-        </button>
+        </Button>
       </div>
       <div css={countText}>
         총 <b>{total.toLocaleString()}</b> 개
-        <button
-          css={registerBtn}
-          style={{ float: "right" }}
+        <Button
+          variant="outlined"
+          sx={{ float: "right", minWidth: 90, fontWeight: 600 }}
           onClick={() => navigate("/admin/movie/edit?page=" + page)}
         >
           등록
-        </button>
+        </Button>
       </div>
       <div css={listWrap}>
         <dl css={listHeader}>
@@ -83,7 +88,7 @@ export default function Movie() {
           <dt>영화명</dt>
           <dt>포스터</dt>
           <dt>DVD 금액</dt>
-          <dt>DVD 할인율</dt> {/* 여기만 "할인율"로 변경 */}
+          <dt>DVD 할인율</dt>
         </dl>
         {list.length === 0 ? (
           <div css={emptyRow}>영화가 없습니다.</div>
@@ -131,27 +136,43 @@ export default function Movie() {
                 )}
               </dd>
               <dd>{row.dvdPrice?.toLocaleString()} 원</dd>
-              <dd>
-                {row.dvdDiscount != null ? `${row.dvdDiscount}%` : "-"}
-                {/* 할인율로 표기, 값이 없으면 "-" */}
-              </dd>
+              <dd>{row.dvdDiscount != null ? `${row.dvdDiscount}%` : "-"}</dd>
             </dl>
           ))
         )}
       </div>
       {totalPages > 1 && (
         <div css={paginationStyle}>
-          <button onClick={() => setPage(groupStart - 1)} disabled={groupStart === 1}>
+          <Button
+            variant="outlined"
+            onClick={() => setPage(groupStart - 1)}
+            disabled={groupStart === 1}
+            sx={{ minWidth: 40 }}
+          >
             &lt;
-          </button>
+          </Button>
           {Array.from({ length: groupEnd - groupStart + 1 }, (_, i) => groupStart + i).map((p) => (
-            <button key={p} className={page === p ? "active" : ""} onClick={() => setPage(p)}>
+            <Button
+              key={p}
+              variant={page === p ? "contained" : "outlined"}
+              onClick={() => setPage(p)}
+              sx={{
+                minWidth: 40,
+                fontWeight: page === p ? 700 : 400,
+                mx: 0.5,
+              }}
+            >
               {p}
-            </button>
+            </Button>
           ))}
-          <button onClick={() => setPage(groupEnd + 1)} disabled={groupEnd === totalPages}>
+          <Button
+            variant="outlined"
+            onClick={() => setPage(groupEnd + 1)}
+            disabled={groupEnd === totalPages}
+            sx={{ minWidth: 40 }}
+          >
             &gt;
-          </button>
+          </Button>
         </div>
       )}
     </div>
@@ -164,43 +185,15 @@ const titleStyle = css`
   margin-bottom: 24px;
   color: #222;
 `
-const tabWrap = css`
-  display: flex;
-  gap: 0;
-  margin-bottom: 24px;
-  .tab {
-    flex: 1;
-    padding: 14px 0;
-    font-size: 17px;
-    font-weight: 600;
-    border: 1.5px solid #ddd;
-    border-bottom: none;
-    background: #f5f5f5;
-    color: #888;
-    border-radius: 8px 8px 0 0;
-    cursor: pointer;
-    transition: background 0.2s;
-    &.active {
-      background: #fff;
-      color: #222;
-      border-bottom: 1.5px solid #fff;
-    }
-    &:not(:first-of-type) {
-      border-left: none;
-    }
-  }
-`
 const filterBox = css`
   border: 1.5px solid #e0e0e0;
   border-radius: 8px;
   background: #fafbfc;
   padding: 24px 24px 16px 24px;
   margin-bottom: 18px;
-`
-const filterRow = css`
   display: flex;
-  gap: 24px;
   align-items: center;
+  gap: 12px;
 `
 const filterLabel = css`
   font-weight: 500;
@@ -214,38 +207,6 @@ const inputStyle = css`
   border-radius: 4px;
   background: #fff;
   font-size: 15px;
-`
-const btnStyle = css`
-  padding: 8px 24px;
-  border: none;
-  border-radius: 4px;
-  background: #222;
-  color: #fff;
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  margin-left: 12px;
-  transition: background 0.2s;
-  &:hover {
-    background: #ff9800;
-    color: #fff;
-  }
-`
-const registerBtn = css`
-  padding: 7px 18px;
-  border: none;
-  border-radius: 4px;
-  background: #eee;
-  color: #888;
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  margin-left: 12px;
-  transition: background 0.2s;
-  &:hover {
-    background: #ff9800;
-    color: #fff;
-  }
 `
 const countText = css`
   margin-bottom: 10px;
@@ -310,22 +271,4 @@ const paginationStyle = css`
   justify-content: center;
   gap: 8px;
   margin-top: 28px;
-  button {
-    border: none;
-    background: #f5f5f5;
-    color: #222;
-    padding: 7px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 15px;
-    &.active {
-      background: #ff9800;
-      color: #fff;
-      font-weight: 700;
-    }
-    &:hover:not(.active) {
-      background: #ffe0b2;
-    }
-  }
 `

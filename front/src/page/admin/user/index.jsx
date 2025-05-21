@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useNavigate, useLocation } from "react-router"
 import { css } from "@emotion/react"
 import { fetchUserList } from "@/api/admin"
+import Button from "@mui/material/Button"
 
 const PAGE_SIZE = 5
 
@@ -100,6 +101,7 @@ export default function AdminUser() {
     navigate(`/admin/user/${id}?page=${page}`)
   }
 
+  // 페이지네이션 파란색 스타일
   return (
     <div>
       <form css={filterBox} onSubmit={handleSearch}>
@@ -124,9 +126,13 @@ export default function AdminUser() {
               <option>관리자</option>
             </select>
           </label>
-          <button css={btnStyle} type="submit">
+          <Button
+            variant="contained"
+            type="submit"
+            sx={{ ml: 2, minWidth: 90, fontWeight: 600, fontSize: 15 }}
+          >
             검색
-          </button>
+          </Button>
         </div>
       </form>
       <div css={countText}>
@@ -162,17 +168,33 @@ export default function AdminUser() {
           ))
         )}
       </div>
-      <div css={paginationStyle}>
-        {[...Array(totalPage)].map((_, idx) => (
-          <button
-            key={idx}
-            className={page === idx + 1 ? "active" : ""}
-            onClick={() => handlePageChange(idx + 1)}
-          >
-            {idx + 1}
-          </button>
-        ))}
-      </div>
+      {totalPage > 1 && (
+        <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: 28 }}>
+          {Array.from({ length: totalPage }, (_, idx) => (
+            <Button
+              key={idx}
+              variant={page === idx + 1 ? "contained" : "outlined"}
+              sx={{
+                minWidth: 40,
+                fontWeight: page === idx + 1 ? 700 : 500,
+                fontSize: 15,
+                mx: 0.5,
+                background: page === idx + 1 ? "#1976d2" : undefined,
+                color: page === idx + 1 ? "#fff" : "#1976d2",
+                borderColor: "#1976d2",
+                "&:hover": {
+                  background: page === idx + 1 ? "#1565c0" : "#e3f2fd",
+                  color: page === idx + 1 ? "#fff" : "#1976d2",
+                  borderColor: "#1976d2",
+                },
+              }}
+              onClick={() => handlePageChange(idx + 1)}
+            >
+              {idx + 1}
+            </Button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -197,7 +219,7 @@ const filterLabel = css`
 const inputStyle = css`
   margin-left: 8px;
   padding: 7px 12px;
-  border: 1px solid #ccc;
+  border: 1.5px solid #ccc;
   border-radius: 4px;
   background: #fff;
   font-size: 15px;
@@ -205,26 +227,10 @@ const inputStyle = css`
 const selectStyle = css`
   margin-left: 8px;
   padding: 7px 12px;
-  border: 1px solid #ccc;
+  border: 1.5px solid #ccc;
   border-radius: 4px;
   background: #fff;
   font-size: 15px;
-`
-const btnStyle = css`
-  padding: 8px 24px;
-  border: none;
-  border-radius: 4px;
-  background: #222;
-  color: #fff;
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  margin-left: 12px;
-  transition: background 0.2s;
-  &:hover {
-    background: #ff9800;
-    color: #fff;
-  }
 `
 const countText = css`
   margin-bottom: 10px;
@@ -279,28 +285,4 @@ const emptyRow = css`
   border: 1.5px solid #ddd;
   border-top: none;
   border-radius: 0 0 6px 6px;
-`
-const paginationStyle = css`
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 28px;
-  button {
-    border: none;
-    background: #f5f5f5;
-    color: #222;
-    padding: 7px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 15px;
-    &.active {
-      background: #ff9800;
-      color: #fff;
-      font-weight: 700;
-    }
-    &:hover:not(.active) {
-      background: #ffe0b2;
-    }
-  }
 `
