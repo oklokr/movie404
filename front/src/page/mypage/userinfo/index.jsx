@@ -1,4 +1,4 @@
-import { updateUser } from "@/api/admin"
+import { sendSMS, smsAuth, updateUser } from "@/api/admin"
 import { sendAuthEmail, signupCheckEmail } from "@/api/signup"
 import { selectUser } from "@/store/selectors"
 import {
@@ -10,6 +10,7 @@ import {
   OutlinedInput,
   TextField,
 } from "@mui/material"
+import { useState } from "react"
 import { useSelector } from "react-redux"
 import { Navigate, NavLink, useNavigate } from "react-router"
 const userchange = {
@@ -206,8 +207,11 @@ function User(props) {
     function handleChangeInputAuth(e) {
       userchange.inputauthcode = e.target.value
     }
+    const [tel, setTel] = useState(userinfo.tel)
+    const [sendsms, isSendSMS] = useState(0)
+    const [smsinput, setSMSInput] = useState("")
     function handleChangeTel(e) {
-      // alert(props.test)
+      setTel(e.target.value)
       if (e.target.value == userinfo.tel) props.setTelEvent(0)
       else props.setTelEvent(1)
     }
@@ -237,7 +241,27 @@ function User(props) {
         props.setCommentRPW("비밀번호가 일치하지 않습니다.")
       }
     }
-
+    function handlerAuthTelEvent(e) {
+      const sendsms = () => {
+        sendSMS({ phone: tel }).then((res) => {
+          console.log(res)
+          isSendSMS(1)
+        })
+      }
+      sendsms()
+    }
+    function handleSMSAuth(e) {
+      const smsauth = () => {
+        smsAuth({ code: smsinput }).then((res) => {
+          console.log(res)
+          if (res.code === 200) {
+            alert("인증성공!")
+            isSendSMS(0)
+          }
+        })
+      }
+      smsauth()
+    }
     return (
       <>
         <div className="input-form">
@@ -365,9 +389,29 @@ function User(props) {
               휴대폰 인증
             </Button>
           ) : (
-            <Button variant="contained">휴대폰 인증</Button>
+            <Button variant="contained" onClick={handlerAuthTelEvent}>
+              휴대폰 인증
+            </Button>
           )}
         </div>
+        <div>
+          <TextField
+            id="outlined-select-currency-native"
+            onChange={(e) => {
+              setSMSInput(e.target.value)
+            }}
+          ></TextField>
+          {sendsms == 0 ? (
+            <Button variant="contained" disabled>
+              인증요청
+            </Button>
+          ) : (
+            <Button variant="contained" onClick={handleSMSAuth}>
+              인증요청
+            </Button>
+          )}
+        </div>
+
         <Button
           variant="outlined"
           onClick={() => {
@@ -388,5 +432,7 @@ const Leftbtn = {
   fontSize: "1.3rem",
   align: "center",
   textDecoration: "none",
+  padding: "20px",
+  display: "flex",
 }
 export { User, UserMenu }

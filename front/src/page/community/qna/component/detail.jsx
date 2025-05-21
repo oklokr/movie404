@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router"
-import { css } from "@emotion/react"
 import { useSelector } from "react-redux"
 import { selectUser } from "@/store/selectors"
 import { communityGetQnaDetail, communityReplyQna, communityDeleteQna } from "@/api/community"
+import Button from "@mui/material/Button"
 
 export default function QnaDetail() {
   const navigate = useNavigate()
@@ -69,34 +69,111 @@ export default function QnaDetail() {
           padding: 24,
         }}
       >
-        <dt css={thStyle} style={{ gridColumn: "1/2" }}>
+        <dt
+          style={{
+            fontWeight: 700,
+            background: "#f0f0f0",
+            border: "1px solid #e0e0e0",
+            padding: "12px 8px",
+            gridColumn: "1/2",
+          }}
+        >
           구분
         </dt>
-        <dd css={tdStyle} style={{ gridColumn: "2/3" }}>
+        <dd
+          style={{
+            background: "#fff",
+            border: "1px solid #e0e0e0",
+            padding: "10px 8px",
+            gridColumn: "2/3",
+          }}
+        >
           {detail.reply ? "답변완료" : "답변대기"}
         </dd>
-        <dt css={thStyle} style={{ gridColumn: "3/4" }}>
+        <dt
+          style={{
+            fontWeight: 700,
+            background: "#f0f0f0",
+            border: "1px solid #e0e0e0",
+            padding: "12px 8px",
+            gridColumn: "3/4",
+          }}
+        >
           작성자
         </dt>
-        <dd css={tdStyle} style={{ gridColumn: "4/5" }}>
+        <dd
+          style={{
+            background: "#fff",
+            border: "1px solid #e0e0e0",
+            padding: "10px 8px",
+            gridColumn: "4/5",
+          }}
+        >
           {detail.userId}
         </dd>
-        <dt css={thStyle} style={{ gridColumn: "1/2" }}>
+        <dt
+          style={{
+            fontWeight: 700,
+            background: "#f0f0f0",
+            border: "1px solid #e0e0e0",
+            padding: "12px 8px",
+            gridColumn: "1/2",
+          }}
+        >
           작성일자
         </dt>
-        <dd css={tdStyle} style={{ gridColumn: "2/3" }}>
+        <dd
+          style={{
+            background: "#fff",
+            border: "1px solid #e0e0e0",
+            padding: "10px 8px",
+            gridColumn: "2/3",
+          }}
+        >
           {detail.writeDate}
         </dd>
-        <dt css={thStyle} style={{ gridColumn: "3/4" }}>
+        <dt
+          style={{
+            fontWeight: 700,
+            background: "#f0f0f0",
+            border: "1px solid #e0e0e0",
+            padding: "12px 8px",
+            gridColumn: "3/4",
+          }}
+        >
           제목
         </dt>
-        <dd css={tdStyle} style={{ gridColumn: "4/5" }}>
+        <dd
+          style={{
+            background: "#fff",
+            border: "1px solid #e0e0e0",
+            padding: "10px 8px",
+            gridColumn: "4/5",
+          }}
+        >
           {detail.title}
         </dd>
-        <dt css={thStyle} style={{ gridColumn: "1/2" }}>
+        <dt
+          style={{
+            fontWeight: 700,
+            background: "#f0f0f0",
+            border: "1px solid #e0e0e0",
+            padding: "12px 8px",
+            gridColumn: "1/2",
+          }}
+        >
           내용
         </dt>
-        <dd css={tdStyle} style={{ gridColumn: "2/5", minHeight: 120, verticalAlign: "top" }}>
+        <dd
+          style={{
+            background: "#fff",
+            border: "1px solid #e0e0e0",
+            padding: "10px 8px",
+            gridColumn: "2/5",
+            minHeight: 120,
+            verticalAlign: "top",
+          }}
+        >
           {detail.content}
         </dd>
       </dl>
@@ -119,14 +196,14 @@ export default function QnaDetail() {
               placeholder="답변을 입력하세요"
               disabled={loading}
             />
-            <button
-              css={btnStyle}
-              style={{ background: "#0078d4", color: "#fff", marginRight: 8 }}
+            <Button
+              variant="contained"
+              sx={{ fontWeight: 600, mr: 1 }}
               onClick={handleSaveAnswer}
               disabled={loading}
             >
               답변 저장
-            </button>
+            </Button>
           </div>
         ) : (
           <div
@@ -143,50 +220,67 @@ export default function QnaDetail() {
         )}
       </div>
       <div style={{ marginTop: 40, textAlign: "right" }}>
-        <button onClick={() => navigate("/community/qna")} css={btnStyle} disabled={loading}>
+        <Button
+          variant="outlined"
+          sx={{
+            minWidth: 90,
+            fontWeight: 600,
+            fontSize: 15,
+            mr: 1,
+            color: "#1976d2",
+            borderColor: "#1976d2",
+            "&:hover": {
+              borderColor: "#1565c0",
+              color: "#1565c0",
+              background: "#e3f2fd",
+            },
+          }}
+          onClick={() => navigate("/community/qna")}
+          disabled={loading}
+        >
           목록
-        </button>
+        </Button>
         {(isAdmin || isWriter) && (
           <>
-            <button
-              css={btnStyle}
-              style={{ background: "#6c757d", color: "#fff", marginLeft: 8 }}
+            <Button
+              variant="contained"
+              sx={{
+                minWidth: 90,
+                fontWeight: 600,
+                fontSize: 15,
+                mr: 1,
+                background: "#1976d2",
+                color: "#fff",
+                "&:hover": {
+                  background: "#1565c0",
+                },
+              }}
               onClick={() => navigate(`/community/qna/${id}/edit`)}
               disabled={loading}
             >
               수정
-            </button>
-            <button
-              css={btnStyle}
-              style={{ background: "#dc3545", color: "#fff", marginLeft: 8 }}
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                minWidth: 90,
+                fontWeight: 600,
+                fontSize: 15,
+                ml: 1,
+                background: "#dc3545",
+                color: "#fff",
+                "&:hover": {
+                  background: "#b71c1c",
+                },
+              }}
               onClick={handleDelete}
               disabled={loading}
             >
               삭제
-            </button>
+            </Button>
           </>
         )}
       </div>
     </div>
   )
 }
-
-const thStyle = css`
-  border: 1px solid #e0e0e0;
-  padding: 12px 8px;
-  background: #f0f0f0;
-  font-weight: 700;
-`
-const tdStyle = css`
-  border: 1px solid #e0e0e0;
-  padding: 10px 8px;
-  background: #fff;
-`
-const btnStyle = css`
-  padding: 8px 24px;
-  background: #f5f5f5;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 600;
-`

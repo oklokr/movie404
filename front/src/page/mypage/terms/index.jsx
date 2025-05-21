@@ -320,8 +320,9 @@ const cssWidth = { width: "100%" }
 const cssAccordion = { maxHeight: "400px", overflowY: "scroll" }
 const Leftbtn = {
   textDecoration: "none",
-
   fontSize: "1.3rem",
   align: "center",
+  padding: "20px",
+  display: "flex",
 }
 export { TermsA, TermsB, TermsC, TermsMenu }

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router"
-import { css } from "@emotion/react"
 import { useSelector } from "react-redux"
 import { selectUser } from "@/store/selectors"
 import { communityGetNoticeDetail, communityEditNotice } from "@/api/community"
+import Button from "@mui/material/Button"
+import { css } from "@emotion/react"
 
 export default function NoticeEdit() {
   const navigate = useNavigate()
@@ -81,8 +82,28 @@ export default function NoticeEdit() {
   }
 
   return (
-    <div css={wrapStyle}>
-      <h1 css={titleStyle}>{isEdit ? "공지사항 수정" : "공지사항 작성"}</h1>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#f9f9f9",
+        padding: "40px 0",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <h1
+        style={{
+          fontSize: "2rem",
+          fontWeight: 800,
+          marginBottom: 32,
+          color: "#222",
+          letterSpacing: "-1px",
+          alignSelf: "flex-start",
+        }}
+      >
+        {isEdit ? "공지사항 수정" : "공지사항 작성"}
+      </h1>
       <dl css={dlStyle}>
         <dt css={thStyle}>구분</dt>
         <dd css={tdStyle}>
@@ -115,10 +136,15 @@ export default function NoticeEdit() {
         </dd>
         <dt css={thStyle}>작성일자</dt>
         <dd css={tdStyle}>{isEdit ? form.writeDate : new Date().toLocaleString()}</dd>
-        <dt css={thStyle} style={{ gridColumn: "1/2" }}>
-          내용
-        </dt>
-        <dd css={tdStyle} style={{ gridColumn: "2/5" }}>
+        <dt css={thStyle}>내용</dt>
+        <dd
+          css={[
+            tdStyle,
+            css`
+              grid-column: 2/5;
+            `,
+          ]}
+        >
           <textarea
             name="content"
             value={form.content}
@@ -133,39 +159,28 @@ export default function NoticeEdit() {
           </div>
         </dd>
       </dl>
-      <div css={btnAreaStyle}>
-        <button
-          css={btnStyle}
-          style={{ marginRight: 8 }}
+      <div style={{ textAlign: "right", marginTop: 40, maxWidth: 900, width: "100%" }}>
+        <Button
+          variant="outlined"
+          sx={{ minWidth: 90, fontWeight: 600, fontSize: 15, mr: 1 }}
           onClick={handleListClick}
           disabled={loading}
         >
           목록
-        </button>
-        <button css={[btnStyle, btnBlue]} onClick={handleSubmit} disabled={loading}>
+        </Button>
+        <Button
+          variant="contained"
+          sx={{ minWidth: 90, fontWeight: 600, fontSize: 15 }}
+          onClick={handleSubmit}
+          disabled={loading}
+        >
           {isEdit ? "수정" : "작성"}
-        </button>
+        </Button>
       </div>
     </div>
   )
 }
 
-const wrapStyle = css`
-  min-height: 100vh;
-  background: #f9f9f9;
-  padding: 40px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`
-const titleStyle = css`
-  font-size: 2rem;
-  font-weight: 800;
-  margin-bottom: 32px;
-  color: #222;
-  letter-spacing: -1px;
-  align-self: flex-start;
-`
 const dlStyle = css`
   display: grid;
   grid-template-columns: 120px 1fr 120px 1fr;
@@ -185,12 +200,15 @@ const thStyle = css`
   background: #f0f0f0;
   font-weight: 700;
   font-size: 1rem;
+  text-align: left;
 `
 const tdStyle = css`
   border: 1px solid #e0e0e0;
   padding: 10px 8px;
   background: #fff;
   font-size: 1rem;
+  vertical-align: middle;
+  text-align: center;
 `
 const inputStyle = css`
   width: 100%;
@@ -209,31 +227,4 @@ const textareaStyle = css`
   border-radius: 4px;
   font-size: 15px;
   resize: vertical;
-`
-const btnAreaStyle = css`
-  text-align: right;
-  margin-top: 40px;
-  max-width: 900px;
-  width: 100%;
-`
-const btnStyle = css`
-  padding: 8px 24px;
-  background: #f5f5f5;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 1rem;
-  transition:
-    background 0.15s,
-    color 0.15s,
-    border 0.15s;
-`
-const btnBlue = css`
-  background: #0078d4 !important;
-  color: #fff !important;
-  border: none;
-  &:hover {
-    background: #005fa3 !important;
-  }
 `

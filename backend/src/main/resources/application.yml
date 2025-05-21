@@ -37,6 +37,9 @@ spring:
           timeout: 5000
           starttls:
             enable: true
+  coolsms:
+    apiKey: NCSH6DKDDSRZ9OVG
+    secretkey: DQ75ZDEW0G2AE3BO2QHWOMUKDEWDCXK8
 
 server:
   port: ${SERVER_PORT}

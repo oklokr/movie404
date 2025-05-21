@@ -1,9 +1,10 @@
-import { css } from "@emotion/react"
 import React, { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router"
 import { useSelector } from "react-redux"
 import { selectUser } from "@/store/selectors"
 import { communityGetNoticeDetail, communityDeleteNotice } from "@/api/community"
+import Button from "@mui/material/Button"
+import { css } from "@emotion/react"
 
 export default function NoticeDetail() {
   const { id } = useParams()
@@ -40,12 +41,47 @@ export default function NoticeDetail() {
   }
 
   if (loading) return null
-  if (!data) return <div css={emptyStyle}>존재하지 않는 공지입니다.</div>
+  if (!data)
+    return (
+      <div style={{ padding: 80, textAlign: "center", color: "#888", fontSize: "1.2rem" }}>
+        존재하지 않는 공지입니다.
+      </div>
+    )
 
   return (
-    <div css={wrapStyle}>
-      <h1 css={titleStyle}>공지사항 상세</h1>
-      <div css={cardStyle}>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#f9f9f9",
+        padding: "40px 0",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <h1
+        style={{
+          fontSize: "2rem",
+          fontWeight: 800,
+          marginBottom: 32,
+          color: "#222",
+          letterSpacing: "-1px",
+          alignSelf: "flex-start",
+        }}
+      >
+        공지사항 상세
+      </h1>
+      <div
+        style={{
+          background: "#fff",
+          borderRadius: 12,
+          boxShadow: "0 2px 12px rgba(0, 0, 0, 0.07)",
+          padding: "32px 24px 28px 24px",
+          maxWidth: 900,
+          width: "100%",
+          margin: "0 auto",
+        }}
+      >
         <dl css={dlStyle}>
           <dt css={thStyle}>구분</dt>
           <dd css={tdStyle}>{data.type}</dd>
@@ -55,35 +91,65 @@ export default function NoticeDetail() {
           <dd css={tdStyle}>{data.writeDate}</dd>
           <dt css={thStyle}>제목</dt>
           <dd css={tdStyle}>{data.title}</dd>
-          <dt css={thStyle} style={{ gridColumn: "1/2" }}>
-            내용
-          </dt>
-          <dd css={contentTdStyle} style={{ gridColumn: "2/5" }}>
+          <dt css={thStyle}>내용</dt>
+          <dd
+            css={[
+              contentTdStyle,
+              css`
+                grid-column: 2/5;
+              `,
+            ]}
+          >
             {data.content}
           </dd>
         </dl>
-        <div css={btnAreaStyle}>
-          <button css={btnStyle} onClick={() => navigate(-1)}>
+        <div style={{ textAlign: "right", marginTop: 16 }}>
+          <Button
+            variant="outlined"
+            sx={{ minWidth: 90, fontWeight: 600, fontSize: 15, mr: 1 }}
+            onClick={() => navigate(-1)}
+            disabled={deleting}
+          >
             목록
-          </button>
+          </Button>
           {isAdmin && (
             <>
-              <button
-                css={[btnStyle, btnGray]}
-                style={{ marginLeft: 8 }}
+              <Button
+                variant="contained"
+                sx={{
+                  minWidth: 90,
+                  fontWeight: 600,
+                  fontSize: 15,
+                  mr: 1,
+                  background: "#1976d2",
+                  color: "#fff",
+                  "&:hover": {
+                    background: "#1565c0",
+                  },
+                }}
                 onClick={() => navigate(`/community/notice/${id}/edit`)}
                 disabled={deleting}
               >
                 수정
-              </button>
-              <button
-                css={[btnStyle, btnRed]}
-                style={{ marginLeft: 8 }}
+              </Button>
+              <Button
+                variant="contained"
+                sx={{
+                  minWidth: 90,
+                  fontWeight: 600,
+                  fontSize: 15,
+                  ml: 1,
+                  background: "#dc3545",
+                  color: "#fff",
+                  "&:hover": {
+                    background: "#b52a37",
+                  },
+                }}
                 onClick={handleDelete}
                 disabled={deleting}
               >
                 삭제
-              </button>
+              </Button>
             </>
           )}
         </div>
@@ -92,31 +158,6 @@ export default function NoticeDetail() {
   )
 }
 
-const wrapStyle = css`
-  min-height: 100vh;
-  background: #f9f9f9;
-  padding: 40px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`
-const titleStyle = css`
-  font-size: 2rem;
-  font-weight: 800;
-  margin-bottom: 32px;
-  color: #222;
-  letter-spacing: -1px;
-  align-self: flex-start;
-`
-const cardStyle = css`
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-  padding: 32px 24px 28px 24px;
-  max-width: 900px;
-  width: 100%;
-  margin: 0 auto;
-`
 const dlStyle = css`
   display: grid;
   grid-template-columns: 120px 1fr 120px 1fr;
@@ -149,49 +190,4 @@ const contentTdStyle = css`
   font-size: 1.08rem;
   min-height: 120px;
   white-space: pre-line;
-`
-const btnAreaStyle = css`
-  text-align: right;
-  margin-top: 16px;
-`
-const btnStyle = css`
-  padding: 8px 24px;
-  background: #fff;
-  color: #222;
-  border: 1.5px solid #ccc;
-  border-radius: 6px;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  transition:
-    background 0.15s,
-    color 0.15s,
-    border 0.15s;
-  &:hover {
-    background: #0078d4;
-    color: #fff;
-    border: 1.5px solid #0078d4;
-  }
-`
-const btnGray = css`
-  background: #6c757d !important;
-  color: #fff !important;
-  border: none;
-  &:hover {
-    background: #495057 !important;
-  }
-`
-const btnRed = css`
-  background: #dc3545 !important;
-  color: #fff !important;
-  border: none;
-  &:hover {
-    background: #b52a37 !important;
-  }
-`
-const emptyStyle = css`
-  padding: 80px 0;
-  text-align: center;
-  color: #888;
-  font-size: 1.2rem;
 `
