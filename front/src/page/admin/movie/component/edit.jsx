@@ -8,6 +8,7 @@ import {
   fetchGenreList,
   fetchCreatorList,
 } from "@/api/admin"
+import Button from "@mui/material/Button"
 
 export default function MovieEdit() {
   const navigate = useNavigate()
@@ -286,15 +287,24 @@ export default function MovieEdit() {
                   alt="포스터 미리보기"
                   style={{ width: 120, borderRadius: 8, background: "#eee" }}
                 />
-                <button
-                  type="button"
-                  css={posterDelBtn}
-                  style={{ position: "absolute", top: 0, right: 0 }}
+                <Button
+                  variant="outlined"
+                  color="error"
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    minWidth: 32,
+                    minHeight: 32,
+                    fontSize: 20,
+                    p: 0,
+                    borderRadius: "50%",
+                  }}
                   onClick={handlePosterRemove}
                   title="삭제"
                 >
                   ×
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -318,15 +328,24 @@ export default function MovieEdit() {
                   alt="배경 미리보기"
                   style={{ width: 240, borderRadius: 8, background: "#eee" }}
                 />
-                <button
-                  type="button"
-                  css={posterDelBtn}
-                  style={{ position: "absolute", top: 0, right: 0 }}
+                <Button
+                  variant="outlined"
+                  color="error"
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    minWidth: 32,
+                    minHeight: 32,
+                    fontSize: 20,
+                    p: 0,
+                    borderRadius: "50%",
+                  }}
                   onClick={handleBackgroundRemove}
                   title="삭제"
                 >
                   ×
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -433,14 +452,22 @@ export default function MovieEdit() {
               {directors.map((d, i) => (
                 <span css={chip} key={i}>
                   {getCreatorName(d)}
-                  <button
-                    type="button"
-                    css={chipDelBtn}
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    sx={{
+                      minWidth: 24,
+                      minHeight: 24,
+                      fontSize: 14,
+                      p: 0,
+                      borderRadius: "50%",
+                      ml: 1,
+                    }}
                     onClick={() => removeDirector(d)}
                     title="삭제"
                   >
                     ×
-                  </button>
+                  </Button>
                 </span>
               ))}
             </div>
@@ -482,16 +509,16 @@ export default function MovieEdit() {
                   ))}
                 </div>
               )}
-              <button
-                type="button"
-                css={miniBtn}
+              <Button
+                variant="outlined"
+                sx={{ ml: 1, minWidth: 60, fontWeight: 600 }}
                 onClick={() => {
                   const found = creatorList.find((c) => c.name === directorInput)
                   if (found) addDirector(found.code)
                 }}
               >
                 등록
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -503,9 +530,22 @@ export default function MovieEdit() {
               {casts.map((c, i) => (
                 <span css={chip} key={i}>
                   {getCreatorName(c)}
-                  <button type="button" css={chipDelBtn} onClick={() => removeCast(c)} title="삭제">
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    sx={{
+                      minWidth: 24,
+                      minHeight: 24,
+                      fontSize: 14,
+                      p: 0,
+                      borderRadius: "50%",
+                      ml: 1,
+                    }}
+                    onClick={() => removeCast(c)}
+                    title="삭제"
+                  >
                     ×
-                  </button>
+                  </Button>
                 </span>
               ))}
             </div>
@@ -547,16 +587,16 @@ export default function MovieEdit() {
                   ))}
                 </div>
               )}
-              <button
-                type="button"
-                css={miniBtn}
+              <Button
+                variant="outlined"
+                sx={{ ml: 1, minWidth: 60, fontWeight: 600 }}
                 onClick={() => {
                   const found = creatorList.find((c) => c.name === castInput)
                   if (found) addCast(found.code)
                 }}
               >
                 등록
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -623,18 +663,28 @@ export default function MovieEdit() {
         </div>
       </div>
       <div css={btnRow}>
-        <button type="button" css={listBtn} onClick={handleListClick}>
+        <Button
+          variant="outlined"
+          sx={{ minWidth: 120, fontWeight: 600, fontSize: 17 }}
+          type="button"
+          onClick={handleListClick}
+        >
           목록
-        </button>
-        <button type="submit" css={submitBtn} disabled={loading}>
+        </Button>
+        <Button
+          variant="contained"
+          sx={{ minWidth: 120, fontWeight: 700, fontSize: 17 }}
+          type="submit"
+          disabled={loading}
+        >
           {loading ? (movieCode ? "수정중..." : "등록중...") : movieCode ? "수정" : "등록"}
-        </button>
+        </Button>
       </div>
     </form>
   )
 }
 
-// 스타일
+// --- 스타일 ---
 const wrapStyle = css`
   max-width: 1200px;
   min-width: 320px;
@@ -720,92 +770,6 @@ const tdStyle = css`
     padding: 16px 12px 18px 14px;
   }
 `
-const posterArea = css`
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  @media (max-width: 600px) {
-    gap: 10px;
-  }
-`
-const posterThumbWrap = css`
-  width: 120px;
-  height: 120px;
-  background: #eee;
-  border-radius: 8px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  border: 1.5px solid #e0e0e0;
-  @media (max-width: 600px) {
-    width: 80px;
-    height: 80px;
-  }
-`
-const posterImg = css`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-`
-const posterDelBtn = css`
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  background: #fff;
-  border: 1.5px solid #ff9800;
-  color: #ff9800;
-  border-radius: 50%;
-  width: 26px;
-  height: 26px;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition:
-    background 0.2s,
-    color 0.2s;
-  &:hover {
-    background: #ff9800;
-    color: #fff;
-  }
-  @media (max-width: 600px) {
-    width: 20px;
-    height: 20px;
-    font-size: 14px;
-  }
-`
-const posterAddBtn = css`
-  width: 120px;
-  height: 120px;
-  background: #f5f5f5;
-  border-radius: 8px;
-  border: 2px dashed #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: border 0.2s;
-  &:hover {
-    border: 2px solid #ff9800;
-    background: #fffbe7;
-  }
-  @media (max-width: 600px) {
-    width: 80px;
-    height: 80px;
-  }
-`
-const plusIcon = css`
-  font-size: 48px;
-  color: #bbb;
-  font-weight: 400;
-  @media (max-width: 600px) {
-    font-size: 32px;
-  }
-`
 const genreRow = css`
   display: flex;
   align-items: center;
@@ -879,86 +843,10 @@ const chip = css`
   margin-right: 6px;
   margin-bottom: 4px;
 `
-const chipDelBtn = css`
-  background: none;
-  border: none;
-  color: #ff9800;
-  font-size: 16px;
-  margin-left: 4px;
-  cursor: pointer;
-  padding: 0 2px;
-  &:hover {
-    color: #d32f2f;
-  }
-`
-const miniBtn = css`
-  padding: 6px 14px;
-  border: none;
-  border-radius: 4px;
-  background: #eee;
-  color: #888;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  margin-left: 8px;
-  transition: background 0.2s;
-  &:hover {
-    background: #ff9800;
-    color: #fff;
-  }
-`
-const systemWrap = css`
-  display: flex;
-  gap: 24px;
-  width: 100%;
-  @media (max-width: 900px) {
-    flex-direction: column;
-    gap: 16px;
-  }
-`
-const systemCol = css`
-  flex: 1 1 0;
-  min-width: 240px;
-  background: #fafbfc;
-  border-radius: 10px;
-  padding: 18px 24px 18px 24px;
-  border: 1.5px solid #e0e0e0;
-  box-sizing: border-box;
-  margin-bottom: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  @media (max-width: 600px) {
-    padding: 12px 8px;
-    min-width: 0;
-  }
-`
-const systemTitle = css`
-  font-weight: 600;
-  font-size: 16px;
-  color: #ff9800;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`
-const systemInputRow = css`
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-`
-const checkLabel = css`
-  margin-right: 16px;
-  font-size: 15px;
-  input {
-    margin-right: 4px;
-  }
-`
 const btnRow = css`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 18px;
   margin-top: 44px;
   padding: 0 40px;
   @media (max-width: 600px) {
@@ -967,47 +855,20 @@ const btnRow = css`
     padding: 0 12px;
   }
 `
-const listBtn = css`
-  padding: 12px 36px;
-  border: none;
-  border-radius: 6px;
-  background: #eee;
-  color: #888;
-  font-weight: 600;
-  font-size: 17px;
-  cursor: pointer;
-  transition: background 0.2s;
-  &:hover {
-    background: #ff9800;
-    color: #fff;
-  }
-  @media (max-width: 600px) {
-    width: 100%;
-    font-size: 15px;
-    padding: 10px 0;
+const checkLabel = css`
+  margin-right: 16px;
+  font-size: 15px;
+  input {
+    margin-right: 4px;
   }
 `
-const submitBtn = css`
-  padding: 12px 36px;
-  border: none;
-  border-radius: 6px;
-  background: #222;
-  color: #fff;
-  font-weight: 700;
-  font-size: 17px;
-  cursor: pointer;
-  transition: background 0.2s;
-  &:hover {
-    background: #ff9800;
-    color: #fff;
-  }
-  @media (max-width: 600px) {
-    width: 100%;
-    font-size: 15px;
-    padding: 10px 0;
-  }
+const systemInputRow = css`
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 `
-
 const genreSelectWrap = css`
   min-width: 200px;
   max-width: 260px;

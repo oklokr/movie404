@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router"
 import { fetchMovieDetail, deleteMovie, fetchGenreList, fetchCreatorList } from "@/api/admin"
 import { css } from "@emotion/react"
+import Button from "@mui/material/Button"
 
 export default function MovieDetail() {
   const { movieCode } = useParams()
@@ -102,24 +103,29 @@ export default function MovieDetail() {
         </DetailRow>
       </div>
       <div css={btnRow}>
-        <button css={listBtn} onClick={() => navigate(-1)}>
+        <Button
+          variant="outlined"
+          sx={{ minWidth: 120, fontWeight: 600, fontSize: 17 }}
+          onClick={() => navigate(-1)}
+        >
           목록
-        </button>
+        </Button>
         <div>
-          <button
-            css={miniBtn}
-            style={{ background: "#ff9800", color: "#fff" }}
+          <Button
+            variant="contained"
+            sx={{ minWidth: 90, fontWeight: 600, fontSize: 15, ml: 1 }}
             onClick={() => navigate(`/admin/movie/edit/${movie.movieCode}`)}
           >
             수정
-          </button>
-          <button
-            css={miniBtn}
-            style={{ marginLeft: 12, background: "#d32f2f", color: "#fff" }}
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            sx={{ minWidth: 90, fontWeight: 600, fontSize: 15, ml: 2 }}
             onClick={handleDelete}
           >
             삭제
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -278,41 +284,5 @@ const btnRow = css`
     flex-direction: column;
     gap: 12px;
     padding: 0 12px;
-  }
-`
-const listBtn = css`
-  padding: 12px 36px;
-  border: none;
-  border-radius: 6px;
-  background: #eee;
-  color: #888;
-  font-weight: 600;
-  font-size: 17px;
-  cursor: pointer;
-  transition: background 0.2s;
-  &:hover {
-    background: #ff9800;
-    color: #fff;
-  }
-  @media (max-width: 600px) {
-    width: 100%;
-    font-size: 15px;
-    padding: 10px 0;
-  }
-`
-const miniBtn = css`
-  padding: 6px 14px;
-  border: none;
-  border-radius: 4px;
-  background: #eee;
-  color: #888;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  margin-left: 8px;
-  transition: background 0.2s;
-  &:hover {
-    background: #ff9800;
-    color: #fff;
   }
 `

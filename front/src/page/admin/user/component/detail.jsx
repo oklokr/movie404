@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
-import { useNavigate, useParams, useLocation } from "react-router" // useLocation 추가
+import { useNavigate, useParams, useLocation } from "react-router"
 import { css } from "@emotion/react"
 import { fetchUserDetail, resetUserPassword, updateUserType } from "@/api/admin"
+import Button from "@mui/material/Button"
 
 const userTypeList = ["일반회원", "VIP회원", "탈퇴회원", "관리자"]
 
-// 한글명 ↔ 코드값 매핑
 const userTypeToCode = {
   일반회원: "1",
   VIP회원: "3",
@@ -22,7 +22,7 @@ const codeToUserType = {
 export default function AdminUserDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const location = useLocation() // 추가
+  const location = useLocation()
   const [user, setUser] = useState(null)
   const [password, setPassword] = useState("")
   const [type, setType] = useState("")
@@ -36,33 +36,23 @@ export default function AdminUserDetail() {
     setType("")
     setNotFound(false)
     fetchUserDetail(id)
-      .then((data) => {
-        // @ts-ignore
+      .then((res) => {
+        const data = res.data ? res.data : res
         if (!data || !data.userId) {
           setNotFound(true)
         } else {
           setUser({
-            // @ts-ignore
             id: data.userId,
-            // @ts-ignore
             name: data.userName,
-            // @ts-ignore
             email: data.email,
-            // @ts-ignore
             tel: data.tel,
-            // @ts-ignore
             joinDate: data.signupDateStr || data.signupDate,
-            // @ts-ignore
             totalPay: data.totalPay ?? 0,
-            // @ts-ignore
             buyCount: data.buyCount ?? 0,
-            // @ts-ignore
             reserveCount: data.reserveCount ?? 0,
-            // @ts-ignore
-            type: codeToUserType[data.userTpcd] || "", // 코드값 → 한글명
+            type: codeToUserType[data.userTpcd] || "",
           })
           setPassword("********")
-          // @ts-ignore
           setType(codeToUserType[data.userTpcd] || "")
         }
       })
@@ -72,10 +62,7 @@ export default function AdminUserDetail() {
   if (notFound) return <div css={notFoundStyle}>존재하지 않는 사용자입니다.</div>
   if (!user) return <div>로딩중...</div>
 
-  // 비밀번호 초기화 버튼 클릭 시 확인 모달 표시
   const handleResetPassword = () => setShowConfirm(true)
-
-  // 확인 모달에서 "확인" 클릭 시 실제 초기화
   const handleConfirmReset = async () => {
     setLoading(true)
     try {
@@ -88,18 +75,12 @@ export default function AdminUserDetail() {
     setLoading(false)
     setShowConfirm(false)
   }
-
-  // 확인 모달에서 "취소" 클릭 시
   const handleCancelReset = () => setShowConfirm(false)
-
-  // 사용자 유형 변경
   const handleTypeChange = (e) => setType(e.target.value)
-
-  // 적용 버튼 (실제 DB 반영)
   const handleApplyType = async () => {
     setLoading(true)
     try {
-      await updateUserType(user.id, userTypeToCode[type]) // 코드값으로 전송
+      await updateUserType(user.id, userTypeToCode[type])
       setUser({ ...user, type })
       alert("사용자 유형이 변경되었습니다.")
     } catch {
@@ -107,10 +88,7 @@ export default function AdminUserDetail() {
     }
     setLoading(false)
   }
-
-  // 목록(뒤로가기) 버튼
   const handleGoList = () => {
-    // 쿼리스트링 유지
     const search = location.search
     navigate(`/admin/user${search}`)
   }
@@ -142,9 +120,14 @@ export default function AdminUserDetail() {
             <span>전화번호</span>
             <span>{user.tel}</span>
           </div>
-          <button css={resetBtn} onClick={handleResetPassword} disabled={loading}>
+          <Button
+            variant="outlined"
+            sx={{ alignSelf: "flex-end", mt: 2, minWidth: 120, fontWeight: 600 }}
+            onClick={handleResetPassword}
+            disabled={loading}
+          >
             비밀번호 초기화
-          </button>
+          </Button>
         </div>
         {/* 사이트 이용정보 */}
         <div css={infoBox}>
@@ -173,27 +156,46 @@ export default function AdminUserDetail() {
               ))}
             </select>
           </div>
-          <button css={applyBtn} onClick={handleApplyType} disabled={loading}>
+          <Button
+            variant="contained"
+            sx={{ alignSelf: "flex-end", mt: 2, minWidth: 120, fontWeight: 600 }}
+            onClick={handleApplyType}
+            disabled={loading}
+          >
             적용
-          </button>
+          </Button>
         </div>
       </div>
       <div css={btnRow}>
-        <button css={listBtn} onClick={handleGoList}>
+        <Button
+          variant="outlined"
+          sx={{ minWidth: 120, fontWeight: 600, fontSize: 17 }}
+          onClick={handleGoList}
+        >
           목록
-        </button>
+        </Button>
       </div>
       {showConfirm && (
         <div css={modalOverlay}>
           <div css={modalBox}>
             <div css={modalMsg}>비밀번호를 1234로 초기화하시겠습니까?</div>
             <div css={modalBtnRow}>
-              <button css={modalBtn} onClick={handleConfirmReset} disabled={loading}>
+              <Button
+                variant="contained"
+                sx={{ minWidth: 90, fontWeight: 600, fontSize: 15 }}
+                onClick={handleConfirmReset}
+                disabled={loading}
+              >
                 확인
-              </button>
-              <button css={modalBtn} onClick={handleCancelReset} disabled={loading}>
+              </Button>
+              <Button
+                variant="outlined"
+                sx={{ minWidth: 90, fontWeight: 600, fontSize: 15, ml: 2 }}
+                onClick={handleCancelReset}
+                disabled={loading}
+              >
                 취소
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -210,7 +212,6 @@ const notFoundStyle = css`
   font-weight: 600;
 `
 
-// 이하 CSS 동일
 const detailWrap = css`
   width: 100%;
   max-width: 1100px;
@@ -275,79 +276,16 @@ const infoItem = css`
 `
 const selectStyle = css`
   padding: 6px 12px;
-  border: 1px solid #ccc;
+  border: 1.5px solid #ccc;
   border-radius: 4px;
   background: #fff;
   font-size: 15px;
-`
-const resetBtn = css`
-  margin-top: 18px;
-  align-self: flex-end;
-  padding: 8px 18px;
-  border: none;
-  border-radius: 4px;
-  background: #bbb;
-  color: #fff;
-  font-weight: 500;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background 0.2s;
-  &:hover {
-    background: #ff9800;
-  }
-`
-const applyBtn = css`
-  margin-top: 18px;
-  align-self: flex-end;
-  padding: 8px 18px;
-  border: none;
-  border-radius: 4px;
-  background: #bbb;
-  color: #fff;
-  font-weight: 500;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background 0.2s;
-  &:hover {
-    background: #ff9800;
-  }
 `
 const btnRow = css`
   display: flex;
   justify-content: flex-end;
   gap: 12px;
   margin-top: 24px;
-`
-const listBtn = css`
-  padding: 12px 36px;
-  border: none;
-  border-radius: 6px;
-  background: #eee;
-  color: #222;
-  font-weight: 600;
-  font-size: 17px;
-  cursor: pointer;
-  transition: background 0.2s;
-  &:hover {
-    background: #bbb;
-    color: #fff;
-  }
-`
-// @ts-ignore
-const saveBtn = css`
-  padding: 12px 48px;
-  border: none;
-  border-radius: 6px;
-  background: #eee;
-  color: #222;
-  font-weight: 600;
-  font-size: 17px;
-  cursor: pointer;
-  transition: background 0.2s;
-  &:hover {
-    background: #ff9800;
-    color: #fff;
-  }
 `
 const modalOverlay = css`
   position: fixed;
@@ -380,17 +318,4 @@ const modalMsg = css`
 const modalBtnRow = css`
   display: flex;
   gap: 18px;
-`
-const modalBtn = css`
-  padding: 8px 28px;
-  border: none;
-  border-radius: 4px;
-  background: #222;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  &:hover {
-    background: #ff9800;
-  }
 `
