@@ -190,4 +190,19 @@ public class MovieService {
         public List<VodDto> selectUserVodList(String id) {
                     return movieMapper.selectUserVodList(id);
     }
+
+    // 상영관(극장) 추가
+    public void createTheater(String code, String name) {
+        movieMapper.insertTheater(code, name);
+    }
+
+    // 상영관(극장) 삭제
+    public void deleteTheater(String code) {
+        movieMapper.deleteTheater(code);
+    }
+
+    // 상영관(극장) 목록 조회 (필요시)
+    public List<Map<String, Object>> getTheaterList() {
+        return movieMapper.selectTheaterList();
+    }
 }

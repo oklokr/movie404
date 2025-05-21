@@ -313,4 +313,20 @@ where m.`USER_ID`=#{id}
           #{sales}
       )
   </insert>
+
+    <!-- 상영관(극장) 추가 -->
+  <insert id="insertTheater">
+    INSERT INTO THEATER (THEATER_CODE, THEATER_NAME)
+    VALUES (#{code}, #{name})
+  </insert>
+
+  <!-- 상영관(극장) 삭제 -->
+  <delete id="deleteTheater">
+    DELETE FROM THEATER WHERE THEATER_CODE = #{code}
+  </delete>
+
+  <!-- 상영관(극장) 목록 조회 (필요시) -->
+  <select id="selectTheaterList" resultType="map">
+    SELECT THEATER_CODE as code, THEATER_NAME as name FROM THEATER ORDER BY THEATER_CODE
+  </select>
 </mapper>
