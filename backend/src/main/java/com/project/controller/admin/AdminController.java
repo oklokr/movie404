@@ -68,10 +68,12 @@ public class AdminController {
         String lang = (String) body.get("lang");
         String dateformat = (String) body.get("dateformat");
         String savehistory = (String) body.get("savehistory");
-        System.out.println("[/user/set]"+id+adult+lang+dateformat+savehistory);
+        String age = (String) body.get("age");
+
+        System.out.println("[/user/set]"+id+adult+lang+dateformat+savehistory+age);
 
         try{
-            userService.updateUserSet(id, adult, lang, dateformat, savehistory);
+            userService.updateUserSet(id, adult, lang, dateformat, savehistory,age);
             return new ApiResponse(200,"success",null);
 
         }catch(Exception e){

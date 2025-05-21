@@ -146,7 +146,7 @@ async function test() {
   })
 }
 function Payment() {
-  test()
+  // test()
   //requestPayment()
   //requestIssueBillingKey()
   return (
