@@ -32,7 +32,7 @@ public interface UserMapper {
     String selectIdbyEmail(String email);
     int checkUserByIdEmail(String email, String id);
     int updateUserTerms(String id, String terms);
-    int updateUserSet(String id, String adult, String lang, String dateformat, String savehistory, Long age);
+    int updateUserSet(String id, String adult, String lang, String dateformat, String savehistory, Integer age);
     int updateUser(String id, String pwd, String email);
      List<OrderDto> selectOrderList(String id);
      List<TermDto> selectTermsList();

@@ -68,7 +68,7 @@ public class AdminController {
         String lang = (String) body.get("lang");
         String dateformat = (String) body.get("dateformat");
         String savehistory = (String) body.get("savehistory");
-        String age = (String) body.get("age");
+        Integer age = (Integer)body.get("age");
 
         System.out.println("[/user/set]"+id+adult+lang+dateformat+savehistory+age);
 
