@@ -160,23 +160,108 @@ function MainPage() {
   `
 
   const rankingGrid = css`
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: 2fr 2fr 2fr 4fr;
+    grid-template-rows: 1fr 1fr;
     gap: 10px;
+    height: 500px;
+    .item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 240px;
+      font-weight: bold;
+      font-size: 20px;
+      position: relative;
+      border-radius: 12px;
+      background-color: #ddd;
+      cursor: pointer;
+
+      &:before {
+        content: "";
+      }
+
+      &:hover {
+        .image-wrap img {
+          transform: scale(1.2);
+        }
+      }
+
+      &-1 {
+        grid-column: 1 / 4;
+        grid-row: 1 / 2;
+      }
+
+      &-2 {
+        grid-column: 4 / 5;
+        grid-row: 1 / 3;
+        height: 500px;
+      }
+
+      &-3 {
+        grid-column: 1 / 2;
+        grid-row: 2 / 3;
+      }
+
+      &-4 {
+        grid-column: 2 / 3;
+        grid-row: 2 / 3;
+      }
+
+      &-5 {
+        grid-column: 3 / 4;
+        grid-row: 2 / 3;
+      }
+
+      strong {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translate3d(-50%, -50%, 0px);
+        color: #fff;
+        font-size: 30px;
+        z-index: 1;
+      }
+      .image-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+        img {
+          width: 100%;
+          transform: scale(1);
+          transition: 0.3s;
+        }
+      }
+    }
   `
 
   const rankingItem = css`
-    background: #ddd;
-    padding: 40px;
     font-size: 24px;
     text-align: center;
-    border-radius: 10px;
+    background: #ddd;
   `
 
   const gridBox = css`
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
+
+    .image-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+    }
   `
 
   const gridItem = css`
@@ -250,7 +335,7 @@ function MainPage() {
 
       <section className="show-movie">
         <h3>상영중인 영화</h3>
-        <Swiper slidesPerView={5} spaceBetween={10} navigation modules={[Navigation]}>
+        <Swiper slidesPerView={5} spaceBetween={20} navigation modules={[Navigation]}>
           {fetchData.showMovies.map((item) => (
             <SwiperSlide key={item.movieCode}>
               <div className="movie-poster">
@@ -274,13 +359,16 @@ function MainPage() {
 
       <section className="lank-movie">
         <h3>인기순위</h3>
-        <div css={rankingGrid}>
+        <ul css={rankingGrid}>
           {fetchData.allMovie.slice(0, 5).map((item, idx) => (
-            <div key={item.movieCode} css={rankingItem}>
-              {idx + 1}
-            </div>
+            <li key={item.movieCode} className={`item item-${idx + 1}`} css={rankingItem}>
+              <strong>{idx + 1}</strong>
+              <span className="image-wrap">
+                <img src={item.poster} alt={item.movieName} />
+              </span>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
       <section className="all-movie">
@@ -288,7 +376,9 @@ function MainPage() {
         <div css={gridBox}>
           {fetchData.allMovie.slice(5, 21).map((item) => (
             <div key={item.movieCode} css={gridItem}>
-              🎞️
+              <span className="image-wrap">
+                <img src={item.background} alt={item.movieName} />
+              </span>
             </div>
           ))}
         </div>
