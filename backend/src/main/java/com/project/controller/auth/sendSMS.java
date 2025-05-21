@@ -53,7 +53,7 @@ public class sendSMS {
         Message message = new Message();
         // 발신번호 및 수신번호는 반드시 01012345678 형태로 입력되어야 합니다.
         message.setFrom("01049222126");
-        message.setTo("01049222126");
+        message.setTo(id);
         //랜덤키 생성
         key = Integer.toString( (int) Math.floor(Math.random()*90000)+10000);
 
