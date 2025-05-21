@@ -29,7 +29,7 @@ export default function FaqEdit() {
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
-  // 작성된 내용이 있을 때 확인 후 이동
+  // 작성된 내용이 있을 때 확인 후 이동 (삭제는 예외)
   const handleLeave = (callback) => {
     if (form.question.trim() || form.answer.trim()) {
       if (window.confirm("작성 중인 내용이 있습니다. 정말 나가시겠습니까?")) {
@@ -52,14 +52,13 @@ export default function FaqEdit() {
     navigate("/community/faq")
   }
 
+  // 삭제는 작성중 여부와 상관없이 바로 삭제 확인만
   const handleDelete = async () => {
-    handleLeave(async () => {
-      if (!window.confirm("정말 삭제하시겠습니까?")) return
-      setLoading(true)
-      await communityDeleteFaq({ faqCode })
-      setLoading(false)
-      navigate("/community/faq")
-    })
+    if (!window.confirm("정말 삭제하시겠습니까?")) return
+    setLoading(true)
+    await communityDeleteFaq({ faqCode })
+    setLoading(false)
+    navigate("/community/faq")
   }
 
   const handleCancel = () => {
