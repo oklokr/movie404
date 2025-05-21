@@ -13,6 +13,7 @@ import { selectUserVodList } from "@/api/admin"
 import { autoBatchEnhancer } from "@reduxjs/toolkit"
 import { selectUser } from "@/store/selectors"
 import { useSelector } from "react-redux"
+import { NavLink } from "react-router"
 
 let list = []
 let userid = ""
@@ -22,9 +23,9 @@ function DvdMenu() {
   userid = state.info.userId
 
   return (
-    <Button id="basic-button" href="#dvd#list" size="large" css={Leftbtn}>
+    <NavLink id="basic-button" to="/mypage/dvd/total" css={Leftbtn}>
       전체
-    </Button>
+    </NavLink>
   )
 }
 

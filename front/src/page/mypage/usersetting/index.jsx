@@ -16,12 +16,13 @@ import {
   TextField,
 } from "@mui/material"
 import { useSelector } from "react-redux"
+import { NavLink } from "react-router"
 
 function UserSetMenu() {
   return (
-    <Button id="basic-button" href="#set#user" size="large" css={Leftbtn}>
+    <NavLink id="basic-button" to="/mypage/set/user" css={Leftbtn}>
       기본설정
-    </Button>
+    </NavLink>
   )
 }
 function UserSet() {

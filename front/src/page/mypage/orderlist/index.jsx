@@ -19,6 +19,7 @@ import { selectUser } from "@/store/selectors"
 import { useSelector } from "react-redux"
 import * as PortOne from "@portone/browser-sdk/v2"
 import header from "@/layout/header"
+import { NavLink } from "react-router"
 
 let userid = ""
 function OrderListMenu(props) {
@@ -31,24 +32,17 @@ function OrderListMenu(props) {
   }
   return (
     <>
-      <Button
+      <NavLink
         id="orderlist"
-        href="#order#orderlist"
-        size="large"
+        to="/mypage/order/orderlist"
         css={Leftbtn}
         onClick={setSubpath_orderlist}
       >
         결제내역
-      </Button>
-      <Button
-        id="payment"
-        href="#order#payment"
-        size="large"
-        css={Leftbtn}
-        onClick={setSubpath_orderlist}
-      >
+      </NavLink>
+      <NavLink id="payment" to="/mypage/order/payment" css={Leftbtn} onClick={setSubpath_orderlist}>
         카드관리
-      </Button>
+      </NavLink>
     </>
   )
 }

@@ -16,6 +16,7 @@ import { Dvd, DvdMenu } from "./dvd"
 import { UserSet, UserSetMenu } from "./usersetting"
 import { OrderList, OrderListMenu, Payment } from "./orderlist"
 import { TermsA, TermsB, TermsC, TermsMenu } from "./terms"
+import { NavLink } from "react-router"
 
 function mypage() {
   const [subpath_orderlist, setSubpath_orderlist] = useState("1")
@@ -48,21 +49,22 @@ function mypage() {
       <div>마이페이지</div>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 12 }} css={Topcontainer}>
-          <Button id="1" size="large" css={Topbtn} href="#basic" onClick={handlePath}>
+          <NavLink id="1" to="/mypage/info" css={Topbtn} onClick={handlePath}>
             회원정보
-          </Button>
-          <Button id="2" size="large" css={Topbtn} href="#dvd" onClick={handlePath}>
+          </NavLink>
+          <NavLink id="2" to="/mypage/dvd" css={Topbtn} onClick={handlePath}>
             DVD 목록
-          </Button>
-          <Button id="3" href="#set" size="large" css={Topbtn} onClick={handlePath}>
+          </NavLink>
+          <NavLink id="3" to="/mypage/set" css={Topbtn} onClick={handlePath}>
             설정
-          </Button>
-          <Button id="4" href="#order" size="large" css={Topbtn} onClick={handlePath}>
+          </NavLink>
+
+          <NavLink id="4" to="/mypage/order" css={Topbtn} onClick={handlePath}>
             결제
-          </Button>
-          <Button id="5" href="#terms" size="large" css={Topbtn} onClick={handlePath}>
+          </NavLink>
+          <NavLink id="5" to="/mypage/terms" css={Topbtn} onClick={handlePath}>
             약관
-          </Button>
+          </NavLink>
         </Grid>
 
         <Grid size={{ xs: 6, md: 4 }} css={Leftcontainer}>
