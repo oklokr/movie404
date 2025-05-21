@@ -16,6 +16,9 @@ import axios from "axios"
 //let list=[]
 function terms() {
   const [list, setlist] = useState([])
+  const [TermA, setTermA] = useState("")
+  const [TermB, setTermB] = useState("")
+  const [TermC, setTermC] = useState("")
 
   useEffect(() => {
     const getTerms = async () => {
@@ -25,9 +28,7 @@ function terms() {
     }
     getTerms()
   }, [])
-  const [TermA, setTermA] = useState("")
-  const [TermB, setTermB] = useState("")
-  const [TermC, setTermC] = useState("")
+
   function handleTermA(e) {
     if (e.target.value == "0") {
       alert("필수약관으로 동의하지 않으시면 서비스 이용이 불가합니다.")
