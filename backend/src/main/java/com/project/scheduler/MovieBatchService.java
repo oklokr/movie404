@@ -113,7 +113,7 @@ public class MovieBatchService {
                 .filter(v -> "Teaser".equalsIgnoreCase(v.getType()))
                 .findFirst()
                 .or(() -> videos.stream().findFirst())
-                .map(v -> "https://www.youtube.com/watch?v=" + v.getKey())
+                .map(v -> "https://www.youtube.com/embed/" + v.getKey())
                 .orElse(null);
 
         // 장르 코드 ---------------------------------------------------------------
@@ -129,31 +129,32 @@ public class MovieBatchService {
 
         // 영화 DTO ----------------------------------------------------------------
         InsertMovieDto movieDto = InsertMovieDto.builder()
-                .movieCode(detail.getId())
-                .genreCodeA(genreA)
-                .genreCodeB(getFromList(genreCodes, 1, null))
-                .genreCodeC(getFromList(genreCodes, 2, null))
-                .movieName(detail.getTitle() != null ? detail.getTitle() : "제목없음")
-                .directCodeA(getIdFromList(directors, 0, CREATOR_UNKNOWN))
-                .directCodeB(getIdFromList(directors, 1, null))
-                .actorCodeA(getIdFromList(actors, 0, CREATOR_UNKNOWN))
-                .actorCodeB(getIdFromList(actors, 1, null))
-                .actorCodeC(getIdFromList(actors, 2, null))
-                .actorCodeD(getIdFromList(actors, 3, null))
-                .actorCodeE(getIdFromList(actors, 4, null))
-                .synopsis(detail.getOverview() != null ? detail.getOverview() : "정보없음")
-                .runtime(detail.getRuntime() != null ? detail.getRuntime() : 0)
-                .ratingTpcd(detail.getAdult() ? "1" : "2")
-                .movieRelease(parseDate(detail.getRelease_date()))
-                .teaser(teaser)
-                .poster("https://image.tmdb.org/t/p/w500" + detail.getPoster_path())
-                .sales(0)
-                .build();
+            .movieCode(detail.getId())
+            .genreCodeA(genreA)
+            .genreCodeB(getFromList(genreCodes, 1, null))
+            .genreCodeC(getFromList(genreCodes, 2, null))
+            .movieName(detail.getTitle() != null ? detail.getTitle() : "제목없음")
+            .directCodeA(getIdFromList(directors, 0, CREATOR_UNKNOWN))
+            .directCodeB(getIdFromList(directors, 1, null))
+            .actorCodeA(getIdFromList(actors, 0, CREATOR_UNKNOWN))
+            .actorCodeB(getIdFromList(actors, 1, null))
+            .actorCodeC(getIdFromList(actors, 2, null))
+            .actorCodeD(getIdFromList(actors, 3, null))
+            .actorCodeE(getIdFromList(actors, 4, null))
+            .synopsis(detail.getOverview() != null ? detail.getOverview() : "정보없음")
+            .runtime(detail.getRuntime() != null ? detail.getRuntime() : 0)
+            .ratingTpcd(detail.getAdult() ? "1" : "2")
+            .movieRelease(parseDate(detail.getRelease_date()))
+            .teaser(teaser)
+            .poster("https://image.tmdb.org/t/p/w500" + detail.getPoster_path())
+            .background("https://image.tmdb.org/t/p/w1280" + detail.getBackdrop_path())
+            .sales(0)
+            .build();
 
         movieMapper.batchInsertMovie(movieDto);
 
         log.info("🎬 저장 완료: {} | 개봉 {} | 장르 {}", detail.getTitle(), detail.getRelease_date(),
-                detail.getGenres().stream().map(TMDBGenreDto::getName).collect(Collectors.joining(", ")));
+            detail.getGenres().stream().map(TMDBGenreDto::getName).collect(Collectors.joining(", ")));
     }
 
     /**
@@ -164,10 +165,10 @@ public class MovieBatchService {
             String code = String.valueOf(p.getId());
             if (!movieMapper.existsCreator(code)) {
                 movieMapper.batchInsertCreator(InsertCreatorDto.builder()
-                        .creatorCode(code)
-                        .creatorName(p.getName())
-                        .gender(String.valueOf(p.getGender()))
-                        .build());
+                    .creatorCode(code)
+                    .creatorName(p.getName())
+                    .gender(String.valueOf(p.getGender()))
+                    .build());
             }
         }
     }

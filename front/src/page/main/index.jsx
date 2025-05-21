@@ -6,9 +6,10 @@ import { Swiper, SwiperSlide } from "swiper/react"
 import "swiper/css"
 import "swiper/css/navigation"
 import { mainGetMovieList } from "@/api/main"
-import { useModal } from "@/component/modalProvider"
 import { Button } from "@mui/material"
 import { usePopup } from "@/component/popupProvider"
+import { useCommon } from "@/store/commonContext"
+import PopMovieDetail from "@/component/popup/popMovieDetail"
 
 function MainPage() {
   const [fetchData, setFetchData] = useState({
@@ -20,27 +21,25 @@ function MainPage() {
   const [openFAQ, setOpenFAQ] = useState(null)
   const [bgY, setBgY] = useState(0)
   const rafRef = useRef()
-  const { openModal, showAlert } = useModal()
   const { openPopup } = usePopup()
+  const { code } = useCommon()
 
+  // 패럴럭스 js
   useEffect(() => {
     const handleScroll = () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
       rafRef.current = requestAnimationFrame(() => {
-        setBgY(window.scrollY * 0.4)
+        setBgY(window.scrollY * 0.2)
       })
     }
     window.addEventListener("scroll", handleScroll)
-
-    // showAlert({ message: "성공적으로 처리되었습니다!", type: "error" })
-    // openModal({ content: "이건 모달입니다.", type: "confirm" })
-
     return () => {
       window.removeEventListener("scroll", handleScroll)
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
   }, [])
 
+  // fetchData
   useEffect(() => {
     const fetchMovie = async () => {
       const showMovie = await mainGetMovieList({ schedule: "1" })
@@ -61,21 +60,22 @@ function MainPage() {
     fetchMovie()
   }, [])
 
-  // 커스텀 컴포넌트(폼 등)
-  const openForm = () => {
+  const openForm = (list, movieCode) => {
+    const targetItem = list.find((item) => item.movieCode === movieCode)
+    const findGenre = (keys) => {
+      if (!code?.GENRE_TPCD || !targetItem) return []
+      return keys.reduce((acc, key) => {
+        const genreCode = targetItem[key]
+        if (!genreCode) return acc
+        const genreObj = code.GENRE_TPCD.find((item) => item.commonValue === genreCode)
+        if (genreObj && genreObj.commonName) acc.push(genreObj.commonName)
+        return acc
+      }, [])
+    }
+    const genreList = findGenre(["genreCodeA", "genreCodeB", "genreCodeC"])
+    console.log(targetItem)
     openPopup({
-      content: ({ close }) => (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            close()
-          }}
-        >
-          <h3>폼 팝업</h3>
-          <input placeholder="입력" />
-          <button type="submit">확인</button>
-        </form>
-      ),
+      content: () => <PopMovieDetail targetItem={targetItem} genreList={genreList} />,
     })
   }
 
@@ -122,7 +122,7 @@ function MainPage() {
         color: #fff;
         font-size: 36px;
 
-        + * {
+        + *:not(.swiper) {
           margin-top: 40px;
         }
       }
@@ -138,7 +138,16 @@ function MainPage() {
       background: linear-gradient(135deg, #444, #000);
 
       .swiper {
-        height: 340px;
+        height: 520px;
+
+        .image-wrap {
+          display: flex;
+          align-items: center;
+
+          img {
+            width: 100%;
+          }
+        }
       }
 
       h3 {
@@ -231,8 +240,8 @@ function MainPage() {
         >
           {fetchData.latest.map((item) => (
             <SwiperSlide key={item.movieCode}>
-              <span>
-                <img src={item.poster} alt={item.movieName} />
+              <span className="image-wrap">
+                <img src={item.background} alt={item.movieName} />
               </span>
             </SwiperSlide>
           ))}
@@ -250,7 +259,10 @@ function MainPage() {
                 </span>
                 <div className="info">
                   <p>{item.movieName}</p>
-                  <Button variant="contained" onClick={() => openForm()}>
+                  <Button
+                    variant="contained"
+                    onClick={() => openForm(fetchData.showMovies, item.movieCode)}
+                  >
                     상세보기
                   </Button>
                 </div>

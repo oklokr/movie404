@@ -13,15 +13,15 @@ public class TMDBScheduler {
 
     private final MovieBatchService movieBatchService;
 
- /*    @PostConstruct
+    @PostConstruct
     public void runOnStartup() {
         log.info("서버 시작 시 배치 실행");
-         movieBatchService.updateMovies();
+        // movieBatchService.updateMovies();
     }
 
     @Scheduled(cron = "${schedule.movie-fetch}")
     public void scheduledMovieUpdate() {
         log.info("스케줄러에 의한 배치 실행");
-         movieBatchService.updateMovies();
-    }*/
+        // movieBatchService.updateMovies();
+    }
 }
