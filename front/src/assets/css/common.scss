@@ -12,20 +12,24 @@ body {
 }
 
 header {
+  min-width: 1200px;
+  max-width: 1400px;
+  position: sticky;
+  top: 0;
   background: #ffffff24;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
   z-index: 10;
   transition: 0.3s;
+  box-sizing: border-box;
 
   &.main-page:hover {
     background: #fff;
   }
 }
 .header {
-  min-width: 1200px;
-  max-width: 1400px;
   padding: 0 40px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 .container {
   min-width: 1200px;
@@ -43,6 +47,7 @@ header {
   max-width: 1400px;
   padding: 0 40px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .MuiButton-sizeLarge {

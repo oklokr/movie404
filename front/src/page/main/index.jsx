@@ -6,7 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react"
 import "swiper/css"
 import "swiper/css/navigation"
 import { mainGetMovieList } from "@/api/main"
-import { useModal } from "@/component/ModalProvider"
+import { useModal } from "@/component/modalProvider"
 import { Button } from "@mui/material"
 
 function MainPage() {

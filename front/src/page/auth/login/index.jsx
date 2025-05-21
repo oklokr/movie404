@@ -15,6 +15,7 @@ import logoImg from "@/assets/images/logo/logo.png"
 import { useDispatch } from "react-redux"
 import { setUserInfo } from "@/store/slices/user"
 import { Link, useNavigate } from "react-router"
+import { useModal } from "@/component/modalProvider"
 
 function Login() {
   const dispatch = useDispatch()
@@ -25,11 +26,21 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [postForm, setPostForm] = useState(defaultPostForm)
   const handleClickShowPassword = () => setShowPassword((show) => !show)
+  const { openModal, showAlert } = useModal()
 
   const handleLogin = () => {
+    setMessage({
+      error: "",
+      id: postForm.id === "" ? "※아이디를 입력해주세요." : "",
+      passwd: postForm.passwd === "" ? "※비밀번호를 입력해주세요." : "",
+    })
+    if (postForm.id === "") return showAlert({ message: "아이디를 입력해주세요.", type: "error" })
+    if (postForm.passwd === "")
+      return showAlert({ message: "비밀번호를 입력해주세요.", type: "error" })
+
     login(postForm).then((res) => {
       const { code, data } = res
-      if (code !== 200) return alert(res.msg)
+      if (code !== 200) return showAlert({ message: res.message, type: "error" })
       const expiryDate = new Date(data.tokenValidityStr)
       document.cookie = `authToken=${data.token}; expires=${expiryDate}; path=/; Secure; SameSite=Strict`
       dispatch(setUserInfo(data))
@@ -46,9 +57,10 @@ function Login() {
     if (e.key === "Enter") {
       setMessage({
         error: "",
-        id: "※아이디를 입력해주세요.",
-        passwd: "※비밀번호를 입력해주세요.",
+        id: postForm.id === "" ? "※아이디를 입력해주세요." : "",
+        passwd: postForm.passwd === "" ? "※비밀번호를 입력해주세요." : "",
       })
+
       handleLogin()
     }
   }
