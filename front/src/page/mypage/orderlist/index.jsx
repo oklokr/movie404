@@ -1,12 +1,3 @@
-import {
-  Button,
-  FormHelperText,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-  TextField,
-} from "@mui/material"
 import Table from "@mui/material/Table"
 import TableBody from "@mui/material/TableBody"
 import TableCell from "@mui/material/TableCell"
@@ -164,5 +155,7 @@ const Leftbtn = {
   fontSize: "1.3rem",
   align: "center",
   textDecoration: "none",
+  padding: "20px",
+  display: "flex",
 }
 export { OrderList, Payment, OrderListMenu }

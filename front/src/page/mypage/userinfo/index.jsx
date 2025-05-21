@@ -388,5 +388,7 @@ const Leftbtn = {
   fontSize: "1.3rem",
   align: "center",
   textDecoration: "none",
+  padding: "20px",
+  display: "flex",
 }
 export { User, UserMenu }
