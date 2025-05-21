@@ -7,19 +7,28 @@ import Radio from "@mui/material/Radio"
 import RadioGroup from "@mui/material/RadioGroup"
 import FormControlLabel from "@mui/material/FormControlLabel"
 import FormControl from "@mui/material/FormControl"
-import { useEffect, useLayoutEffect, useState } from "react"
-import { Button } from "@mui/material"
-import { useNavigate } from "react-router"
+import React, { useEffect, useLayoutEffect, useState } from "react"
+import { Button, List } from "@mui/material"
+import { useLocation, useNavigate } from "react-router"
 import { signupTerms } from "@/api/signup"
+import axios from "axios"
 
+//let list=[]
 function terms() {
+  const [list, setlist] = useState([])
   const [TermA, setTermA] = useState("")
   const [TermB, setTermB] = useState("")
   const [TermC, setTermC] = useState("")
-  let list = []
-  signupTerms().then((res) => {
-    list = res.data
-  })
+
+  useEffect(() => {
+    const getTerms = async () => {
+      await signupTerms().then((res) => {
+        setlist(res.data)
+      })
+    }
+    getTerms()
+  }, [])
+
   function handleTermA(e) {
     if (e.target.value == "0") {
       alert("필수약관으로 동의하지 않으시면 서비스 이용이 불가합니다.")
@@ -53,9 +62,9 @@ function terms() {
   }
 
   return (
-    <div>
+    <>
       {list.map((value, index) => (
-        <>
+        <div key={index}>
           <Accordion defaultExpanded={index == 0 ? true : false}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
@@ -81,7 +90,7 @@ function terms() {
               <FormControlLabel value="1" control={<Radio />} label="동의함" />
             </RadioGroup>
           </FormControl>
-        </>
+        </div>
       ))}
       <div>
         <Button css={cssAlign} variant="contained" onClick={nextbutton}>
@@ -91,7 +100,7 @@ function terms() {
           취소
         </Button>
       </div>
-    </div>
+    </>
   )
 }
 

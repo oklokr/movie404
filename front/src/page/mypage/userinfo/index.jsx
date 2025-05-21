@@ -11,7 +11,7 @@ import {
   TextField,
 } from "@mui/material"
 import { useSelector } from "react-redux"
-import { Navigate, useNavigate } from "react-router"
+import { Navigate, NavLink, useNavigate } from "react-router"
 const userchange = {
   pwd: "",
   repwd: "",
@@ -27,9 +27,9 @@ const userchange = {
 
 function UserMenu() {
   return (
-    <Button id="basic-button" href="#basic#user" size="large" css={Leftbtn}>
+    <NavLink id="basic-button" to="/mypage/info/user" css={Leftbtn}>
       기본정보
-    </Button>
+    </NavLink>
   )
 }
 function User(props) {
@@ -387,5 +387,6 @@ function User(props) {
 const Leftbtn = {
   fontSize: "1.3rem",
   align: "center",
+  textDecoration: "none",
 }
 export { User, UserMenu }

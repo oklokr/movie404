@@ -1,20 +1,12 @@
-import { Button } from "@mui/material"
-import * as React from "react"
-import Table from "@mui/material/Table"
-import TableBody from "@mui/material/TableBody"
-import TableCell from "@mui/material/TableCell"
-import TableContainer from "@mui/material/TableContainer"
-import TableHead from "@mui/material/TableHead"
-import TableRow from "@mui/material/TableRow"
-import Paper from "@mui/material/Paper"
 import Box from "@mui/material/Box"
 import { ThemeProvider } from "@mui/material/styles"
 import { selectUserVodList } from "@/api/admin"
-import { autoBatchEnhancer } from "@reduxjs/toolkit"
 import { selectUser } from "@/store/selectors"
 import { useSelector } from "react-redux"
+import { NavLink } from "react-router"
+import { useState } from "react"
+import { useEffect } from "react"
 
-let list = []
 let userid = ""
 
 function DvdMenu() {
@@ -22,22 +14,25 @@ function DvdMenu() {
   userid = state.info.userId
 
   return (
-    <Button id="basic-button" href="#dvd#list" size="large" css={Leftbtn}>
+    <NavLink id="basic-button" to="/mypage/dvd/total" css={Leftbtn}>
       전체
-    </Button>
+    </NavLink>
   )
-}
-
-const selectUserDvdList = () => {
-  selectUserVodList({ id: userid }).then((res) => {
-    console.log(res.data)
-    list = res.data
-  })
 }
 
 function Dvd() {
   //DB목록 부르기
-  selectUserDvdList()
+  const [list, setlist] = useState([])
+
+  useEffect(() => {
+    const selectUserDvdList = async () => {
+      selectUserVodList({ id: userid }).then((res) => {
+        console.log(res.data)
+        setlist(res.data)
+      })
+    }
+    selectUserDvdList()
+  }, [])
 
   return (
     <div>
@@ -92,5 +87,7 @@ function Dvd() {
 const Leftbtn = {
   fontSize: "1.3rem",
   align: "center",
+
+  textDecoration: "none",
 }
 export { Dvd, DvdMenu }

@@ -19,6 +19,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
 import { useSelector } from "react-redux"
 import { selectUser } from "@/store/selectors"
 import { updateUserTerms } from "@/api/admin"
+import { NavLink } from "react-router"
 
 const userinfo = {
   id: "",
@@ -57,15 +58,15 @@ function TermsMenu(props) {
     userinfo.terms = state.info.terms
     return (
       <>
-        <Button id="A" href="#Terms#TermA" size="large" css={Leftbtn} onClick={setSubpath_terms}>
+        <NavLink id="A" to="/mypage/terms/termA" css={Leftbtn} onClick={setSubpath_terms}>
           서비스이용약관
-        </Button>
-        <Button id="B" href="#Terms#TermsB" size="large" css={Leftbtn} onClick={setSubpath_terms}>
+        </NavLink>
+        <NavLink id="B" to="/mypage/terms/termB" css={Leftbtn} onClick={setSubpath_terms}>
           개인정보처리방침
-        </Button>
-        <Button id="C" href="#Terms#TermsB" size="large" css={Leftbtn} onClick={setSubpath_terms}>
+        </NavLink>
+        <NavLink id="C" to="/mypage/terms/termC" css={Leftbtn} onClick={setSubpath_terms}>
           마케팅약관
-        </Button>
+        </NavLink>
       </>
     )
   }
@@ -318,6 +319,8 @@ const cssJust = { justifyContent: "right" }
 const cssWidth = { width: "100%" }
 const cssAccordion = { maxHeight: "400px", overflowY: "scroll" }
 const Leftbtn = {
+  textDecoration: "none",
+
   fontSize: "1.3rem",
   align: "center",
 }

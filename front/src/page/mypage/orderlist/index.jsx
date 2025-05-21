@@ -19,6 +19,8 @@ import { selectUser } from "@/store/selectors"
 import { useSelector } from "react-redux"
 import * as PortOne from "@portone/browser-sdk/v2"
 import header from "@/layout/header"
+import { NavLink } from "react-router"
+import { useEffect, useState } from "react"
 
 let userid = ""
 function OrderListMenu(props) {
@@ -31,39 +33,36 @@ function OrderListMenu(props) {
   }
   return (
     <>
-      <Button
+      <NavLink
         id="orderlist"
-        href="#order#orderlist"
-        size="large"
+        to="/mypage/order/orderlist"
         css={Leftbtn}
         onClick={setSubpath_orderlist}
       >
         결제내역
-      </Button>
-      <Button
-        id="payment"
-        href="#order#payment"
-        size="large"
-        css={Leftbtn}
-        onClick={setSubpath_orderlist}
-      >
+      </NavLink>
+      <NavLink id="payment" to="/mypage/order/payment" css={Leftbtn} onClick={setSubpath_orderlist}>
         카드관리
-      </Button>
+      </NavLink>
     </>
   )
 }
-let list = []
 
-const selectorderlist = () => {
-  selectOrderList({ id: userid }).then((res) => {
-    if (res.code === 200) {
-      console.log(res.data)
-      list = res.data
-    }
-  })
-}
 function OrderList() {
-  selectorderlist()
+  const [list, setlist] = useState([])
+
+  useEffect(() => {
+    const selectorderlist = async () => {
+      selectOrderList({ id: userid }).then((res) => {
+        if (res.code === 200) {
+          console.log(res.data)
+          setlist(res.data)
+        }
+      })
+    }
+    selectorderlist()
+  }, [])
+
   return (
     <>
       <h1>결제내역</h1>
@@ -127,7 +126,7 @@ function requestPayment() {
     },
   })
 }
-const PORTONE_API_SECRET =
+/*const PORTONE_API_SECRET =
   "HAScg24us1bOISHDyTXYY3IWugf79CESXMqOWAOWl5ZX5tvR6jrIrDNtbWkaL8pnAaw6qSYLX3vSym71"
 const identityVerification = `identity-verification-${crypto.randomUUID()}`
 
@@ -150,9 +149,9 @@ async function test() {
       console.log(response.json.verifiedCustomer)
     })
   })
-}
+}*/
 function Payment() {
-  test()
+  // test()
   //requestPayment()
   //requestIssueBillingKey()
   return (
@@ -164,5 +163,6 @@ function Payment() {
 const Leftbtn = {
   fontSize: "1.3rem",
   align: "center",
+  textDecoration: "none",
 }
 export { OrderList, Payment, OrderListMenu }

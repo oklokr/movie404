@@ -1,21 +1,11 @@
-import { Height, InsertEmoticon, Visibility, VisibilityOff } from "@mui/icons-material"
-import {
-  Button,
-  FormHelperText,
-  Grid,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  Menu,
-  OutlinedInput,
-  TextField,
-} from "@mui/material"
-import { useState } from "react"
+import { Grid } from "@mui/material"
+import { useEffect, useState } from "react"
 import { User, UserMenu } from "./userinfo"
 import { Dvd, DvdMenu } from "./dvd"
 import { UserSet, UserSetMenu } from "./usersetting"
 import { OrderList, OrderListMenu, Payment } from "./orderlist"
 import { TermsA, TermsB, TermsC, TermsMenu } from "./terms"
+import { NavLink, useLocation } from "react-router"
 
 function mypage() {
   const [subpath_orderlist, setSubpath_orderlist] = useState("1")
@@ -32,10 +22,8 @@ function mypage() {
   const [Email, setEmail] = useState("")
   const [PW, setPW] = useState("")
   const [RPW, setRPW] = useState("")
-  const [termA, setTermA] = useState("")
-  const [termB, setTermB] = useState("")
-  const [termC, setTermC] = useState("")
 
+  const location = useLocation()
   function handlePath(e) {
     if (e.target.id == "1") setPath("1")
     else if (e.target.id == "2") setPath("2")
@@ -43,26 +31,35 @@ function mypage() {
     else if (e.target.id == "4") setPath("4")
     else if (e.target.id == "5") setPath("5")
   }
+  useEffect(() => {
+    if (location.state != null) {
+      if (location.state.path == "1") setPath("1")
+      else if (location.state.path == "2") setPath("2")
+      else if (location.state.path == "3") setPath("3")
+      else if (location.state.path == "4") setPath("4")
+      else if (location.state.path == "5") setPath("5")
+    }
+  }, [location])
   return (
     <>
-      <div>마이페이지</div>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 12 }} css={Topcontainer}>
-          <Button id="1" size="large" css={Topbtn} href="#basic" onClick={handlePath}>
+          <NavLink id="1" to="/mypage/info" css={Topbtn} onClick={handlePath}>
             회원정보
-          </Button>
-          <Button id="2" size="large" css={Topbtn} href="#dvd" onClick={handlePath}>
+          </NavLink>
+          <NavLink id="2" to="/mypage/dvd" css={Topbtn} onClick={handlePath}>
             DVD 목록
-          </Button>
-          <Button id="3" href="#set" size="large" css={Topbtn} onClick={handlePath}>
+          </NavLink>
+          <NavLink id="3" to="/mypage/set" css={Topbtn} onClick={handlePath}>
             설정
-          </Button>
-          <Button id="4" href="#order" size="large" css={Topbtn} onClick={handlePath}>
+          </NavLink>
+
+          <NavLink id="4" to="/mypage/order" css={Topbtn} onClick={handlePath}>
             결제
-          </Button>
-          <Button id="5" href="#terms" size="large" css={Topbtn} onClick={handlePath}>
+          </NavLink>
+          <NavLink id="5" to="/mypage/terms" css={Topbtn} onClick={handlePath}>
             약관
-          </Button>
+          </NavLink>
         </Grid>
 
         <Grid size={{ xs: 6, md: 4 }} css={Leftcontainer}>
@@ -139,6 +136,7 @@ const Topcontainer = {
 const Topbtn = {
   fontSize: "1.5rem",
   align: "center",
+  textDecoration: "none",
 }
 const Leftbtn = {
   fontSize: "1.3rem",

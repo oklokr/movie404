@@ -116,8 +116,8 @@ public class UserService {
         return userMapper.updateUserTerms(id, terms);
 
     }
-    public int updateUserSet(String id, String adult, String lang, String dateformat, String savehistory){
-        return userMapper.updateUserSet(id, adult, lang, dateformat, savehistory);
+    public int updateUserSet(String id, String adult, String lang, String dateformat, String savehistory, Integer age){
+        return userMapper.updateUserSet(id, adult, lang, dateformat, savehistory, age);
 
     }
     public int updateUser(String id, String pwd, String email){
