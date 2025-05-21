@@ -103,4 +103,27 @@ public class MovieController {
                 }
 
     }
+
+    // 상영관(극장) 추가
+    @PostMapping("/theater")
+    public ResponseEntity<?> createTheater(@RequestBody Map<String, String> param) {
+        String code = param.get("code");
+        String name = param.get("name");
+        movieService.createTheater(code, name);
+        return ResponseEntity.ok().build();
+    }
+
+    // 상영관(극장) 삭제
+    @DeleteMapping("/theater")
+    public ResponseEntity<?> deleteTheater(@RequestBody Map<String, String> param) {
+        String code = param.get("code");
+        movieService.deleteTheater(code);
+        return ResponseEntity.ok().build();
+    }
+
+    // 상영관(극장) 목록 조회 (필요시)
+    @GetMapping("/theater")
+    public List<Map<String, Object>> getTheaterList() {
+        return movieService.getTheaterList();
+    }
 }

@@ -8,6 +8,7 @@ import "swiper/css/navigation"
 import { mainGetMovieList } from "@/api/main"
 import { useModal } from "@/component/modalProvider"
 import { Button } from "@mui/material"
+import { usePopup } from "@/component/popupProvider"
 
 function MainPage() {
   const [fetchData, setFetchData] = useState({
@@ -20,6 +21,7 @@ function MainPage() {
   const [bgY, setBgY] = useState(0)
   const rafRef = useRef()
   const { openModal, showAlert } = useModal()
+  const { openPopup } = usePopup()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,7 +61,24 @@ function MainPage() {
     fetchMovie()
   }, [])
 
-  // FAQ 더미 데이터
+  // 커스텀 컴포넌트(폼 등)
+  const openForm = () => {
+    openPopup({
+      content: ({ close }) => (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            close()
+          }}
+        >
+          <h3>폼 팝업</h3>
+          <input placeholder="입력" />
+          <button type="submit">확인</button>
+        </form>
+      ),
+    })
+  }
+
   const faqList = [
     { q: "프로젝트 큰일났을 때 어떻게 해야함", a: "빨리 빨리 해야져" },
     { q: "선장은 undefined입니다", a: "타입을 지정해야 합니다." },
@@ -231,7 +250,9 @@ function MainPage() {
                 </span>
                 <div className="info">
                   <p>{item.movieName}</p>
-                  <Button variant="contained">상세보기</Button>
+                  <Button variant="contained" onClick={() => openForm()}>
+                    상세보기
+                  </Button>
                 </div>
               </div>
             </SwiperSlide>

@@ -160,3 +160,22 @@ export function authVerify(data) {
     data,
   }).then((res) => console.log(res))
 }
+
+// 상영관 추가
+export function createTheater({ code, name }) {
+  return request({
+    url: "/api/admin/movie/theater", // 경로 수정
+    method: "post",
+    data: { code, name },
+  }).then((res) => res)
+}
+
+// 상영관 삭제
+export function deleteTheater({ code }) {
+  if (!code) throw new Error("상영관 코드(code)가 필요합니다.")
+  return request({
+    url: "/api/admin/movie/theater", // 경로 수정
+    method: "delete",
+    data: { code },
+  }).then((res) => res)
+}

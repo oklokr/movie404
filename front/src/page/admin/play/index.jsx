@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react"
 import { css } from "@emotion/react"
-import { fetchMovieList, fetchCreatorList, createSchedule, fetchRunScheduleList } from "@/api/admin"
+import {
+  fetchMovieList,
+  fetchCreatorList,
+  createSchedule,
+  fetchRunScheduleList,
+  createTheater,
+  deleteTheater,
+} from "@/api/admin"
 
 const hours = Array.from({ length: 17 }, (_, i) => i + 6) // 06~22
 const PAGE_SIZE = 5
@@ -151,48 +158,50 @@ export default function Play() {
     })
   }
 
-  // 상영관 삭제 시 예약된 시간대가 있으면 삭제 불가, 빈 번호로 추가 시 가장 작은 번호부터 재사용
-  const handleAddTheater = () => {
-    // 사용 중인 id(번호) 목록
+  // 상영관 추가 시 DB에도 추가
+  const handleAddTheater = async () => {
     const usedIds = theaters.map((t) => t.id)
-    // 1부터 시작해서 비어있는 가장 작은 번호 찾기
     let nextId = 1
     while (usedIds.includes(nextId)) nextId++
     const nextCode = "T" + String(nextId).padStart(3, "0")
-    setTheaters([...theaters, { id: nextId, code: nextCode, name: `${nextId}관` }])
-    setSelectedHours((prev) => ({ ...prev, [nextId]: [] }))
+    const nextName = `${nextId}관`
+    try {
+      await createTheater({ code: nextCode, name: nextName })
+      setTheaters((prev) => [...prev, { id: nextId, code: nextCode, name: nextName }])
+      setSelectedHours((prev) => ({ ...prev, [nextId]: [] }))
+    } catch (e) {
+      alert("상영관 추가에 실패했습니다.\n" + (e?.message || e))
+    }
   }
 
-  const handleDeleteTheater = (id) => {
-    // 예약된 시간대가 있으면 삭제 불가
+  // 상영관 삭제 시 DB에서도 삭제
+  const handleDeleteTheater = async (id) => {
+    const theater = theaters.find((t) => t.id === id)
     if ((reservedHours[id]?.length ?? 0) > 0) {
       alert("이미 상영이 등록된 상영관은 삭제할 수 없습니다.")
       return
     }
-    setDeleteTarget(id)
-  }
-
-  const confirmDelete = () => {
-    setTheaters((prev) => prev.filter((t) => t.id !== deleteTarget))
-    setSelectedHours((prev) => {
-      const newObj = { ...prev }
-      delete newObj[deleteTarget]
-      return newObj
-    })
-    setTimeout(() => {
-      setSelectedTheater((prev) => {
-        if (prev === deleteTarget) {
-          const remain = theaters.filter((t) => t.id !== deleteTarget)
-          return remain.length > 0 ? remain[0].id : null
-        }
-        return prev
+    if (!window.confirm("정말 삭제하시겠습니까?")) return
+    try {
+      await deleteTheater({ code: theater.code })
+      setTheaters((prev) => prev.filter((t) => t.id !== id))
+      setSelectedHours((prev) => {
+        const newObj = { ...prev }
+        delete newObj[id]
+        return newObj
       })
-    }, 0)
-    setDeleteTarget(null)
-  }
-
-  const cancelDelete = () => {
-    setDeleteTarget(null)
+      setTimeout(() => {
+        setSelectedTheater((prev) => {
+          if (prev === id) {
+            const remain = theaters.filter((t) => t.id !== id)
+            return remain.length > 0 ? remain[0].id : null
+          }
+          return prev
+        })
+      }, 0)
+    } catch (e) {
+      alert("상영관 삭제에 실패했습니다.\n" + (e?.message || e))
+    }
   }
 
   const canGoNext = (() => {
@@ -612,9 +621,9 @@ export default function Play() {
                 {theaters.length > 1 && (
                   <button
                     css={deleteBtn}
-                    onClick={(e) => {
+                    onClick={async (e) => {
                       e.stopPropagation()
-                      handleDeleteTheater(theater.id)
+                      await handleDeleteTheater(theater.id)
                     }}
                     title="상영관 삭제"
                   >
@@ -689,21 +698,6 @@ export default function Play() {
           다음
         </button>
       </div>
-      {deleteTarget !== null && (
-        <div css={modalOverlay}>
-          <div css={modalBox}>
-            <div css={modalMsg}>정말 삭제하시겠습니까?</div>
-            <div css={modalBtnWrap}>
-              <button css={modalBtn} onClick={confirmDelete}>
-                삭제
-              </button>
-              <button css={modalBtnCancel} onClick={cancelDelete}>
-                취소
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

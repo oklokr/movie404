@@ -60,4 +60,9 @@ public interface MovieMapper {
     void batchInsertCreator(InsertCreatorDto creator);
     void batchInsertMovie(InsertMovieDto movie);
     List<VodDto> selectUserVodList(String id);
+
+    void insertTheater(@Param("code") String code, @Param("name") String name);
+    void deleteTheater(@Param("code") String code);
+
+    List<Map<String, Object>> selectTheaterList();
 }
