@@ -1,15 +1,4 @@
-import { Height, InsertEmoticon, Visibility, VisibilityOff } from "@mui/icons-material"
-import {
-  Button,
-  FormHelperText,
-  Grid,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  Menu,
-  OutlinedInput,
-  TextField,
-} from "@mui/material"
+import { Grid } from "@mui/material"
 import { useEffect, useState } from "react"
 import { User, UserMenu } from "./userinfo"
 import { Dvd, DvdMenu } from "./dvd"
@@ -53,7 +42,6 @@ function mypage() {
   }, [location])
   return (
     <>
-      <div>마이페이지</div>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 12 }} css={Topcontainer}>
           <NavLink id="1" to="/mypage/info" css={Topbtn} onClick={handlePath}>
@@ -148,6 +136,7 @@ const Topcontainer = {
 const Topbtn = {
   fontSize: "1.5rem",
   align: "center",
+  textDecoration: "none",
 }
 const Leftbtn = {
   fontSize: "1.3rem",

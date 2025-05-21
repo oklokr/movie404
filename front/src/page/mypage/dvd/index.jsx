@@ -87,5 +87,7 @@ function Dvd() {
 const Leftbtn = {
   fontSize: "1.3rem",
   align: "center",
+
+  textDecoration: "none",
 }
 export { Dvd, DvdMenu }

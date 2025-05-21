@@ -387,5 +387,6 @@ function User(props) {
 const Leftbtn = {
   fontSize: "1.3rem",
   align: "center",
+  textDecoration: "none",
 }
 export { User, UserMenu }

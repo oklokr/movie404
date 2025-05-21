@@ -163,5 +163,6 @@ function Payment() {
 const Leftbtn = {
   fontSize: "1.3rem",
   align: "center",
+  textDecoration: "none",
 }
 export { OrderList, Payment, OrderListMenu }

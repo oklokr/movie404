@@ -319,6 +319,8 @@ const cssJust = { justifyContent: "right" }
 const cssWidth = { width: "100%" }
 const cssAccordion = { maxHeight: "400px", overflowY: "scroll" }
 const Leftbtn = {
+  textDecoration: "none",
+
   fontSize: "1.3rem",
   align: "center",
 }
