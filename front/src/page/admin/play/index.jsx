@@ -151,14 +151,24 @@ export default function Play() {
     })
   }
 
+  // 상영관 삭제 시 예약된 시간대가 있으면 삭제 불가, 빈 번호로 추가 시 가장 작은 번호부터 재사용
   const handleAddTheater = () => {
-    const nextId = theaters.length > 0 ? Math.max(...theaters.map((t) => t.id)) + 1 : 1
+    // 사용 중인 id(번호) 목록
+    const usedIds = theaters.map((t) => t.id)
+    // 1부터 시작해서 비어있는 가장 작은 번호 찾기
+    let nextId = 1
+    while (usedIds.includes(nextId)) nextId++
     const nextCode = "T" + String(nextId).padStart(3, "0")
     setTheaters([...theaters, { id: nextId, code: nextCode, name: `${nextId}관` }])
     setSelectedHours((prev) => ({ ...prev, [nextId]: [] }))
   }
 
   const handleDeleteTheater = (id) => {
+    // 예약된 시간대가 있으면 삭제 불가
+    if ((reservedHours[id]?.length ?? 0) > 0) {
+      alert("이미 상영이 등록된 상영관은 삭제할 수 없습니다.")
+      return
+    }
     setDeleteTarget(id)
   }
 
@@ -212,17 +222,27 @@ export default function Play() {
   const hourBtn = (selected, reserved, disabled) => css`
     width: 38px;
     height: 38px;
-    border: 1px solid ${selected ? "#1976d2" : reserved ? "#bbb" : "#ccc"};
-    background: ${selected ? "#1976d2" : reserved ? "#eee" : "#fff"};
-    color: ${selected ? "#fff" : reserved ? "#bbb" : "#222"};
-    border-radius: 4px;
+    border: 2px solid ${selected ? "#1976d2" : reserved ? "#bbb" : disabled ? "#eee" : "#ccc"};
+    background: ${selected ? "#1976d2" : reserved ? "#f3f3f3" : disabled ? "#f8f8f8" : "#fff"};
+    color: ${selected ? "#fff" : reserved ? "#bbb" : disabled ? "#ccc" : "#222"};
+    border-radius: 6px;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 700;
     margin-right: 2px;
     cursor: ${reserved || disabled ? "not-allowed" : "pointer"};
-    opacity: ${reserved || disabled ? 0.5 : 1};
+    opacity: ${reserved ? 0.45 : disabled ? 0.35 : 1};
+    box-shadow: ${selected ? "0 0 0 2px #90caf9" : "none"};
+    transition:
+      background 0.15s,
+      border 0.15s,
+      color 0.15s,
+      box-shadow 0.15s;
     &:hover {
-      background: ${reserved || disabled ? "#eee" : "#e3f2fd"};
+      background: ${reserved || disabled ? "#f8f8f8" : "#e3f2fd"};
+      border-color: ${reserved || disabled ? "#eee" : "#1976d2"};
+      color: ${reserved || disabled ? "#ccc" : "#1976d2"};
+      box-shadow: ${reserved || disabled ? "none" : "0 0 0 2px #1976d2"};
+      z-index: 1;
     }
   `
 
@@ -578,75 +598,79 @@ export default function Play() {
         />
       </div>
       <div>
-        {theaters.map((theater) => (
-          <div key={theater.id} css={theaterBox(selectedTheater === theater.id)}>
-            <div
-              css={theaterHeader(selectedTheater === theater.id)}
-              onClick={() => setSelectedTheater(theater.id)}
-            >
-              {theater.name}
-              {theaters.length > 1 && (
-                <button
-                  css={deleteBtn}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleDeleteTheater(theater.id)
-                  }}
-                  title="상영관 삭제"
-                >
-                  ×
-                </button>
+        {/* 상영관을 id 오름차순(1관, 2관, 3관...)으로 정렬해서 출력 */}
+        {theaters
+          .slice()
+          .sort((a, b) => a.id - b.id)
+          .map((theater) => (
+            <div key={theater.id} css={theaterBox(selectedTheater === theater.id)}>
+              <div
+                css={theaterHeader(selectedTheater === theater.id)}
+                onClick={() => setSelectedTheater(theater.id)}
+              >
+                {theater.name}
+                {theaters.length > 1 && (
+                  <button
+                    css={deleteBtn}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleDeleteTheater(theater.id)
+                    }}
+                    title="상영관 삭제"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+              {selectedTheater === theater.id && (
+                <div css={hourRow}>
+                  {hours.map((hour) => {
+                    const reserved = reservedHours[theater.id]?.includes(hour)
+                    const selectedArr = selectedHours[theater.id] || []
+                    const selected = selectedArr.includes(hour)
+                    let disabled = reserved || !selectedDate
+                    if (!disabled && selectedArr.length > 0 && !selected) {
+                      if (selectedArr.length === 1) {
+                        // 선택된 시간대가 1개일 때는 base±2까지 허용
+                        const base = selectedArr[0]
+                        if (hour < base - 2 || hour > base + 2) disabled = true
+                      } else {
+                        // 여러 개일 때는 min/max ±2까지 허용
+                        const min = Math.min(...selectedArr)
+                        const max = Math.max(...selectedArr)
+                        if (hour < min - 2 || hour > max + 2) disabled = true
+                      }
+                    }
+                    return (
+                      <button
+                        key={hour}
+                        css={hourBtn(selected, reserved, disabled)}
+                        onClick={() => handleHourClick(theater.id, hour)}
+                        disabled={disabled}
+                        title={
+                          !selectedDate
+                            ? "날짜를 먼저 선택하세요"
+                            : reserved
+                              ? "이미 등록된 시간"
+                              : selectedArr.length > 0 &&
+                                  !selected &&
+                                  ((selectedArr.length === 1 &&
+                                    (hour < selectedArr[0] - 2 || hour > selectedArr[0] + 2)) ||
+                                    (selectedArr.length > 1 &&
+                                      (hour < Math.min(...selectedArr) - 2 ||
+                                        hour > Math.max(...selectedArr) + 2)))
+                                ? "선택된 시간대 기준 ±2시간만 선택 가능"
+                                : undefined
+                        }
+                      >
+                        {hour.toString().padStart(2, "0")}
+                      </button>
+                    )
+                  })}
+                </div>
               )}
             </div>
-            {selectedTheater === theater.id && (
-              <div css={hourRow}>
-                {hours.map((hour) => {
-                  const reserved = reservedHours[theater.id]?.includes(hour)
-                  const selectedArr = selectedHours[theater.id] || []
-                  const selected = selectedArr.includes(hour)
-                  let disabled = reserved || !selectedDate
-                  if (!disabled && selectedArr.length > 0 && !selected) {
-                    if (selectedArr.length === 1) {
-                      // 선택된 시간대가 1개일 때는 base±2까지 허용
-                      const base = selectedArr[0]
-                      if (hour < base - 2 || hour > base + 2) disabled = true
-                    } else {
-                      // 여러 개일 때는 min/max ±2까지 허용
-                      const min = Math.min(...selectedArr)
-                      const max = Math.max(...selectedArr)
-                      if (hour < min - 2 || hour > max + 2) disabled = true
-                    }
-                  }
-                  return (
-                    <button
-                      key={hour}
-                      css={hourBtn(selected, reserved, disabled)}
-                      onClick={() => handleHourClick(theater.id, hour)}
-                      disabled={disabled}
-                      title={
-                        !selectedDate
-                          ? "날짜를 먼저 선택하세요"
-                          : reserved
-                            ? "이미 등록된 시간"
-                            : selectedArr.length > 0 &&
-                                !selected &&
-                                ((selectedArr.length === 1 &&
-                                  (hour < selectedArr[0] - 2 || hour > selectedArr[0] + 2)) ||
-                                  (selectedArr.length > 1 &&
-                                    (hour < Math.min(...selectedArr) - 2 ||
-                                      hour > Math.max(...selectedArr) + 2)))
-                              ? "선택된 시간대 기준 ±2시간만 선택 가능"
-                              : undefined
-                      }
-                    >
-                      {hour.toString().padStart(2, "0")}
-                    </button>
-                  )
-                })}
-              </div>
-            )}
-          </div>
-        ))}
+          ))}
         <div css={addTheaterWrap}>
           <button css={addBtn} onClick={handleAddTheater}>
             상영관 추가하기
@@ -767,6 +791,7 @@ const hourRow = css`
   gap: 4px;
   padding: 12px 18px;
   flex-wrap: wrap;
+  justify-content: center; // 가운데 정렬 추가
 `
 const addTheaterWrap = css`
   display: flex;
