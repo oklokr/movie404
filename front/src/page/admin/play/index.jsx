@@ -5,7 +5,6 @@ import { fetchMovieList, fetchCreatorList, createSchedule, fetchRunScheduleList 
 const hours = Array.from({ length: 17 }, (_, i) => i + 6) // 06~22
 const PAGE_SIZE = 5
 
-// 코드 → 이름 변환 함수
 function getCreatorName(code, creatorList) {
   if (!code || !creatorList) return ""
   const found = creatorList.find((c) => c.code === code)
@@ -24,10 +23,8 @@ export default function Play() {
   const [deleteTarget, setDeleteTarget] = useState(null)
   const [goStep2, setGoStep2] = useState(false)
 
-  // 예약된 시간대 상태
-  const [reservedHours, setReservedHours] = useState({}) // { [theaterId]: [hour, ...] }
+  const [reservedHours, setReservedHours] = useState({})
 
-  // 영화선택 모달 상태
   const [movieModalOpen, setMovieModalOpen] = useState(false)
   const [movieSearch, setMovieSearch] = useState("")
   const [movieList, setMovieList] = useState([])
@@ -36,17 +33,13 @@ export default function Play() {
   const [moviePage, setMoviePage] = useState(1)
   const [selectedMovieInfo, setSelectedMovieInfo] = useState(null)
 
-  // 가격/할인율 입력 상태
   const [price, setPrice] = useState("")
-  const [discount, setDiscount] = useState("") // 할인율(%)로 사용
+  const [discount, setDiscount] = useState("")
 
-  // 크리에이터 목록 상태
   const [creatorList, setCreatorList] = useState([])
 
-  // 최종 등록 확인 모달 상태
   const [confirmApplyOpen, setConfirmApplyOpen] = useState(false)
 
-  // 예약된 시간대 조회 함수
   const fetchReserved = async (date, theaters) => {
     if (!date) {
       setReservedHours({})
@@ -78,17 +71,14 @@ export default function Play() {
     setReservedHours(result)
   }
 
-  // step1 접근/날짜 변경/상영관 추가 시 예약 시간 조회
   useEffect(() => {
     fetchReserved(selectedDate, theaters)
   }, [selectedDate, theaters.length])
 
-  // step1 접근 시에도 조회
   useEffect(() => {
     if (step === 1) fetchReserved(selectedDate, theaters)
   }, [step])
 
-  // 크리에이터 목록 불러오기 (최초 1회)
   useEffect(() => {
     fetchCreatorList()
       .then((res) => {
@@ -99,7 +89,6 @@ export default function Play() {
       })
   }, [])
 
-  // 영화 목록 불러오기 (모달 열릴 때마다, 검색/페이지 변경 시)
   useEffect(() => {
     if (movieModalOpen) {
       fetchMovieList({
@@ -119,35 +108,44 @@ export default function Play() {
     if (reservedHours[theaterId]?.includes(hour) || !selectedDate) return
     setSelectedHours((prev) => {
       const prevArr = prev[theaterId] || []
+      // 이미 선택된 시간 클릭 시 해제
       if (prevArr.includes(hour)) {
         return {
           ...prev,
           [theaterId]: prevArr.filter((h) => h !== hour),
         }
       }
+      // 선택된 시간대가 없으면 선택
       if (prevArr.length === 0) {
         return { ...prev, [theaterId]: [hour] }
       }
+      // 선택된 시간대가 1개일 때, 새로 클릭한 시간이 ±2 이내면 사이 구간 자동 선택
       if (prevArr.length === 1) {
-        const min = Math.min(prevArr[0], hour)
-        const max = Math.max(prevArr[0], hour)
-        if (Math.abs(prevArr[0] - hour) === 1) {
-          return { ...prev, [theaterId]: [min, max] }
+        const base = prevArr[0]
+        if (Math.abs(hour - base) <= 2) {
+          const min = Math.min(base, hour)
+          const max = Math.max(base, hour)
+          // 최대 3개까지만 허용
+          if (max - min > 2) return prev
+          const range = []
+          for (let h = min; h <= max; h++) range.push(h)
+          return { ...prev, [theaterId]: range }
         }
-        if (Math.abs(prevArr[0] - hour) === 2) {
-          return { ...prev, [theaterId]: [min, min + 1, max] }
-        }
-        return { ...prev, [theaterId]: [prevArr[0], hour] }
-      }
-      if (prevArr.length === 2) {
-        const arr = [...prevArr, hour].sort((a, b) => a - b)
-        if (arr[2] - arr[0] === 2 && arr[1] - arr[0] === 1 && arr[2] - arr[1] === 1) {
-          return { ...prev, [theaterId]: arr }
-        }
-        return { ...prev, [theaterId]: [prevArr[1], hour] }
-      }
-      if (prevArr.length >= 3) {
         return prev
+      }
+      // 여러 개일 때는 기존 로직(연속성, 최대 3개)
+      const min = Math.min(...prevArr)
+      const max = Math.max(...prevArr)
+      if (hour >= min - 2 && hour <= max + 2) {
+        const newArr = [...prevArr, hour].sort((a, b) => a - b)
+        const uniqueArr = Array.from(new Set(newArr))
+        for (let i = 1; i < uniqueArr.length; i++) {
+          if (uniqueArr[i] - uniqueArr[i - 1] !== 1) {
+            return prev
+          }
+        }
+        if (uniqueArr.length > 3) return prev
+        return { ...prev, [theaterId]: uniqueArr }
       }
       return prev
     })
@@ -187,21 +185,17 @@ export default function Play() {
     setDeleteTarget(null)
   }
 
-  // step1 → step2 이동 조건: 날짜 선택 + 2시간 이상 선택
   const canGoNext = (() => {
     if (!selectedDate) return false
     const hoursArr = selectedHours[selectedTheater] || []
     return hoursArr.length >= 2
   })()
 
-  // step2에서 사용할 데이터
   const selectedHourArr = selectedHours[selectedTheater]?.sort((a, b) => a - b) || []
 
-  // 영화 모달 페이징
   const totalPages = Math.ceil(movieTotal / PAGE_SIZE)
   const pagedMovies = movieList
 
-  // 페이지네이션 블록 처리 (10개씩)
   const PAGINATION_BLOCK = 10
   const currentBlock = Math.floor((moviePage - 1) / PAGINATION_BLOCK)
   const startPage = currentBlock * PAGINATION_BLOCK + 1
@@ -215,7 +209,7 @@ export default function Play() {
   }
 
   // 예약된 시간대 버튼 스타일 적용
-  const hourBtn = (selected, reserved) => css`
+  const hourBtn = (selected, reserved, disabled) => css`
     width: 38px;
     height: 38px;
     border: 1px solid ${selected ? "#1976d2" : reserved ? "#bbb" : "#ccc"};
@@ -225,10 +219,10 @@ export default function Play() {
     font-size: 15px;
     font-weight: 600;
     margin-right: 2px;
-    cursor: ${reserved ? "not-allowed" : "pointer"};
-    opacity: ${reserved ? 0.5 : 1};
+    cursor: ${reserved || disabled ? "not-allowed" : "pointer"};
+    opacity: ${reserved || disabled ? 0.5 : 1};
     &:hover {
-      background: ${reserved ? "#eee" : "#e3f2fd"};
+      background: ${reserved || disabled ? "#eee" : "#e3f2fd"};
     }
   `
 
@@ -608,12 +602,25 @@ export default function Play() {
               <div css={hourRow}>
                 {hours.map((hour) => {
                   const reserved = reservedHours[theater.id]?.includes(hour)
-                  const selected = selectedHours[theater.id]?.includes(hour)
-                  const disabled = reserved || !selectedDate
+                  const selectedArr = selectedHours[theater.id] || []
+                  const selected = selectedArr.includes(hour)
+                  let disabled = reserved || !selectedDate
+                  if (!disabled && selectedArr.length > 0 && !selected) {
+                    if (selectedArr.length === 1) {
+                      // 선택된 시간대가 1개일 때는 base±2까지 허용
+                      const base = selectedArr[0]
+                      if (hour < base - 2 || hour > base + 2) disabled = true
+                    } else {
+                      // 여러 개일 때는 min/max ±2까지 허용
+                      const min = Math.min(...selectedArr)
+                      const max = Math.max(...selectedArr)
+                      if (hour < min - 2 || hour > max + 2) disabled = true
+                    }
+                  }
                   return (
                     <button
                       key={hour}
-                      css={hourBtn(selected, reserved || !selectedDate)}
+                      css={hourBtn(selected, reserved, disabled)}
                       onClick={() => handleHourClick(theater.id, hour)}
                       disabled={disabled}
                       title={
@@ -621,7 +628,15 @@ export default function Play() {
                           ? "날짜를 먼저 선택하세요"
                           : reserved
                             ? "이미 등록된 시간"
-                            : undefined
+                            : selectedArr.length > 0 &&
+                                !selected &&
+                                ((selectedArr.length === 1 &&
+                                  (hour < selectedArr[0] - 2 || hour > selectedArr[0] + 2)) ||
+                                  (selectedArr.length > 1 &&
+                                    (hour < Math.min(...selectedArr) - 2 ||
+                                      hour > Math.max(...selectedArr) + 2)))
+                              ? "선택된 시간대 기준 ±2시간만 선택 가능"
+                              : undefined
                       }
                     >
                       {hour.toString().padStart(2, "0")}
