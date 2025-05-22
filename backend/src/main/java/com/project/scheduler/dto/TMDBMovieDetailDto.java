@@ -14,6 +14,7 @@ public class TMDBMovieDetailDto {
     private String overview;
     private String release_date;
     private String poster_path;
+    private String backdrop_path;
     private double vote_average;
     private Integer runtime;
 

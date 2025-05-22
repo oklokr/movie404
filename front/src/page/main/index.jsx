@@ -6,9 +6,10 @@ import { Swiper, SwiperSlide } from "swiper/react"
 import "swiper/css"
 import "swiper/css/navigation"
 import { mainGetMovieList } from "@/api/main"
-import { useModal } from "@/component/modalProvider"
 import { Button } from "@mui/material"
 import { usePopup } from "@/component/popupProvider"
+import { useCommon } from "@/store/commonContext"
+import PopMovieDetail from "@/component/popup/popMovieDetail"
 
 function MainPage() {
   const [fetchData, setFetchData] = useState({
@@ -20,27 +21,25 @@ function MainPage() {
   const [openFAQ, setOpenFAQ] = useState(null)
   const [bgY, setBgY] = useState(0)
   const rafRef = useRef()
-  const { openModal, showAlert } = useModal()
   const { openPopup } = usePopup()
+  const { code } = useCommon()
 
+  // 패럴럭스 js
   useEffect(() => {
     const handleScroll = () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
       rafRef.current = requestAnimationFrame(() => {
-        setBgY(window.scrollY * 0.4)
+        setBgY(window.scrollY * 0.2)
       })
     }
     window.addEventListener("scroll", handleScroll)
-
-    // showAlert({ message: "성공적으로 처리되었습니다!", type: "error" })
-    // openModal({ content: "이건 모달입니다.", type: "confirm" })
-
     return () => {
       window.removeEventListener("scroll", handleScroll)
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
   }, [])
 
+  // fetchData
   useEffect(() => {
     const fetchMovie = async () => {
       const showMovie = await mainGetMovieList({ schedule: "1" })
@@ -61,21 +60,22 @@ function MainPage() {
     fetchMovie()
   }, [])
 
-  // 커스텀 컴포넌트(폼 등)
-  const openForm = () => {
+  const openForm = (list, movieCode) => {
+    const targetItem = list.find((item) => item.movieCode === movieCode)
+    const findGenre = (keys) => {
+      if (!code?.GENRE_TPCD || !targetItem) return []
+      return keys.reduce((acc, key) => {
+        const genreCode = targetItem[key]
+        if (!genreCode) return acc
+        const genreObj = code.GENRE_TPCD.find((item) => item.commonValue === genreCode)
+        if (genreObj && genreObj.commonName) acc.push(genreObj.commonName)
+        return acc
+      }, [])
+    }
+    const genreList = findGenre(["genreCodeA", "genreCodeB", "genreCodeC"])
+    console.log(targetItem)
     openPopup({
-      content: ({ close }) => (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            close()
-          }}
-        >
-          <h3>폼 팝업</h3>
-          <input placeholder="입력" />
-          <button type="submit">확인</button>
-        </form>
-      ),
+      content: () => <PopMovieDetail targetItem={targetItem} genreList={genreList} />,
     })
   }
 
@@ -122,7 +122,7 @@ function MainPage() {
         color: #fff;
         font-size: 36px;
 
-        + * {
+        + *:not(.swiper) {
           margin-top: 40px;
         }
       }
@@ -138,7 +138,16 @@ function MainPage() {
       background: linear-gradient(135deg, #444, #000);
 
       .swiper {
-        height: 340px;
+        height: 520px;
+
+        .image-wrap {
+          display: flex;
+          align-items: center;
+
+          img {
+            width: 100%;
+          }
+        }
       }
 
       h3 {
@@ -151,23 +160,108 @@ function MainPage() {
   `
 
   const rankingGrid = css`
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: 2fr 2fr 2fr 4fr;
+    grid-template-rows: 1fr 1fr;
     gap: 10px;
+    height: 500px;
+    .item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 240px;
+      font-weight: bold;
+      font-size: 20px;
+      position: relative;
+      border-radius: 12px;
+      background-color: #ddd;
+      cursor: pointer;
+
+      &:before {
+        content: "";
+      }
+
+      &:hover {
+        .image-wrap img {
+          transform: scale(1.2);
+        }
+      }
+
+      &-1 {
+        grid-column: 1 / 4;
+        grid-row: 1 / 2;
+      }
+
+      &-2 {
+        grid-column: 4 / 5;
+        grid-row: 1 / 3;
+        height: 500px;
+      }
+
+      &-3 {
+        grid-column: 1 / 2;
+        grid-row: 2 / 3;
+      }
+
+      &-4 {
+        grid-column: 2 / 3;
+        grid-row: 2 / 3;
+      }
+
+      &-5 {
+        grid-column: 3 / 4;
+        grid-row: 2 / 3;
+      }
+
+      strong {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translate3d(-50%, -50%, 0px);
+        color: #fff;
+        font-size: 30px;
+        z-index: 1;
+      }
+      .image-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+        img {
+          width: 100%;
+          transform: scale(1);
+          transition: 0.3s;
+        }
+      }
+    }
   `
 
   const rankingItem = css`
-    background: #ddd;
-    padding: 40px;
     font-size: 24px;
     text-align: center;
-    border-radius: 10px;
+    background: #ddd;
   `
 
   const gridBox = css`
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
+
+    .image-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+    }
   `
 
   const gridItem = css`
@@ -231,8 +325,8 @@ function MainPage() {
         >
           {fetchData.latest.map((item) => (
             <SwiperSlide key={item.movieCode}>
-              <span>
-                <img src={item.poster} alt={item.movieName} />
+              <span className="image-wrap">
+                <img src={item.background} alt={item.movieName} />
               </span>
             </SwiperSlide>
           ))}
@@ -241,7 +335,7 @@ function MainPage() {
 
       <section className="show-movie">
         <h3>상영중인 영화</h3>
-        <Swiper slidesPerView={5} spaceBetween={10} navigation modules={[Navigation]}>
+        <Swiper slidesPerView={5} spaceBetween={20} navigation modules={[Navigation]}>
           {fetchData.showMovies.map((item) => (
             <SwiperSlide key={item.movieCode}>
               <div className="movie-poster">
@@ -250,7 +344,10 @@ function MainPage() {
                 </span>
                 <div className="info">
                   <p>{item.movieName}</p>
-                  <Button variant="contained" onClick={() => openForm()}>
+                  <Button
+                    variant="contained"
+                    onClick={() => openForm(fetchData.showMovies, item.movieCode)}
+                  >
                     상세보기
                   </Button>
                 </div>
@@ -262,13 +359,16 @@ function MainPage() {
 
       <section className="lank-movie">
         <h3>인기순위</h3>
-        <div css={rankingGrid}>
+        <ul css={rankingGrid}>
           {fetchData.allMovie.slice(0, 5).map((item, idx) => (
-            <div key={item.movieCode} css={rankingItem}>
-              {idx + 1}
-            </div>
+            <li key={item.movieCode} className={`item item-${idx + 1}`} css={rankingItem}>
+              <strong>{idx + 1}</strong>
+              <span className="image-wrap">
+                <img src={item.poster} alt={item.movieName} />
+              </span>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
       <section className="all-movie">
@@ -276,7 +376,9 @@ function MainPage() {
         <div css={gridBox}>
           {fetchData.allMovie.slice(5, 21).map((item) => (
             <div key={item.movieCode} css={gridItem}>
-              🎞️
+              <span className="image-wrap">
+                <img src={item.background} alt={item.movieName} />
+              </span>
             </div>
           ))}
         </div>

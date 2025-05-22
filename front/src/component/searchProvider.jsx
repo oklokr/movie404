@@ -6,6 +6,8 @@ import CloseIcon from "@mui/icons-material/Close"
 import { mainGetMovieList } from "@/api/main"
 import { useModal } from "@/component/modalProvider"
 import { usePopup } from "@/component/popupProvider"
+import PopMovieDetail from "@/component/popup/popMovieDetail"
+import { useCommon } from "@/store/commonContext"
 
 const SearchContext = createContext()
 export const useSearch = () => useContext(SearchContext)
@@ -33,6 +35,7 @@ export function SearchProvider({ children }) {
   const { pathname } = useLocation()
   const { openModal, showAlert } = useModal()
   const { openPopup } = usePopup()
+  const { code } = useCommon()
 
   useEffect(() => {
     pageRef.current = page
@@ -142,22 +145,21 @@ export function SearchProvider({ children }) {
     }
   }, [fetchMovie, searchListVisible, active])
 
-  // 커스텀 컴포넌트(폼 등)
-  const openForm = () => {
-    console.log("test")
+  const openForm = (item) => {
+    const findGenre = (keys) => {
+      if (!code?.GENRE_TPCD || !item) return []
+      return keys.reduce((acc, key) => {
+        const genreCode = item[key]
+        if (!genreCode) return acc
+        const genreObj = code.GENRE_TPCD.find((item) => item.commonValue === genreCode)
+        if (genreObj && genreObj.commonName) acc.push(genreObj.commonName)
+        return acc
+      }, [])
+    }
+    const genreList = findGenre(["genreCodeA", "genreCodeB", "genreCodeC"])
+    console.log(item)
     openPopup({
-      content: ({ close }) => (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            close()
-          }}
-        >
-          <h3>폼 팝업</h3>
-          <input placeholder="입력" />
-          <button type="submit">확인</button>
-        </form>
-      ),
+      content: () => <PopMovieDetail targetItem={item} genreList={genreList} />,
     })
   }
 
@@ -258,7 +260,7 @@ export function SearchProvider({ children }) {
                         variant="contained"
                         size="small"
                         aria-label={`${item.movieName} 상세보기`}
-                        onClick={() => openForm()}
+                        onClick={() => openForm(item)}
                       >
                         상세보기
                       </Button>

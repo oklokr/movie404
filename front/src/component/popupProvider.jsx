@@ -5,7 +5,6 @@ const PopupContext = createContext()
 export const PopupProvider = ({ children }) => {
   const [popups, setPopups] = useState([])
 
-  // content에 ReactNode(컴포넌트, 마크업 등) 허용
   const openPopup = useCallback(({ content, ...rest }) => {
     const id = Date.now() + Math.random()
     setPopups((prev) => [...prev, { id, open: true, content, ...rest }])
