@@ -3,49 +3,58 @@ import { css } from "@emotion/react"
 import { orderCreateId, orderValidate } from "@/api/order"
 import { useSelector } from "react-redux"
 import { selectUser } from "@/store/selectors"
+import { useModal } from "@/component/modalProvider"
+import { usePopup } from "@/component/popupProvider"
+import { useNavigate } from "react-router"
 
 export default function popMovieDetail(props) {
   const user = useSelector(selectUser)
+  const { popups, closePopup } = usePopup()
+  const { openModal, showAlert, closeModal } = useModal()
+  const navigate = useNavigate()
+
   const handlePayment = async () => {
     try {
       const userId = user.info.userId
       const movieCode = props.targetItem.movieCode
-      const price = props.targetItem.dvdPrice || 1
+      const price = props.targetItem.dvdPrice || 100
 
       const createRes = await orderCreateId({ userId, movieCode, price })
       const { orderCode } = createRes.data
 
       const { IMP } = window
-      IMP.init("imp36514004") // 가맹점 식별코드
+      IMP.init("imp36514004")
 
       IMP.request_pay(
         {
-          pg: "html5_inicis", // KG 이니시스
+          pg: "html5_inicis",
           pay_method: "card",
-          merchant_uid: orderCode, // 생성한 주문 번호
+          merchant_uid: orderCode,
           name: props.targetItem.movieName,
           amount: price,
           buyer_email: user.info.email || "",
           buyer_name: user.info.userName,
         },
-        async (rsp) => {
-          if (rsp.success) {
+        async (res) => {
+          console.log(res)
+          if (res.success) {
             // 3. 결제 성공 → 백엔드에 검증 요청
-            const validateRes = await orderValidate({
-              orderCode: orderCode,
-              impUid: rsp.imp_uid,
+            const validateRes = await orderValidate({ orderCode: orderCode, impUid: res.imp_uid })
+            openModal({
+              content: "결제가 완료되었습니다!",
+              fn: () => {
+                closePopup()
+                navigate("/mypage")
+              },
             })
-
-            alert("결제가 완료되었습니다!")
             console.log(validateRes.data)
           } else {
-            alert("결제에 실패했습니다: " + rsp.error_msg)
+            openModal({ content: res.error_msg, fn: closeModal })
           }
         },
       )
     } catch (error) {
-      console.error("결제 오류:", error)
-      alert("결제 처리 중 오류가 발생했습니다.")
+      openModal({ cotnent: "결제 처리 중 오류가 발생했습니다." })
     }
   }
   return (
