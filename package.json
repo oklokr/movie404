@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@portone/browser-sdk": "^0.0.20"
+    "@portone/browser-sdk": "^0.0.20",
+    "react-confetti": "^6.4.0"
   }
 }

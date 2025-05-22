@@ -104,7 +104,7 @@ public class UserService {
         return userMapper.checkEmail(email);
     } 
 
-    public String insertUser(UserDto newUser){
+    public int insertUser(UserDto newUser){
 
         return userMapper.insertUser(newUser);
     }

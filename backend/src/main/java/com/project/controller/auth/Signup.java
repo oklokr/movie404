@@ -99,10 +99,17 @@ public class Signup {
         userdto.setPasswd((String) requestBody.get("pwd"));
         userdto.setUserName((String) requestBody.get("id"));
         userdto.setEmail((String) requestBody.get("email"));
+        userdto.setTerms((String) requestBody.get("terms"));
 
         
+       try{ 
         userService.insertUser(userdto);
             return new ApiResponse(200,"success",null);
+       }catch(Exception e) {
+            System.out.println(e);
+            return new ApiResponse(404,"fail",null);
+
+       }
         
     }
     @PostMapping("/signupterms")

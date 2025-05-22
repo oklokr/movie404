@@ -134,12 +134,14 @@ function signup() {
       id: user_info.id,
       pwd: user_info.pwd,
       email: user_info.email,
-      terms: location.state,
+      terms: location.state.terms,
     }).then((res) => {
       if (res.code === 200) {
         showAlert({ message: "가입성공!", type: "success" })
 
-        navigate("/result")
+        navigate("/result", { state: user_info.id })
+      } else {
+        showAlert({ message: "가입실패!", type: "fail" })
       }
     })
   }

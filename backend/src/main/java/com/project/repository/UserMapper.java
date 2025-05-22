@@ -28,7 +28,7 @@ public interface UserMapper {
     int updateUserType(@Param("userId") String userId, @Param("type") String type);
     int checkId(String id);
     int checkEmail(String email);
-    String insertUser(UserDto newUser);
+    int insertUser(UserDto newUser);
     String selectIdbyEmail(String email);
     int checkUserByIdEmail(String email, String id);
     int updateUserTerms(String id, String terms);
