@@ -300,8 +300,8 @@ function TermsC(props) {
           </AccordionSummary>
           <AccordionDetails css={cssAccordion}>
             <Typography>
-              해당 약관에 동의할 경우 오둥이 빵 gs25 출시와 같은 최신 오둥이 정보를 제공받으실 수
-              있습니다.
+              해당 약관에 동의할 경우 회원가입 시 등록한 이메일로 각종 이벤트, 쿠폰 등의 정보를
+              제공받으실 수 있습니다.
             </Typography>
           </AccordionDetails>
         </Accordion>
