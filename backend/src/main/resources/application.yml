@@ -56,3 +56,8 @@ tmdb:
 
 schedule:
   movie-fetch: "0 0 3 * * *"
+
+imp:
+  code: imp36514004
+  key: 3181733625564284
+  secret_key: 8wmZ32gZhgZgksSbw5pWUW4VudOi5Via1a22sm1kniIIGDCaoDottSSAxArTHAhE4LfLdFTD3fq1MsFC

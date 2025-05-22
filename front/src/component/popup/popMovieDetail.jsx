@@ -1,7 +1,62 @@
 import { Button } from "@mui/material"
 import { css } from "@emotion/react"
+import { orderCreateId, orderValidate } from "@/api/order"
+import { useSelector } from "react-redux"
+import { selectUser } from "@/store/selectors"
+import { useModal } from "@/component/modalProvider"
+import { usePopup } from "@/component/popupProvider"
+import { useNavigate } from "react-router"
 
 export default function popMovieDetail(props) {
+  const user = useSelector(selectUser)
+  const { popups, closePopup } = usePopup()
+  const { openModal, showAlert, closeModal } = useModal()
+  const navigate = useNavigate()
+
+  const handlePayment = async () => {
+    try {
+      const userId = user.info.userId
+      const movieCode = props.targetItem.movieCode
+      const price = props.targetItem.dvdPrice || 100
+
+      const createRes = await orderCreateId({ userId, movieCode, price })
+      const { orderCode } = createRes.data
+
+      const { IMP } = window
+      IMP.init("imp36514004")
+
+      IMP.request_pay(
+        {
+          pg: "html5_inicis",
+          pay_method: "card",
+          merchant_uid: orderCode,
+          name: props.targetItem.movieName,
+          amount: price,
+          buyer_email: user.info.email || "",
+          buyer_name: user.info.userName,
+        },
+        async (res) => {
+          console.log(res)
+          if (res.success) {
+            // 3. 결제 성공 → 백엔드에 검증 요청
+            const validateRes = await orderValidate({ orderCode: orderCode, impUid: res.imp_uid })
+            openModal({
+              content: "결제가 완료되었습니다!",
+              fn: () => {
+                closePopup()
+                navigate("/mypage")
+              },
+            })
+            console.log(validateRes.data)
+          } else {
+            openModal({ content: res.error_msg, fn: closeModal })
+          }
+        },
+      )
+    } catch (error) {
+      openModal({ cotnent: "결제 처리 중 오류가 발생했습니다." })
+    }
+  }
   return (
     <>
       <div css={topContentStyle}>
@@ -31,7 +86,7 @@ export default function popMovieDetail(props) {
         <dd>{props.targetItem.synopsis}</dd>
       </dl>
       <div css={btnWrapStyle}>
-        <Button variant="contained" size="large">
+        <Button variant="contained" size="large" onClick={handlePayment}>
           DVD구매하기
         </Button>
         <Button variant="contained" size="large">

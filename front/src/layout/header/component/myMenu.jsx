@@ -63,9 +63,10 @@ export default function MyMenu({ state, fn_handleOpenMyMenu }) {
 }
 
 const myMenuStyle = css`
+  min-width: 160px;
   position: absolute;
-  top: 100%;
-  right: 0;
+  top: 45px;
+  left: calc(-50% - (32 * 1.5px));
   overflow: hidden;
   ul {
     list-style: none;
