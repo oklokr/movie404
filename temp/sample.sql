@@ -21,12 +21,12 @@ INSERT INTO COMMON_CODE (COMMON_ID, COMMON_CODE, COMMON_NAME, COMMON_VALUE) VALU
 -- MEMBERS
 INSERT INTO MEMBERS (USER_ID, PASSWD, USER_NAME, EMAIL, TEL, AGE, LANG_TPCD, DATE_TPCD, VIEW_ADULT, SAVE_HISTORY, TERMS, USER_TPCD)
 VALUES
-('user', '1234', '홍길동', 'user1@example.com', '01012345678', 25, '1', '1', 'N', 'Y', 'Y', '1'),
-('vip', '1234', '이순신', 'vip@example.com', '01012341234', 25, '1', '1', 'N', 'Y', 'Y', '3'),
-('admin', '1234', '관리자', 'admin@example.com', '01043211234', 25, '1', '1', 'N', 'Y', 'Y', '2'),
-('delete', '1234', '김유신', 'delete@example.com', '01056781234', 25, '1', '1', 'N', 'Y', 'Y', '4'),
-('user2', '1234', '강감찬', 'user2@example.com', '01087654321', 25, '1', '1', 'N', 'Y', 'Y', '1'),
-('user3', '1234', '대조영', 'user3@example.com', '01043214321', 25, '1', '1', 'N', 'Y', 'Y', '1');
+('user', '1234', '홍길동', 'user1@example.com', '01012345678', 25, '1', '1', 'N', 'Y', '110', '1'),
+('vip', '1234', '이순신', 'vip@example.com', '01012341234', 25, '1', '1', 'N', 'Y', '110', '3'),
+('admin', '1234', '관리자', 'admin@example.com', '01043211234', 25, '1', '1', 'N', 'Y', '111', '2'),
+('delete', '1234', '김유신', 'delete@example.com', '01056781234', 25, '1', '1', 'N', 'Y', '110', '4'),
+('user2', '1234', '강감찬', 'user2@example.com', '01087654321', 25, '1', '1', 'N', 'Y', '111', '1'),
+('user3', '1234', '대조영', 'user3@example.com', '01043214321', 25, '1', '1', 'N', 'Y', '110', '1');
 
 
 -- GENRE
