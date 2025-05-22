@@ -13,6 +13,9 @@ import {
 import { useState } from "react"
 import { useSelector } from "react-redux"
 import { Navigate, NavLink, useNavigate } from "react-router"
+import { useModal } from "@/component/modalProvider"
+const { openModal, showAlert } = useModal()
+
 const userchange = {
   pwd: "",
   repwd: "",
@@ -76,23 +79,26 @@ function User(props) {
     if (userchange.domain == "") userchange.domain = userinfo.domain
 
     function handlerSaveEvent() {
-      alert("/handlerSave")
       var check = 1
       if (userchange.pwd == "") {
-        alert("비밀번호를 입력해주세요")
+        showAlert({ message: "비밀번호를 입력해주세요", type: "error" })
         check = 0
       } else if (userchange.repwd == "") {
-        alert("비밀번호 재확인을 입력해주세요")
+        showAlert({ message: "비밀번호 재확인을 입력해주세요", type: "error" })
+
         check = 0
       } else if (userchange.pwd != userchange.repwd) {
-        alert("비밀번호가 일치하지 않습니다.")
+        showAlert({ message: "비밀번호가 일치하지 않습니다.", type: "error" })
+
         check = 0
       } else if (userchange.pwdpass != 1 || userchange.repwdpass != 1) {
-        alert("비밀번호 입력 조건을 확인해주세요")
+        showAlert({ message: "비밀번호 입력 조건을 확인해주세요", type: "error" })
+
         check = 0
       } else if (userchange.sendemail == 1) {
         if (userchange.authcode != "인증완료") {
-          alert("이메일 인증을 완료해주세요")
+          showAlert({ message: "이메일 인증을 완료해주세요", type: "error" })
+
           check = 0
         } else {
           check = 1
@@ -113,21 +119,22 @@ function User(props) {
         // tel: userchange.tel,
       }).then((res) => {
         if (res.code === 200) {
-          alert("수정완료!")
+          showAlert({ message: "수정완료", type: "success" })
         } else {
-          alert("수정 실패!")
+          showAlert({ message: "수정 실패!", type: "error" })
         }
       })
     }
 
     function handleCheckEamilAuth(e) {
       if (userchange.authcode == userchange.inputauthcode) {
-        alert("이메일 인증 성공!")
+        showAlert({ message: "이메일 인증 성공!", type: "success" })
+
         userchange.authcode = "인증완료"
         props.setEmailEvent(0)
         props.setEmailAuth(0)
       } else {
-        alert("인증실패!")
+        showAlert({ message: "인증실패", type: "error" })
       }
     }
     function handleChangeEmail(e) {
@@ -167,19 +174,18 @@ function User(props) {
         props.setEmailEvent(1)
         userchange.domain = val
       }
-      alert(userchange.domain)
     }
     const sendEmail = () => {
-      alert(userchange.email + "@" + userchange.domain)
       sendAuthEmail({
         email: userchange.email + "@" + userchange.domain,
       }).then((res) => {
         if (res.code === 200) {
-          alert("인증메일을 전송했습니다!")
+          showAlert({ message: "인증메일을 전송했습니다!", type: "success" })
+
           userchange.authcode = res.data
           userchange.sendemail = 1
         } else {
-          alert("전송실패!")
+          showAlert({ message: "전송실패", type: "error" })
         }
       })
     }
@@ -191,11 +197,12 @@ function User(props) {
         console.log(res)
         if (res.code === 200) {
           userinfo.email = props.Email + props.EmailFormat
-          alert("사용 가능한 이메일 입니다.")
+          showAlert({ message: "사용 가능한 이메일 입니다.", type: "success" })
+
           //메일전송
           sendEmail()
         } else {
-          alert("이미 등록된 이메일 입니다.")
+          showAlert({ message: "이미 등록된 이메일 입니다.", type: "error" })
         }
       })
     }
@@ -255,7 +262,8 @@ function User(props) {
         smsAuth({ code: smsinput }).then((res) => {
           console.log(res)
           if (res.code === 200) {
-            alert("인증성공!")
+            showAlert({ message: "인증성공!", type: "success" })
+
             isSendSMS(0)
           }
         })

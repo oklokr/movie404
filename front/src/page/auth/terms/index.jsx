@@ -7,12 +7,13 @@ import Radio from "@mui/material/Radio"
 import RadioGroup from "@mui/material/RadioGroup"
 import FormControlLabel from "@mui/material/FormControlLabel"
 import FormControl from "@mui/material/FormControl"
-import React, { useEffect, useLayoutEffect, useState } from "react"
-import { Button, List } from "@mui/material"
-import { useLocation, useNavigate } from "react-router"
+import { useEffect, useState } from "react"
+import { Button } from "@mui/material"
+import { useNavigate } from "react-router"
 import { signupTerms } from "@/api/signup"
-import axios from "axios"
+import { useModal } from "@/component/modalProvider"
 
+const { showAlert } = useModal()
 //let list=[]
 function terms() {
   const [list, setlist] = useState([])
@@ -31,13 +32,19 @@ function terms() {
 
   function handleTermA(e) {
     if (e.target.value == "0") {
-      alert("필수약관으로 동의하지 않으시면 서비스 이용이 불가합니다.")
+      showAlert({
+        message: "필수약관으로 동의하지 않으시면 서비스 이용이 불가합니다.",
+        type: "error",
+      })
     }
     setTermA(e.target.value)
   }
   function handleTermB(e) {
     if (e.target.value == "0") {
-      alert("필수약관으로 동의하지 않으시면 서비스 이용이 불가합니다.")
+      showAlert({
+        message: "필수약관으로 동의하지 않으시면 서비스 이용이 불가합니다.",
+        type: "error",
+      })
     }
     setTermB(e.target.value)
   }
@@ -47,12 +54,21 @@ function terms() {
 
   function nextbutton(e) {
     if (TermA == "1" && TermB == "1" && TermC != "") {
-      alert("다음으로 넘어갑니다.")
+      showAlert({
+        message: "다음으로 넘어갑니다.",
+        type: "confirm",
+      })
       navigate("/signup", { state: { terms: TermA + TermB + TermC } })
     } else if (TermC == "") {
-      alert("모든 약관을 확인하시고 동의여부를 클릭해주세요.")
+      showAlert({
+        message: "모든 약관을 확인하시고 동의여부를 클릭해주세요.",
+        type: "error",
+      })
     } else {
-      alert("필수약관을 모두 동의하지 않으시면 서비스 이용이 불가합니다.")
+      showAlert({
+        message: "필수약관으로 동의하지 않으시면 서비스 이용이 불가합니다.",
+        type: "error",
+      })
     }
   }
   const navigate = useNavigate()
