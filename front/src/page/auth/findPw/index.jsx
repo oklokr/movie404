@@ -10,7 +10,9 @@ import FormLabel from "@mui/material/FormLabel"
 import { useState } from "react"
 import { sendAuthEmail, signupCheckEmail } from "@/api/signup"
 import { checkUserByIdEmail } from "@/api/findpw"
+import { useModal } from "@/component/modalProvider"
 
+const { openModal, showAlert } = useModal()
 const findid_info = {
   id: "",
   pwd: "",
@@ -74,7 +76,7 @@ function findPw() {
       email: Email,
     }).then((res) => {
       if (res.code === 200) {
-        alert("인증메일을 전송했습니다!")
+        showAlert({ message: "인증메일을 전송했습니다!", type: "success" })
         findid_info.authcode = res.data
         findid_info.email = Email
         setAuthButtonActive(1)
@@ -87,10 +89,11 @@ function findPw() {
     }).then((res) => {
       console.log(res)
       if (res.code === 200) {
-        alert("등록되지 않은 이메일 입니다.")
+        showAlert({ message: "등록되지 않은 이메일 입니다.", type: "error" })
+
         //메일전송
       } else {
-        alert("인증번호 전송 중")
+        showAlert({ message: "인증번호 전송 중", type: "success" })
         sendEmail()
       }
     })
@@ -101,9 +104,10 @@ function findPw() {
   }
   function authEmailCheck(e) {
     if (InputCode == findid_info.authcode) {
-      alert("인증번호가 일치합니다!")
+      showAlert({ message: "인증번호가 일치합니다", type: "success" })
+
       showPw()
-    } else alert("인증번호가 일치하지 않습니다!")
+    } else showAlert({ message: "인증번호가 일치하지 않습니다!", type: "error" })
   }
 
   function handleChangeAuth(e) {
@@ -117,9 +121,9 @@ function findPw() {
       email: findid_info.email,
     }).then((res) => {
       if (res.code === 200) {
-        alert("초기화 비밀번호 : " + res.data)
+        showAlert({ message: "초기화 비밀번호 : " + res.data, type: "success" })
       } else {
-        alert("등록되지 않은 아이디입니다!")
+        showAlert({ message: "등록되지 않은 아이디입니다!", type: "error" })
       }
     })
   }

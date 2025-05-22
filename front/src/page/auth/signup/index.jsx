@@ -11,7 +11,9 @@ import { FormHelperText } from "@mui/material"
 import { useEffect } from "react"
 import { insertUser, sendAuthEmail, signupCheckEmail, signupCheckId } from "@/api/signup"
 import { useNavigate, useLocation } from "react-router"
+import { useModal } from "@/component/modalProvider"
 
+const { showAlert } = useModal()
 const user_info = {
   id: "",
   pwd: "",
@@ -113,15 +115,16 @@ function signup() {
 
   function SignUpEvent(e) {
     if (ID == "") {
-      alert("아이디를 입력해주세요")
+      showAlert({ message: "아이디를 입력해주세요", type: "error" })
     } else if (user_info.id == "") {
-      alert("아이디 중복확인을 해주세요")
+      showAlert({ message: "아이디 중복확인을 해주세요", type: "error" })
     } else if (RPW == "" || user_info.pwd == "") {
-      alert("비밀번호를 입력해주세요")
+      showAlert({ message: "비밀번호를 입력해주세요", type: "error" })
     } else if (Email == "" || user_info.authcode != "인증완료") {
-      alert("이메일 인증을 완료해주세요")
+      showAlert({ message: "이메일 인증을 완료해주세요", type: "error" })
     } else {
-      alert("가입중!")
+      showAlert({ message: "가입중!", type: "success" })
+
       newUser()
     }
   }
@@ -133,7 +136,8 @@ function signup() {
       terms: location.state,
     }).then((res) => {
       if (res.code === 200) {
-        alert("가입성공!")
+        showAlert({ message: "가입성공!", type: "success" })
+
         navigate("/result")
       }
     })
@@ -145,11 +149,10 @@ function signup() {
       console.log(res)
       if (res.code === 200) {
         user_info.id = ID
-        alert("사용 가능한 아이디 입니다.")
-        //alert(user_info.terms)
+        showAlert({ message: "사용 가능한 아이디 입니다.", type: "success" })
       } else {
         user_info.id = ""
-        alert("사용불가한 아이디 입니다.")
+        showAlert({ message: "사용불가한 아이디 입니다.", type: "error" })
       }
     })
   }
@@ -161,12 +164,13 @@ function signup() {
       console.log(res)
       if (res.code === 200) {
         user_info.email = Email + EmailFormat
-        alert("사용 가능한 이메일 입니다.")
+        showAlert({ message: "사용 가능한 이메일 입니다.", type: "success" })
+
         //메일전송
         sendEmail()
       } else {
         user_info.id = ""
-        alert("이미 등록된 이메일 입니다.")
+        showAlert({ message: "이미 등록된 이메일 입니다.", type: "error" })
       }
     })
   }
@@ -176,7 +180,8 @@ function signup() {
       email: user_info.email,
     }).then((res) => {
       if (res.code === 200) {
-        alert("인증메일을 전송했습니다!")
+        showAlert({ message: "인증메일을 전송했습니다!", type: "success" })
+
         user_info.authcode = res.data
         setSendMail(1)
       }
@@ -185,11 +190,11 @@ function signup() {
 
   function CheckIdEvent(e) {
     if (ID == "") {
-      alert("아이디를 입력해주세요")
+      showAlert({ message: "아이디를 입력해주세요", type: "error" })
     } else if (/[!@#$%^&*|ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(ID)) {
-      alert("특수문자/한글 포함 불가")
+      showAlert({ message: "특수문자/한글 포함 불가", type: "error" })
     } else {
-      alert(ID)
+      //alert(ID)
       checkId()
       //DB에 중복확인
     }
@@ -197,9 +202,9 @@ function signup() {
 
   function checkEmailEvent(e) {
     if (Email == "") {
-      alert("이메일을 입력해주세요")
+      showAlert({ message: "이메일을 입력해주세요", type: "error" })
     } else {
-      alert(Email + EmailFormat)
+      //alert(Email + EmailFormat)
       checkEmail()
     }
   }
@@ -209,9 +214,10 @@ function signup() {
 
   function authEmailCheck(e) {
     if (InputCode == user_info.authcode) {
-      alert("인증번호가 일치합니다!")
+      showAlert({ message: "인증번호가 일치합니다!", type: "success" })
+
       user_info.authcode = "인증완료"
-    } else alert("인증번호가 일치하지 않습니다!")
+    } else showAlert({ message: "인증번호가 일치하지 않습니다!", type: "error" })
   }
 
   function userInputEvent(e) {

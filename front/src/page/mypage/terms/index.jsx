@@ -20,7 +20,9 @@ import { useSelector } from "react-redux"
 import { selectUser } from "@/store/selectors"
 import { updateUserTerms } from "@/api/admin"
 import { NavLink } from "react-router"
+import { useModal } from "@/component/modalProvider"
 
+const { showAlert } = useModal()
 const userinfo = {
   id: "",
   adult: "",
@@ -29,13 +31,13 @@ const userinfo = {
 }
 
 const updateTerms = () => {
-  alert(userinfo.terms + userinfo.id)
+  // alert(userinfo.terms + userinfo.id)
   updateUserTerms({
     id: userinfo.id,
     terms: userinfo.terms,
   }).then((res) => {
     if (res.code === 200) {
-      alert("성공적으로 저장되었습니다.")
+      showAlert({ message: "성공적으로 저장되었습니다.", type: "success" })
       userinfo.terms = res.data.terms
     }
   })
@@ -75,7 +77,7 @@ function TermsMenu(props) {
 function TermsA() {
   function TermsASaveEvent(e) {
     if (userinfo.terms[0] == "0") {
-      alert("동의하지 않으실 경우 서비스 이용이 불가합니다.")
+      showAlert({ message: "동의하지 않으실 경우 서비스 이용이 불가합니다.", type: "error" })
     } else {
       updateTerms()
     }
@@ -83,7 +85,10 @@ function TermsA() {
 
   function TermsAChangeEvent(e) {
     if (e.target.value == 0) {
-      alert("필수약관으로 동의하지 않을 경우 서비스 이용이 불가합니다.")
+      showAlert({
+        message: "필수약관으로 동의하지 않을 경우 서비스 이용이 불가합니다.",
+        type: "error",
+      })
     }
     var terms = userinfo.terms.substring(1, userinfo.terms.length)
     terms = e.target.value + terms
@@ -171,7 +176,7 @@ function TermsA() {
 function TermsB() {
   function TermsBSaveEvent(e) {
     if (userinfo.terms[1] == "0") {
-      alert("동의하지 않으실 경우 서비스 이용이 불가합니다.")
+      showAlert({ message: "동의하지 않으실 경우 서비스 이용이 불가합니다.", type: "error" })
     } else {
       updateTerms()
     }
@@ -179,7 +184,10 @@ function TermsB() {
 
   function TermsBChangeEvent(e) {
     if (e.target.value == 0) {
-      alert("필수약관으로 동의하지 않을 경우 서비스 이용이 불가합니다.")
+      showAlert({
+        message: "필수약관으로 동의하지 않을 경우 서비스 이용이 불가합니다.",
+        type: "error",
+      })
     }
     var terms =
       userinfo.terms.substring(0, 1) +

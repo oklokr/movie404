@@ -5,7 +5,9 @@ import PortOne from "@portone/browser-sdk/v2"
 import { useState } from "react"
 import { useSelector } from "react-redux"
 import { NavLink } from "react-router"
+import { useModal } from "@/component/modalProvider"
 
+const { openModal, showAlert } = useModal()
 function UserSetMenu() {
   return (
     <NavLink id="basic-button" to="/mypage/set/user" css={Leftbtn}>
@@ -70,7 +72,7 @@ function UserSet() {
       if (userchange.dateformat != "") userinfo.dateformat = userchange.dateformat
       if (userchange.savehistory != "") userinfo.savehistory = userchange.savehistory
       //setAge(userchange.age)
-      alert(
+      /*alert(
         userinfo.adult +
           "//" +
           userinfo.lang +
@@ -84,7 +86,7 @@ function UserSet() {
           userchange.age +
           "//" +
           age,
-      )
+      )*/
       updateSetting()
     }
     const updateSetting = () => {
@@ -97,9 +99,9 @@ function UserSet() {
         age: age,
       }).then((res) => {
         if (res.code === 200) {
-          alert("수정 성공!")
+          showAlert({ message: "수정 성공!", type: "success" })
         } else {
-          alert("저장실패!")
+          showAlert({ message: "저장실패!", type: "error" })
         }
       })
     }
@@ -135,11 +137,11 @@ function UserSet() {
       }).then((res) => {
         console.log(encodeURIComponent(res.identityVerificationId))
         if (res.code !== undefined) {
-          return alert(res.message)
+          return showAlert({ message: "res.message", type: "error" }) //확인필요요
         } else {
           setAuthAdult(1)
           setAge(23)
-          alert("인증되었습니다!")
+          showAlert({ message: "인증되었습니다!", type: "success" })
         }
       })
     }
