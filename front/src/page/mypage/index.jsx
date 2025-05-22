@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material"
+import { Card, CardActions, CardContent, CardMedia, Grid, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
 import { User, UserMenu } from "./userinfo"
 import { Dvd, DvdMenu } from "./dvd"
