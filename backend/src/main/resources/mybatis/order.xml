@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.project.repository.OrderMapper">
+
+    <insert id="insertOrder">
+        INSERT INTO ORDER_HISTORY (
+            ORDER_CODE, USER_ID, MOVIE_CODE, PRICE, ORDER_DATE
+        ) VALUES (
+            #{orderCode}, #{userId}, #{movieCode}, #{price}, #{orderDate}
+        )
+    </insert>
+
+    <select id="findOrderByCode" resultType="com.project.model.Order">
+        SELECT * FROM ORDER_HISTORY WHERE ORDER_CODE = #{orderCode}
+    </select>
+
+    <update id="updateImpUid">
+        UPDATE ORDER_HISTORY SET IMP_UID = #{impUid} WHERE ORDER_CODE = #{orderCode}
+    </update>
+
+    <update id="updateCardNum">
+        UPDATE ORDER_HISTORY SET CARD_NUM = #{cardNum} WHERE ORDER_CODE = #{orderCode}
+    </update>
+</mapper>

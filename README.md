@@ -40,57 +40,37 @@ not404/
 │  ├─ .gitignore
 │  ├─ .project
 │  └─ src/
-│     └─ main/
-│        ├─ java/
-│        │  └─ com/
-│        │     └─ project/
-│        │        ├─ config/
-│        │        │  ├─ ApiResponseAspect.java
-│        │        │  ├─ ServletInitializer.java
-│        │        │  └─ WebConfig.java
-│        │        ├─ controller/
-│        │        │  ├─ auth/
-│        │        │  │  ├─ Login.java
-│        │        │  │  └─ Findpw.java
-│        │        │  ├─ admin/
-│        │        │  │  └─ MovieController.java
-│        │        │  └─ main/
-│        │        ├─ interceptor/
-│        │        │  └─ AuthInterceptor.java
-│        │        ├─ model/
-│        │        │  ├─ ApiResponse.java
-│        │        │  └─ UserDto.java
-│        │        ├─ repository/
-│        │        │  ├─ CommonMapper.java
-│        │        │  ├─ MovieMapper.java
-│        │        │  └─ UserMapper.java
-│        │        ├─ service/
-│        │        │  ├─ CommonService.java
-│        │        │  ├─ MovieService.java
-│        │        │  └─ UserService.java
-│        │        └─ util/
-│        │        │  └─ DateFormatUtil.java
-│        │        └─ scheduler/
-│        │           ├─ dto/
-│        │           │  ├─ response/
-│        │           │  │   ├─  TMDBCreditResponseDto.java
-│        │           │  │   ├─  TMDBDiscoverIdListResponseDto.java
-│        │           │  │   ├─  TMDBGenreResponseDto.java
-│        │           │  │   └─  TMDBVideoResponseDto.java
-│        │           │  ├─ TMDBCastDto.java
-│        │           │  ├─ TMDBDiscoverIdListDto.java
-│        │           │  ├─ TMDBGenreDto.java
-│        │           │  ├─ TMDBMovieDetailDto.java
-│        │           │  └─ TMDBVideoDto.java
-│        │           ├─ MovieBatchService.java
-│        │           ├─ TMDBClient.java
-│        │           └─ TMDBScheduler.java
-│        └─ resources/
-│           ├─ application.yml
-│           ├─ logback-spring.xml
-│           ├─ mybatis/
-│           │  └─ user.xml
-│           └─ static/
+│     ├─ main/
+│     │  ├─ java/
+│     │  │  └─ com/
+│     │  │     └─ project/
+│     │  │        ├─ config/         # 스프링 설정 (PortOneConfig 등)
+│     │  │        ├─ controller/     # REST API 컨트롤러 (auth, admin, main 등 하위폴더)
+│     │  │        ├─ interceptor/    # 인터셉터
+│     │  │        ├─ model/          # DTO, VO, Entity 클래스
+│     │  │        ├─ repository/     # MyBatis Mapper 인터페이스
+│     │  │        ├─ service/        # 비즈니스 로직 서비스
+│     │  │        ├─ util/           # 유틸리티 클래스
+│     │  │        └─ scheduler/      # 배치/스케줄러 및 TMDB 관련
+│     │  │           ├─ dto/
+│     │  │           │  ├─ response/
+│     │  │           │  └─ ...
+│     │  │           ├─ MovieBatchService.java
+│     │  │           ├─ TMDBClient.java
+│     │  │           └─ TMDBScheduler.java
+│     │  └─ resources/
+│     │     ├─ application.yml
+│     │     ├─ logback-spring.xml
+│     │     ├─ mybatis/
+│     │     │  ├─ user.xml
+│     │     │  ├─ movie.xml
+│     │     │  └─ ... (기타 매퍼)
+│     │     └─ static/
+│     └─ test/
+│        └─ java/
+│           └─ com/
+│              └─ project/
+│                 └─ ... (테스트 코드)
 ├─ front/
 │  ├─ .gitignore
 │  ├─ .prettierrc
@@ -103,28 +83,20 @@ not404/
 │  ├─ public/
 │  │  └─ vite.svg
 │  └─ src/
-│     ├─ api/
-│     │  ├─ admin.js
-│     │  ├─ common.js
-│     │  └─ sample.js
-│     ├─ assets/
-│     │  └─ react.svg
-│     ├─ layout/
+│     ├─ api/                # API 호출 함수 (admin.js, common.js 등)
+│     ├─ assets/             # 이미지, 폰트 등 정적 리소스
+│     ├─ component/          # 공통 컴포넌트 (popupProvider, popupContainer 등)
+│     ├─ layout/             # 레이아웃(Header, Footer, Content 등)
 │     │  ├─ content/
-│     │  │  └─ index.jsx
 │     │  ├─ footer/
-│     │  │  └─ index.jsx
 │     │  ├─ header/
-│     │  │  └─ index.jsx
 │     │  └─ index.jsx
-│     ├─ locales/
+│     ├─ locales/            # 다국어(i18n)
 │     │  ├─ en/
-│     │  │  └─ translationEN.json
-│     │  ├─ i18n.js
-│     │  └─ ko/
-│     │     └─ translationKO.json
+│     │  ├─ ko/
+│     │  └─ i18n.js
 │     ├─ main.jsx
-│     ├─ page/
+│     ├─ page/               # 페이지별 폴더
 │     │  ├─ 404/
 │     │  │  └─ index.jsx
 │     │  ├─ admin/
@@ -161,7 +133,7 @@ not404/
 │     │  │  ├─ index.jsx
 │     │  │  └─ reservation.jsx
 │     │  └─ ... (기타 페이지)
-│     ├─ routes/
+│     ├─ routes/             # 라우트 정의
 │     │  ├─ index.jsx
 │     │  └─ pages/
 │     │     ├─ admin.jsx
@@ -169,16 +141,16 @@ not404/
 │     │     ├─ community.jsx
 │     │     ├─ main.jsx
 │     │     └─ ... (기타 라우트)
-│     ├─ store/
+│     ├─ store/              # 상태관리(Redux 등)
 │     │  ├─ index.js
 │     │  ├─ selectors.js
 │     │  └─ slices/
 │     │     ├─ common.js
 │     │     └─ user.js
-│     └─ utils/
-│        ├─ auth.js
-│        ├─ request.js
-│        └─ validate.js
-└─ .vscode/
-   └─ settings.json
+│     └─ utils/              # 유틸 함수 (auth.js, request.js, validate.js 등)
+├─ logs/
+│  ├─ batch.2025-05-19.log
+│  ├─ batch.2025-05-20.log
+│  ├─ batch.2025-05-21.log
+│  └─ batch.log
 ```
