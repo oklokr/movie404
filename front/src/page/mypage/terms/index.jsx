@@ -22,7 +22,6 @@ import { updateUserTerms } from "@/api/admin"
 import { NavLink } from "react-router"
 import { useModal } from "@/component/modalProvider"
 
-const { showAlert } = useModal()
 const userinfo = {
   id: "",
   adult: "",
@@ -31,6 +30,8 @@ const userinfo = {
 }
 
 const updateTerms = () => {
+  const { showAlert } = useModal()
+
   // alert(userinfo.terms + userinfo.id)
   updateUserTerms({
     id: userinfo.id,
@@ -75,6 +76,8 @@ function TermsMenu(props) {
 }
 
 function TermsA() {
+  const { showAlert } = useModal()
+
   function TermsASaveEvent(e) {
     if (userinfo.terms[0] == "0") {
       showAlert({ message: "동의하지 않으실 경우 서비스 이용이 불가합니다.", type: "error" })
@@ -174,6 +177,8 @@ function TermsA() {
   )
 }
 function TermsB() {
+  const { showAlert } = useModal()
+
   function TermsBSaveEvent(e) {
     if (userinfo.terms[1] == "0") {
       showAlert({ message: "동의하지 않으실 경우 서비스 이용이 불가합니다.", type: "error" })

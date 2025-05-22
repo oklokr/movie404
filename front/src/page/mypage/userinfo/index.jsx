@@ -14,7 +14,6 @@ import { useState } from "react"
 import { useSelector } from "react-redux"
 import { Navigate, NavLink, useNavigate } from "react-router"
 import { useModal } from "@/component/modalProvider"
-const { openModal, showAlert } = useModal()
 
 const userchange = {
   pwd: "",
@@ -56,6 +55,7 @@ function User(props) {
     },
   ]
   const navigate = useNavigate()
+  const { showAlert } = useModal()
 
   let state = useSelector(selectUser)
   if (!state.info || state.info === null || state.info === undefined) {

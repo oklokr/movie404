@@ -24,13 +24,6 @@ function mypage() {
   const [RPW, setRPW] = useState("")
 
   const location = useLocation()
-  function handlePath(e) {
-    if (e.target.id == "1") setPath("1")
-    else if (e.target.id == "2") setPath("2")
-    else if (e.target.id == "3") setPath("3")
-    else if (e.target.id == "4") setPath("4")
-    else if (e.target.id == "5") setPath("5")
-  }
   useEffect(() => {
     if (location.state != null) {
       if (location.state.path == "1") setPath("1")
@@ -40,6 +33,14 @@ function mypage() {
       else if (location.state.path == "5") setPath("5")
     }
   }, [location])
+  function handlePath(e) {
+    if (e.target.id == "1") setPath("1")
+    else if (e.target.id == "2") setPath("2")
+    else if (e.target.id == "3") setPath("3")
+    else if (e.target.id == "4") setPath("4")
+    else if (e.target.id == "5") setPath("5")
+  }
+
   return (
     <>
       <Grid container spacing={2}>
@@ -138,10 +139,7 @@ const Topbtn = {
   align: "center",
   textDecoration: "none",
 }
-const Leftbtn = {
-  fontSize: "1.3rem",
-  align: "center",
-}
+
 const Leftcontainer = {
   borderStyle: "solid",
   maxWidth: "600px",

@@ -13,7 +13,6 @@ import { insertUser, sendAuthEmail, signupCheckEmail, signupCheckId } from "@/ap
 import { useNavigate, useLocation } from "react-router"
 import { useModal } from "@/component/modalProvider"
 
-const { showAlert } = useModal()
 const user_info = {
   id: "",
   pwd: "",
@@ -22,6 +21,8 @@ const user_info = {
   authcode: "",
 }
 function signup() {
+  const { showAlert } = useModal()
+
   const [commentId, setCommentId] = useState("아이디를 입력해주세요")
   const [commentPW, setCommentPW] = useState("비밀번호를 입력해주세요")
   const [commentRPW, setCommentRPW] = useState("비밀번호 재확인을 입력해주세요")

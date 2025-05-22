@@ -7,7 +7,6 @@ import { useSelector } from "react-redux"
 import { NavLink } from "react-router"
 import { useModal } from "@/component/modalProvider"
 
-const { openModal, showAlert } = useModal()
 function UserSetMenu() {
   return (
     <NavLink id="basic-button" to="/mypage/set/user" css={Leftbtn}>
@@ -90,6 +89,8 @@ function UserSet() {
       updateSetting()
     }
     const updateSetting = () => {
+      const { showAlert } = useModal()
+
       updateUserSet({
         id: userinfo.id,
         adult: userinfo.adult,
@@ -124,6 +125,8 @@ function UserSet() {
       } else userchange.savehistory = "N"
     }
     function handlerAuthAdult(e) {
+      const { showAlert } = useModal()
+
       const PORTONE_API_SECRET =
         "HAScg24us1bOISHDyTXYY3IWugf79CESXMqOWAOWl5ZX5tvR6jrIrDNtbWkaL8pnAaw6qSYLX3vSym71"
       const identityVerification = `identity-verification-${crypto.randomUUID()}`

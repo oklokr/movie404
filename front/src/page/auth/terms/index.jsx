@@ -13,9 +13,10 @@ import { useNavigate } from "react-router"
 import { signupTerms } from "@/api/signup"
 import { useModal } from "@/component/modalProvider"
 
-const { showAlert } = useModal()
 //let list=[]
 function terms() {
+  const { showAlert } = useModal()
+
   const [list, setlist] = useState([])
   const [TermA, setTermA] = useState("")
   const [TermB, setTermB] = useState("")
