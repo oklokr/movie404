@@ -28,3 +28,7 @@ setting.env
 logs/
 logs/*
 *.log
+
+static/*
+static/
+/static

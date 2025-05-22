@@ -1,9 +1,13 @@
+server:
+  port: 9090
+  servlet:
+    context-path: /
+
 spring:
-  devtools:
-    livereload:
-      enabled: false
-    restart:
-      enabled: true
+  mvc:
+    static-path-pattern: /static/**
+  resources:
+    static-locations: classpath:/static/
 
   config:
     import: optional:file:./db.env
@@ -18,9 +22,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:mysql://localhost:3306/bit
+    username: bit
+    password: bit
 
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
@@ -37,12 +41,10 @@ spring:
           timeout: 5000
           starttls:
             enable: true
+
   coolsms:
     apiKey: NCSH6DKDDSRZ9OVG
     secretkey: DQ75ZDEW0G2AE3BO2QHWOMUKDEWDCXK8
-
-server:
-  port: ${SERVER_PORT}
 
 mybatis:
   mapper-locations: classpath:mybatis/*.xml
@@ -52,7 +54,7 @@ mybatis:
 
 tmdb:
   api:
-    key: ${TMDB_API_KEY}
+    key: ff91ea6c8c3ef898afc8f92bed76e5da
 
 schedule:
   movie-fetch: "0 0 3 * * *"
