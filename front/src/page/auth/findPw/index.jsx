@@ -11,8 +11,8 @@ import { useState } from "react"
 import { sendAuthEmail, signupCheckEmail } from "@/api/signup"
 import { checkUserByIdEmail } from "@/api/findpw"
 import { useModal } from "@/component/modalProvider"
+import { useNavigate } from "react-router"
 
-const { openModal, showAlert } = useModal()
 const findid_info = {
   id: "",
   pwd: "",
@@ -20,6 +20,8 @@ const findid_info = {
   authcode: "",
 }
 function findPw() {
+  const { openModal, showAlert } = useModal()
+  const navigate = useNavigate()
   const [radio, setRadio] = useState("email")
   const [TelButtonActive, setTelButtonActive] = useState(0)
   const [EmailButtonActive, setEmailButtonActive] = useState(0)
@@ -121,7 +123,7 @@ function findPw() {
       email: findid_info.email,
     }).then((res) => {
       if (res.code === 200) {
-        showAlert({ message: "초기화 비밀번호 : " + res.data, type: "success" })
+        navigate("/resultPw", { state: res.data })
       } else {
         showAlert({ message: "등록되지 않은 아이디입니다!", type: "error" })
       }
@@ -219,8 +221,14 @@ function findPw() {
         </>
       )}
 
-      <Button variant="outlined">이전</Button>
-      <Button variant="contained">로그인</Button>
+      <Button
+        variant="outlined"
+        onClick={() => {
+          navigate("/login")
+        }}
+      >
+        이전
+      </Button>
     </>
   )
 }

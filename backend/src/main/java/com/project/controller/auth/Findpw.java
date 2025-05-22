@@ -12,7 +12,7 @@ import com.project.model.ApiResponse;
 import com.project.service.UserService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/find")
 public class Findpw {
      @Autowired
      private UserService userService;

@@ -70,7 +70,7 @@ public class Signup {
 			text += "<div>";
             text += "<h3 style='color: darkslateblue; font-style:oblique; font-weight:bold; justify-self:center'>[NOT404CINEMA] 이메일 인증코드입니다.</h3>";
             text += "<div style='background-color:lightgrey;height:200px;align-content:center;'>";
-			text += "<h1 style='color: blue ;justify-self:center'>["+key+"]</h1></div>";
+			text += "<h1 style='color: blue ;justify-self:center'>[ "+key+" ]</h1></div>";
             text += "<div><h3 style='color: darkslateblue; font-style:oblique;font-weight:bold;justify-self:center'>감사합니다:)</h3>";
 			text += "</div>";
 
