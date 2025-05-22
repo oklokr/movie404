@@ -1,4 +1,4 @@
-import { useLocation } from "react-router"
+import { useLocation, useNavigate } from "react-router"
 
 import Card from "@mui/material/Card"
 import CardContent from "@mui/material/CardContent"
@@ -11,38 +11,50 @@ import logoImg from "@/assets/images/logo/logo2.png"
 
 function resultId() {
   const location = useLocation()
-
+  const navigate = useNavigate()
   return (
-    <div css={css}>
-      <Card sx={{ maxWidth: 500, minHeight: 500 }} css={css}>
-        <CardActionArea sx={{ backgroundColor: "black" }}>
-          <CardMedia component="img" height="300" image={logoImg} alt="logo" />
-        </CardActionArea>
+    <>
+      <div css={css}>
+        <Card sx={{ maxWidth: 500, minHeight: 500 }} css={css}>
+          <CardActionArea sx={{ backgroundColor: "black" }}>
+            <CardMedia component="img" height="300" image={logoImg} alt="logo" />
+          </CardActionArea>
 
-        <CardContent>
-          <Typography
-            gutterBottom
-            variant="h5"
-            component="div"
-            sx={{ display: "flex", paddingTop: "20px" }}
-            css={css}
-          >
-            <Typography variant="h5" sx={{ color: "grey", fontFamily: "fantasy" }}>
-              [ 아이디 찾기 결과 ]
+          <CardContent>
+            <Typography
+              gutterBottom
+              variant="h5"
+              component="div"
+              sx={{ display: "flex", paddingTop: "20px" }}
+              css={css}
+            >
+              <Typography variant="h5" sx={{ color: "grey", fontFamily: "fantasy" }}>
+                [ 아이디 찾기 결과 ]
+              </Typography>
             </Typography>
-          </Typography>
-          <Typography variant="h3" sx={{ color: "", justifySelf: "center" }}>
-            {location.state}
-          </Typography>
-          <Typography
-            variant="h5"
-            sx={{ color: "text.secondary", fontSize: "small", paddingTop: "30px" }}
+            <Typography variant="h3" sx={{ color: "", justifySelf: "center" }}>
+              {location.state}
+            </Typography>
+            <Typography
+              variant="h5"
+              sx={{ color: "text.secondary", fontSize: "small", paddingTop: "30px" }}
+            >
+              *일부 마스킹 처리되어 보여집니다.
+            </Typography>
+          </CardContent>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => {
+              navigate("/login")
+            }}
+            sx={{ float: "right", margin: "10px" }}
           >
-            *일부 마스킹 처리되어 보여집니다.
-          </Typography>
-        </CardContent>
-      </Card>
-    </div>
+            로그인
+          </Button>
+        </Card>
+      </div>
+    </>
   )
 }
 const css = {
