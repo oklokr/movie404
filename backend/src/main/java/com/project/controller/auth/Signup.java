@@ -66,6 +66,7 @@ public class Signup {
 			message.setSubject("MOVIE 404 CINEMA 회원가입 인증 메일입니다:)");
             RandomKey();
 			String text = "";
+            text += "<img src='../front/src/assets/images/logo/logo.png'/>";
 			text += "<h1>"+"인증코드 : "+"</h1><br>";
 			text += "<h2>"+key+"</h2>";
 			//System.out.println(key);
