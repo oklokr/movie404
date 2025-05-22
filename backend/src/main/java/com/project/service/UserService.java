@@ -4,11 +4,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import com.project.model.ApiResponse;
 import com.project.model.OrderDto;
 import com.project.model.TermDto;
 import com.project.model.UserDto;
@@ -120,8 +123,8 @@ public class UserService {
         return userMapper.updateUserSet(id, adult, lang, dateformat, savehistory, age);
 
     }
-    public int updateUser(String id, String pwd, String email){
-        return userMapper.updateUser(id, pwd, email);
+    public int updateUser(String id, String pwd, String email, String tel){
+        return userMapper.updateUser(id, pwd, email, tel);
 
     }
     public  List<OrderDto> selectOrderList(String id){
@@ -133,4 +136,8 @@ public class UserService {
     public List<TermDto> selectTermsList(){
         return userMapper.selectTermsList();
     }
+    public int checkTel(String tel) {
+        return userMapper.checkTel(tel);
+    }
+    
 }

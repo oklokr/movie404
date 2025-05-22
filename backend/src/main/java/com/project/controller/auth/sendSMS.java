@@ -57,7 +57,7 @@ public class sendSMS {
         //랜덤키 생성
         key = Integer.toString( (int) Math.floor(Math.random()*90000)+10000);
 
-        message.setText("테스트 문자입니다. 인증번호["+key+"]를 입력해주세요.");
+        message.setText("[NOT404CINEMA] 휴대폰 번호 인증 문자입니다. 인증번호["+key+"]를 입력해주세요.");
 
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
         System.out.println(response);

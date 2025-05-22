@@ -89,9 +89,10 @@ public class AdminController {
         String id = (String) body.get("id");
         String pwd = (String) body.get("pwd");
         String email = (String) body.get("email");
+        String tel = (String) body.get("tel");
 
         try{
-            userService.updateUser(id, pwd, email);
+            userService.updateUser(id, pwd, email, tel);
             return new ApiResponse(200,"success",null);
 
         }catch(Exception e){
@@ -123,4 +124,16 @@ System.out.println("authuser들어옴");
 
 
 }
+        @PostMapping("/checktel")
+    public ApiResponse checkTel(@RequestBody Map<String, Object> body) {
+        String tel = (String)body.get("phone");
+        int result = userService.checkTel(tel);
+
+        if(result==0){
+            return new ApiResponse(200,"success",null);
+        }else{
+            return new ApiResponse(404,"fail",null);
+        }
+        
+    }    
 }

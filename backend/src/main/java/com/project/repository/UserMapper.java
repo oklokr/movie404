@@ -33,7 +33,8 @@ public interface UserMapper {
     int checkUserByIdEmail(String email, String id);
     int updateUserTerms(String id, String terms);
     int updateUserSet(String id, String adult, String lang, String dateformat, String savehistory, Integer age);
-    int updateUser(String id, String pwd, String email);
+    int updateUser(String id, String pwd, String email, String tel);
      List<OrderDto> selectOrderList(String id);
      List<TermDto> selectTermsList();
+     int checkTel(String tel);
 }

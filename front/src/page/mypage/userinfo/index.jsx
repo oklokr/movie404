@@ -1,4 +1,4 @@
-import { sendSMS, smsAuth, updateUser } from "@/api/admin"
+import { checkTel, sendSMS, smsAuth, updateUser } from "@/api/admin"
 import { sendAuthEmail, signupCheckEmail } from "@/api/signup"
 import { selectUser } from "@/store/selectors"
 import {
@@ -116,7 +116,7 @@ function User(props) {
         id: userinfo.id,
         pwd: userchange.pwd,
         email: userchange.email + "@" + userchange.domain,
-        // tel: userchange.tel,
+        tel: tel,
       }).then((res) => {
         if (res.code === 200) {
           showAlert({ message: "수정완료", type: "success" })
@@ -252,10 +252,25 @@ function User(props) {
       const sendsms = () => {
         sendSMS({ phone: tel }).then((res) => {
           console.log(res)
+          showAlert({
+            message: "문자메시지를 전송했습니다. 휴대폰 인증번호를 입력해주세요",
+            type: "success",
+          })
+
           isSendSMS(1)
         })
       }
-      sendsms()
+
+      checkTel({ phone: tel }).then((res) => {
+        if (res.code === 200) {
+          sendsms()
+        } else {
+          showAlert({
+            message: "이미 등록된 휴대폰 번호입니다.",
+            type: "error",
+          })
+        }
+      })
     }
     function handleSMSAuth(e) {
       const smsauth = () => {
@@ -263,8 +278,8 @@ function User(props) {
           console.log(res)
           if (res.code === 200) {
             showAlert({ message: "인증성공!", type: "success" })
-
             isSendSMS(0)
+            userchange.tel = tel
           }
         })
       }

@@ -153,6 +153,9 @@
     <select id="checkEmail" resultType="int">
         SELECT COUNT(*) FROM MEMBERS WHERE EMAIL=#{email}
     </select>
+          <select id="checkTel" resultType="int">
+        SELECT COUNT(*) FROM MEMBERS WHERE TEL=#{tel}
+    </select>
     <insert id="insertUser" parameterType="com.project.model.UserDto">
         INSERT MEMBERS 
         (USER_ID, PASSWD, USER_NAME, EMAIL, TEL, SIGNUP_DATE, 
@@ -175,7 +178,7 @@
     UPDATE MEMBERS SET VIEW_ADULT=#{adult}, LANG_TPCD=#{lang}, DATE_TPCD=#{dateformat}, SAVE_HISTORY=#{savehistory}, AGE=#{age} WHERE USER_ID=#{id}
     </update>
   <update id="updateUser">
-    UPDATE MEMBERS SET PASSWD=#{pwd}, EMAIL=#{email} WHERE USER_ID=#{id}
+    UPDATE MEMBERS SET PASSWD=#{pwd}, EMAIL=#{email}, TEL=#{tel} WHERE USER_ID=#{id}
     </update>
     <select id="selectOrderList" resultType="OrderDto">
        SELECT oh.ORDER_CODE, m.MOVIE_NAME, oh.PRICE, DATE_FORMAT(oh.ORDER_DATE, '%Y-%m-%d %H:%i')as ORDER_DATE, oh.CARD_NUM
@@ -185,4 +188,7 @@
     <select id="selectTermsList" resultType="TermDto">
      SELECT TERMS_TITLE, TERMS_CONTENT, TERMS_REQUIRED FROM TERMS
     </select>
+   
+
+  
 </mapper>
