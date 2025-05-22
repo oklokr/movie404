@@ -7,12 +7,22 @@ const ModalContext = createContext()
 
 export const ModalProvider = ({ children }) => {
   // type: message, confirm
-  const [modal, setModal] = useState({ open: false, title: "알림", content: null, type: "message" })
+  const [modal, setModal] = useState({
+    open: false,
+    title: "알림",
+    content: null,
+    type: "message",
+    fn: () => {},
+  })
   const [alert, setAlert] = useState({ open: false, message: "", type: "info" })
 
-  const openModal = ({ title = "알림", content = null, type = "message" }) =>
-    setModal({ open: true, title, content, type })
-  const closeModal = () => setModal({ open: false, title: null, content: null, type: "" })
+  const openModal = ({ title = "알림", content = null, type = "message", fn = () => {} }) => {
+    console.log(title, content, type)
+    setModal({ open: true, title, content, type, fn })
+  }
+
+  const closeModal = () =>
+    setModal({ open: false, title: null, content: null, type: "", fn: () => {} })
 
   const showAlert = ({ message, type = "info" }) => {
     setAlert({ open: true, message, type })
@@ -71,7 +81,7 @@ export const ModalProvider = ({ children }) => {
           <div className="btn-wrap" css={btnWrapStyle}>
             {modal.type === "confirm" ? (
               <>
-                <Button variant="contained" size="medium">
+                <Button variant="contained" size="medium" onClick={modal.fn}>
                   확인
                 </Button>
                 <Button variant="outlined" size="medium" onClick={closeModal}>
@@ -79,7 +89,9 @@ export const ModalProvider = ({ children }) => {
                 </Button>
               </>
             ) : (
-              <Button>확인</Button>
+              <Button variant="contained" onClick={modal.fn}>
+                확인
+              </Button>
             )}
           </div>
         </Box>
