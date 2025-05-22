@@ -35,7 +35,9 @@ public class WebConfig implements WebMvcConfigurer {
             "/api/main/movieList",
             "/api/main/movie/detail",
             "/api/find/*",
-           // "/api/checkId",
+            "/api/admin/checktel",
+            "/api/send-one",
+            "/api/sms-auth",
         };
 
         registry.addInterceptor(authInterceptor)

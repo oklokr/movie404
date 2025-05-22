@@ -280,6 +280,8 @@ function User(props) {
             showAlert({ message: "인증성공!", type: "success" })
             isSendSMS(0)
             userchange.tel = tel
+          } else {
+            showAlert({ message: "인증번호가 일치하지 않습니다.", type: "error" })
           }
         })
       }

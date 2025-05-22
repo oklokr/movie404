@@ -31,9 +31,30 @@ public class Findid {
             else
                id = id.substring(0,length-3)+"***" ;
 
-        return new ApiResponse(id);
+        return new ApiResponse(200,"success",id);
         }
 
         return new ApiResponse(404,"fail",null);
     }
+
+ @PostMapping("/findidbyTel")
+    public ApiResponse findIdbyTel(@RequestBody Map<String, Object> requestBody) {
+        String tel = (String) requestBody.get("phone");
+
+        String id = userService.selectIdbyTel(tel);
+
+        if(id!=""){
+            int length = id.length();
+
+            if(length<5)
+               id = id.substring(0,length-2) +"**";
+            else
+               id = id.substring(0,length-3)+"***" ;
+
+        return new ApiResponse(200,"success",id);
+        }
+
+        return new ApiResponse(404,"fail",null);
+    }
+    
 }

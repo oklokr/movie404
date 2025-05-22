@@ -139,5 +139,10 @@ public class UserService {
     public int checkTel(String tel) {
         return userMapper.checkTel(tel);
     }
+public String selectIdbyTel(String tel){
+
+        return userMapper.selectIdbyTel(tel);
+    }
+    
     
 }

@@ -167,6 +167,9 @@
     <select id="selectIdbyEmail" resultType="String">
         SELECT USER_ID FROM MEMBERS WHERE EMAIL=#{email}
     </select>
+    <select id="selectIdbyTel" resultType="String">
+        SELECT USER_ID FROM MEMBERS WHERE TEL=#{tel}
+    </select>
     <select id="checkUserByIdEmail" resultType="int">
         SELECT COUNT(*) FROM MEMBERS WHERE EMAIL=#{email} and USER_ID=#{id}
     </select>

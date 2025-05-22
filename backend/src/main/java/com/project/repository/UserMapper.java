@@ -37,4 +37,5 @@ public interface UserMapper {
      List<OrderDto> selectOrderList(String id);
      List<TermDto> selectTermsList();
      int checkTel(String tel);
+     String selectIdbyTel(String tel);
 }

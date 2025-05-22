@@ -7,3 +7,11 @@ export function selectIdbyEmail(data) {
     data,
   })
 }
+
+export function selectIdbyTel(data) {
+  return request({
+    url: "/api/find/findidbyTel",
+    method: "post",
+    data,
+  })
+}
