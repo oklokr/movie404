@@ -5,6 +5,7 @@ import { selectUser } from "@/store/selectors"
 import { communityGetNoticeList } from "@/api/community"
 import Button from "@mui/material/Button"
 import { css } from "@emotion/react"
+import { useModal } from "@/component/modalProvider"
 
 export default function NoticeList() {
   const navigate = useNavigate()
@@ -16,6 +17,7 @@ export default function NoticeList() {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
   const [loading, setLoading] = useState(false)
+  const { openModal, closeModal, showAlert } = useModal()
 
   useEffect(() => {
     setLoading(true)
@@ -42,6 +44,22 @@ export default function NoticeList() {
       ),
     )
     setCurrentPage(1)
+  }
+
+  // 공지 작성 버튼 클릭 시 공통모달로 접근 제한 처리
+  const handleWriteClick = () => {
+    if (!isAdmin) {
+      openModal({
+        title: "접근 제한",
+        content: "관리자만 작성할 수 있습니다.",
+        type: "message",
+        fn: () => {
+          closeModal()
+        },
+      })
+      return
+    }
+    navigate("/community/notice/write")
   }
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage)
@@ -90,20 +108,18 @@ export default function NoticeList() {
         </Button>
       </div>
       <div style={{ textAlign: "right", marginBottom: 10 }}>
-        {isAdmin && (
-          <Button
-            variant="contained"
-            sx={{
-              minWidth: 90,
-              fontWeight: 600,
-              fontSize: 15,
-              height: 40,
-            }}
-            onClick={() => navigate("/community/notice/write")}
-          >
-            작성
-          </Button>
-        )}
+        <Button
+          variant="contained"
+          sx={{
+            minWidth: 90,
+            fontWeight: 600,
+            fontSize: 15,
+            height: 40,
+          }}
+          onClick={handleWriteClick}
+        >
+          작성
+        </Button>
       </div>
       <div style={{ marginBottom: 10, color: "#888", fontWeight: 500 }}>
         총 {filtered.length.toLocaleString()} 개

@@ -3,6 +3,7 @@ import { useNavigate, useParams, useLocation } from "react-router"
 import { css } from "@emotion/react"
 import { fetchUserDetail, resetUserPassword, updateUserType } from "@/api/admin"
 import Button from "@mui/material/Button"
+import { useModal } from "@/component/modalProvider"
 
 const userTypeList = ["일반회원", "VIP회원", "탈퇴회원", "관리자"]
 
@@ -26,9 +27,9 @@ export default function AdminUserDetail() {
   const [user, setUser] = useState(null)
   const [password, setPassword] = useState("")
   const [type, setType] = useState("")
-  const [showConfirm, setShowConfirm] = useState(false)
   const [notFound, setNotFound] = useState(false)
   const [loading, setLoading] = useState(false)
+  const { openModal, closeModal, showAlert } = useModal()
 
   useEffect(() => {
     setUser(null)
@@ -62,29 +63,35 @@ export default function AdminUserDetail() {
   if (notFound) return <div css={notFoundStyle}>존재하지 않는 사용자입니다.</div>
   if (!user) return <div>로딩중...</div>
 
-  const handleResetPassword = () => setShowConfirm(true)
-  const handleConfirmReset = async () => {
-    setLoading(true)
-    try {
-      await resetUserPassword(user.id)
-      setPassword("1234")
-      alert("비밀번호가 1234로 초기화되었습니다.")
-    } catch {
-      alert("비밀번호 초기화 실패")
-    }
-    setLoading(false)
-    setShowConfirm(false)
+  const handleResetPassword = () => {
+    openModal({
+      title: "비밀번호 초기화",
+      content: "비밀번호를 1234로 초기화하시겠습니까?",
+      type: "confirm",
+      fn: async () => {
+        closeModal()
+        setLoading(true)
+        try {
+          await resetUserPassword(user.id)
+          setPassword("1234")
+          showAlert({ message: "비밀번호가 1234로 초기화되었습니다.", type: "success" })
+        } catch {
+          showAlert({ message: "비밀번호 초기화 실패", type: "error" })
+        }
+        setLoading(false)
+      },
+    })
   }
-  const handleCancelReset = () => setShowConfirm(false)
+
   const handleTypeChange = (e) => setType(e.target.value)
   const handleApplyType = async () => {
     setLoading(true)
     try {
       await updateUserType(user.id, userTypeToCode[type])
       setUser({ ...user, type })
-      alert("사용자 유형이 변경되었습니다.")
+      showAlert({ message: "사용자 유형이 변경되었습니다.", type: "success" })
     } catch {
-      alert("유형 변경 실패")
+      showAlert({ message: "유형 변경 실패", type: "error" })
     }
     setLoading(false)
   }
@@ -175,31 +182,6 @@ export default function AdminUserDetail() {
           목록
         </Button>
       </div>
-      {showConfirm && (
-        <div css={modalOverlay}>
-          <div css={modalBox}>
-            <div css={modalMsg}>비밀번호를 1234로 초기화하시겠습니까?</div>
-            <div css={modalBtnRow}>
-              <Button
-                variant="contained"
-                sx={{ minWidth: 90, fontWeight: 600, fontSize: 15 }}
-                onClick={handleConfirmReset}
-                disabled={loading}
-              >
-                확인
-              </Button>
-              <Button
-                variant="outlined"
-                sx={{ minWidth: 90, fontWeight: 600, fontSize: 15, ml: 2 }}
-                onClick={handleCancelReset}
-                disabled={loading}
-              >
-                취소
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
@@ -286,36 +268,4 @@ const btnRow = css`
   justify-content: flex-end;
   gap: 12px;
   margin-top: 24px;
-`
-const modalOverlay = css`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-`
-const modalBox = css`
-  background: #fff;
-  border-radius: 10px;
-  padding: 32px 32px 24px 32px;
-  min-width: 320px;
-  box-shadow: 0 4px 24px #bbb;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`
-const modalMsg = css`
-  font-size: 17px;
-  color: #222;
-  margin-bottom: 24px;
-  text-align: center;
-`
-const modalBtnRow = css`
-  display: flex;
-  gap: 18px;
 `

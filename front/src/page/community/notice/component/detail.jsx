@@ -5,6 +5,7 @@ import { selectUser } from "@/store/selectors"
 import { communityGetNoticeDetail, communityDeleteNotice } from "@/api/community"
 import Button from "@mui/material/Button"
 import { css } from "@emotion/react"
+import { useModal } from "@/component/modalProvider"
 
 export default function NoticeDetail() {
   const { id } = useParams()
@@ -14,6 +15,7 @@ export default function NoticeDetail() {
   const [deleting, setDeleting] = useState(false)
   const user = useSelector(selectUser)
   const isAdmin = user.info?.userTpcd === "2"
+  const { openModal, closeModal, showAlert } = useModal()
 
   useEffect(() => {
     setLoading(true)
@@ -29,15 +31,24 @@ export default function NoticeDetail() {
   }, [id])
 
   const handleDelete = () => {
-    if (window.confirm("정말 삭제하시겠습니까?")) {
-      setDeleting(true)
-      communityDeleteNotice({ noticeCode: id })
-        .then(() => {
-          setDeleting(false)
+    openModal({
+      title: "삭제 확인",
+      content: "정말 삭제하시겠습니까?",
+      type: "confirm",
+      fn: async () => {
+        closeModal()
+        setDeleting(true)
+        try {
+          await communityDeleteNotice({ noticeCode: id })
+          showAlert({ message: "삭제되었습니다.", type: "success" })
           navigate("/community/notice")
-        })
-        .catch(() => setDeleting(false))
-    }
+        } catch {
+          showAlert({ message: "삭제에 실패했습니다.", type: "error" })
+        } finally {
+          setDeleting(false)
+        }
+      },
+    })
   }
 
   if (loading) return null

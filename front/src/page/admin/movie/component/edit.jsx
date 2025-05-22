@@ -9,10 +9,12 @@ import {
   fetchCreatorList,
 } from "@/api/admin"
 import Button from "@mui/material/Button"
+import { useModal } from "@/component/modalProvider"
 
 export default function MovieEdit() {
   const navigate = useNavigate()
   const { movieCode } = useParams()
+  const { openModal, closeModal, showAlert } = useModal()
   // 폼 상태
   const [poster, setPoster] = useState("")
   const [posterInput, setPosterInput] = useState("")
@@ -132,7 +134,7 @@ export default function MovieEdit() {
   const addDirector = (code) => {
     if (!code) return
     if (directors.length >= 2) {
-      alert("감독은 최대 2명까지 등록할 수 있습니다.")
+      showAlert({ message: "감독은 최대 2명까지 등록할 수 있습니다.", type: "warning" })
       return
     }
     if (!directors.includes(code)) {
@@ -147,7 +149,7 @@ export default function MovieEdit() {
   const addCast = (code) => {
     if (!code) return
     if (casts.length >= 5) {
-      alert("출연진은 최대 5명까지 등록할 수 있습니다.")
+      showAlert({ message: "출연진은 최대 5명까지 등록할 수 있습니다.", type: "warning" })
       return
     }
     if (!casts.includes(code)) {
@@ -189,9 +191,15 @@ export default function MovieEdit() {
       dvdDateTo
 
     if (hasValue) {
-      if (window.confirm("작성 중인 내용이 있습니다. 정말 목록으로 이동하시겠습니까?")) {
-        navigate("/admin/movie")
-      }
+      openModal({
+        title: "확인",
+        content: "작성 중인 내용이 있습니다. 정말 목록으로 이동하시겠습니까?",
+        type: "confirm",
+        fn: () => {
+          closeModal()
+          navigate("/admin/movie")
+        },
+      })
     } else {
       navigate("/admin/movie")
     }
@@ -199,17 +207,19 @@ export default function MovieEdit() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!genre) return alert("장르를 선택하세요.")
-    if (!rating) return alert("관람등급을 선택하세요.")
-    if (!title) return alert("제목을 입력하세요.")
-    if (!desc) return alert("설명을 입력하세요.")
-    if (directors.length === 0) return alert("감독을 1명 이상 등록하세요.")
-    if (casts.length === 0) return alert("출연진을 1명 이상 등록하세요.")
+    if (!genre) return showAlert({ message: "장르를 선택하세요.", type: "warning" })
+    if (!rating) return showAlert({ message: "관람등급을 선택하세요.", type: "warning" })
+    if (!title) return showAlert({ message: "제목을 입력하세요.", type: "warning" })
+    if (!desc) return showAlert({ message: "설명을 입력하세요.", type: "warning" })
+    if (directors.length === 0)
+      return showAlert({ message: "감독을 1명 이상 등록하세요.", type: "warning" })
+    if (casts.length === 0)
+      return showAlert({ message: "출연진을 1명 이상 등록하세요.", type: "warning" })
 
     if (dvdUse) {
-      if (!dvdPrice) return alert("DVD 판매금액을 입력하세요.")
-      if (!dvdDateFrom) return alert("DVD 시작일을 입력하세요.")
-      if (!dvdDateTo) return alert("DVD 종료일을 입력하세요.")
+      if (!dvdPrice) return showAlert({ message: "DVD 판매금액을 입력하세요.", type: "warning" })
+      if (!dvdDateFrom) return showAlert({ message: "DVD 시작일을 입력하세요.", type: "warning" })
+      if (!dvdDateTo) return showAlert({ message: "DVD 종료일을 입력하세요.", type: "warning" })
     }
 
     setLoading(true)
@@ -238,8 +248,10 @@ export default function MovieEdit() {
 
       formData.append("DVD_USE", dvdUse ? "Y" : "N")
       if (dvdUse) {
+        // 할인율이 비어있으면 0으로 처리
+        const discountValue = dvdDiscount === "" ? "0" : dvdDiscount
         formData.append("DVD_PRICE", dvdPrice)
-        formData.append("DVD_DISCOUNT", dvdDiscount === "" ? "0" : dvdDiscount)
+        formData.append("DVD_DISCOUNT", discountValue)
         formData.append("DVD_DATE_FROM", dvdDateFrom)
         formData.append("DVD_DATE_TO", dvdDateTo)
       } else {
@@ -251,14 +263,17 @@ export default function MovieEdit() {
 
       if (movieCode) {
         await updateMovie(movieCode, formData)
-        alert("수정이 완료되었습니다.")
+        showAlert({ message: "수정이 완료되었습니다.", type: "success" })
       } else {
         await createMovie(formData)
-        alert("등록이 완료되었습니다.")
+        showAlert({ message: "등록이 완료되었습니다.", type: "success" })
       }
       navigate("/admin/movie")
     } catch (err) {
-      alert((movieCode ? "수정" : "등록") + " 실패: " + (err?.message || "알 수 없는 오류"))
+      showAlert({
+        message: (movieCode ? "수정" : "등록") + " 실패: " + (err?.message || "알 수 없는 오류"),
+        type: "error",
+      })
     } finally {
       setLoading(false)
     }
