@@ -7,6 +7,7 @@ import { commonGetUserInfo } from "@/api/common"
 import { setUserInfo } from "@/store/slices/user"
 import { communityGetQnaDetail, communityEditQna } from "@/api/community"
 import Button from "@mui/material/Button"
+import { useModal } from "@/component/modalProvider"
 
 export default function QnaEdit() {
   const navigate = useNavigate()
@@ -14,6 +15,7 @@ export default function QnaEdit() {
   const dispatch = useDispatch()
   const user = useSelector(selectUser)
   const isEdit = !!id
+  const { openModal, closeModal, showAlert } = useModal()
 
   const [form, setForm] = useState({
     title: "",
@@ -59,9 +61,15 @@ export default function QnaEdit() {
   const handleListClick = () => {
     const hasValue = form.title.trim() || form.content.trim()
     if (hasValue) {
-      if (window.confirm("작성 중인 내용이 있습니다. 정말 목록으로 이동하시겠습니까?")) {
-        navigate("/community/qna")
-      }
+      openModal({
+        title: "확인",
+        content: "작성 중인 내용이 있습니다. 정말 목록으로 이동하시겠습니까?",
+        type: "confirm",
+        fn: () => {
+          closeModal()
+          navigate("/community/qna")
+        },
+      })
     } else {
       navigate("/community/qna")
     }
@@ -69,11 +77,11 @@ export default function QnaEdit() {
 
   const handleSubmit = () => {
     if (!form.title.trim() || !form.content.trim()) {
-      alert("제목과 내용을 입력하세요.")
+      showAlert({ message: "제목과 내용을 입력하세요.", type: "warning" })
       return
     }
     if (!user.info?.userId) {
-      alert("로그인 정보가 없습니다. 다시 로그인 해주세요.")
+      showAlert({ message: "로그인 정보가 없습니다. 다시 로그인 해주세요.", type: "warning" })
       return
     }
     setLoading(true)
@@ -85,6 +93,7 @@ export default function QnaEdit() {
     })
       .then(() => {
         setLoading(false)
+        showAlert({ message: isEdit ? "수정되었습니다." : "작성되었습니다.", type: "success" })
         navigate("/community/qna")
       })
       .catch(() => setLoading(false))

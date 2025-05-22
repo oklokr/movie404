@@ -5,6 +5,7 @@ import { selectUser } from "@/store/selectors"
 import { communityGetNoticeDetail, communityEditNotice } from "@/api/community"
 import Button from "@mui/material/Button"
 import { css } from "@emotion/react"
+import { useModal } from "@/component/modalProvider"
 
 export default function NoticeEdit() {
   const navigate = useNavigate()
@@ -12,6 +13,7 @@ export default function NoticeEdit() {
   const user = useSelector(selectUser)
   const isEdit = !!id
   const isAdmin = user.info?.userTpcd === "2"
+  const { openModal, closeModal, showAlert } = useModal()
 
   const [form, setForm] = useState({
     type: "",
@@ -23,10 +25,17 @@ export default function NoticeEdit() {
 
   useEffect(() => {
     if (!isAdmin) {
-      alert("관리자만 접근 가능합니다.")
-      navigate("/community/notice")
+      openModal({
+        title: "접근 제한",
+        content: "관리자만 접근 가능합니다.",
+        type: "message",
+        fn: () => {
+          closeModal()
+          navigate("/community/notice")
+        },
+      })
     }
-  }, [isAdmin, navigate])
+  }, [isAdmin, navigate, openModal, closeModal])
 
   useEffect(() => {
     if (isEdit) {
@@ -53,9 +62,15 @@ export default function NoticeEdit() {
   const handleListClick = () => {
     const hasValue = form.title.trim() || form.content.trim()
     if (hasValue) {
-      if (window.confirm("작성 중인 내용이 있습니다. 정말 목록으로 이동하시겠습니까?")) {
-        navigate("/community/notice")
-      }
+      openModal({
+        title: "확인",
+        content: "작성 중인 내용이 있습니다. 정말 목록으로 이동하시겠습니까?",
+        type: "confirm",
+        fn: () => {
+          closeModal()
+          navigate("/community/notice")
+        },
+      })
     } else {
       navigate("/community/notice")
     }
@@ -63,7 +78,7 @@ export default function NoticeEdit() {
 
   const handleSubmit = () => {
     if (!form.type.trim() || !form.title.trim() || !form.content.trim()) {
-      alert("구분, 제목, 내용을 입력하세요.")
+      showAlert({ message: "구분, 제목, 내용을 입력하세요.", type: "warning" })
       return
     }
     setLoading(true)
@@ -76,6 +91,7 @@ export default function NoticeEdit() {
     })
       .then(() => {
         setLoading(false)
+        showAlert({ message: isEdit ? "수정되었습니다." : "작성되었습니다.", type: "success" })
         navigate("/community/notice")
       })
       .catch(() => setLoading(false))

@@ -7,6 +7,7 @@ import { commonGetUserInfo } from "@/api/common"
 import { setUserInfo } from "@/store/slices/user"
 import { communityGetQnaList } from "@/api/community"
 import Button from "@mui/material/Button"
+import { useModal } from "@/component/modalProvider"
 
 export default function QnaList() {
   const navigate = useNavigate()
@@ -18,6 +19,7 @@ export default function QnaList() {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
   const [loading, setLoading] = useState(false)
+  const { openModal, closeModal, showAlert } = useModal()
 
   // 사용자 정보가 없으면 불러오기
   useEffect(() => {
@@ -49,6 +51,22 @@ export default function QnaList() {
       ),
     )
     setCurrentPage(1)
+  }
+
+  // 작성 버튼 클릭 시 로그인 확인
+  const handleWriteClick = () => {
+    if (!user.info?.userId) {
+      openModal({
+        title: "로그인 필요",
+        content: "로그인 후 문의를 작성할 수 있습니다.",
+        type: "message",
+        fn: () => {
+          closeModal()
+        },
+      })
+      return
+    }
+    navigate("/community/qna/write")
   }
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage)
@@ -108,7 +126,7 @@ export default function QnaList() {
             color: undefined,
             borderColor: undefined,
           }}
-          onClick={() => navigate("/community/qna/write")}
+          onClick={handleWriteClick}
         >
           작성
         </Button>

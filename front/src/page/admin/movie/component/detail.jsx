@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router"
 import { fetchMovieDetail, deleteMovie, fetchGenreList, fetchCreatorList } from "@/api/admin"
 import { css } from "@emotion/react"
 import Button from "@mui/material/Button"
+import { useModal } from "@/component/modalProvider"
 
 export default function MovieDetail() {
   const { movieCode } = useParams()
@@ -10,6 +11,7 @@ export default function MovieDetail() {
   const [genreList, setGenreList] = useState([])
   const [creatorList, setCreatorList] = useState([])
   const navigate = useNavigate()
+  const { openModal, closeModal, showAlert } = useModal()
 
   useEffect(() => {
     fetchMovieDetail(movieCode).then(setMovie)
@@ -21,15 +23,21 @@ export default function MovieDetail() {
   const getCreatorName = (code) => creatorList.find((c) => c.code === code)?.name || code
 
   const handleDelete = async () => {
-    if (window.confirm("정말 삭제하시겠습니까?")) {
-      try {
-        await deleteMovie(movieCode)
-        alert("삭제되었습니다.")
-        navigate("/admin/movie")
-      } catch (e) {
-        alert("삭제 실패: " + (e?.message || "알 수 없는 오류"))
-      }
-    }
+    openModal({
+      title: "삭제 확인",
+      content: "정말 삭제하시겠습니까?",
+      type: "confirm",
+      fn: async () => {
+        closeModal()
+        try {
+          await deleteMovie(movieCode)
+          showAlert({ message: "삭제되었습니다.", type: "success" })
+          navigate("/admin/movie")
+        } catch (e) {
+          showAlert({ message: "삭제 실패: " + (e?.message || "알 수 없는 오류"), type: "error" })
+        }
+      },
+    })
   }
 
   if (!movie) return <div css={wrapStyle}>로딩중...</div>

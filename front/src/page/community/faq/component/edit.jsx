@@ -1,7 +1,8 @@
 import { css } from "@emotion/react"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useRef } from "react"
 import { useNavigate, useParams } from "react-router"
 import { communityGetFaqDetail, communityEditFaq, communityDeleteFaq } from "@/api/community"
+import { useModal } from "@/component/modalProvider"
 
 export default function FaqEdit() {
   const navigate = useNavigate()
@@ -10,6 +11,8 @@ export default function FaqEdit() {
 
   const [form, setForm] = useState({ question: "", answer: "" })
   const [loading, setLoading] = useState(false)
+  const { openModal, closeModal, showAlert } = useModal()
+  const confirmCallback = useRef(null)
 
   useEffect(() => {
     if (isEdit) {
@@ -32,9 +35,15 @@ export default function FaqEdit() {
   // 작성된 내용이 있을 때 확인 후 이동 (삭제는 예외)
   const handleLeave = (callback) => {
     if (form.question.trim() || form.answer.trim()) {
-      if (window.confirm("작성 중인 내용이 있습니다. 정말 나가시겠습니까?")) {
-        callback()
-      }
+      openModal({
+        title: "확인",
+        content: "작성 중인 내용이 있습니다. 정말 나가시겠습니까?",
+        type: "confirm",
+        fn: () => {
+          closeModal()
+          callback()
+        },
+      })
     } else {
       callback()
     }
@@ -43,22 +52,31 @@ export default function FaqEdit() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!form.question.trim() || !form.answer.trim()) {
-      alert("질문과 답변을 모두 입력하세요.")
+      showAlert({ message: "질문과 답변을 모두 입력하세요.", type: "warning" })
       return
     }
     setLoading(true)
     await communityEditFaq({ ...form, faqCode })
     setLoading(false)
+    showAlert({ message: "저장되었습니다.", type: "success" })
     navigate("/community/faq")
   }
 
   // 삭제는 작성중 여부와 상관없이 바로 삭제 확인만
-  const handleDelete = async () => {
-    if (!window.confirm("정말 삭제하시겠습니까?")) return
-    setLoading(true)
-    await communityDeleteFaq({ faqCode })
-    setLoading(false)
-    navigate("/community/faq")
+  const handleDelete = () => {
+    openModal({
+      title: "삭제 확인",
+      content: "정말 삭제하시겠습니까?",
+      type: "confirm",
+      fn: async () => {
+        closeModal()
+        setLoading(true)
+        await communityDeleteFaq({ faqCode })
+        setLoading(false)
+        showAlert({ message: "삭제되었습니다.", type: "success" })
+        navigate("/community/faq")
+      },
+    })
   }
 
   const handleCancel = () => {

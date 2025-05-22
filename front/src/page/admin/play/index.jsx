@@ -9,6 +9,7 @@ import {
   createTheater,
   deleteTheater,
 } from "@/api/admin"
+import { useModal } from "@/component/modalProvider"
 
 const hours = Array.from({ length: 17 }, (_, i) => i + 6) // 06~22
 const PAGE_SIZE = 5
@@ -45,7 +46,7 @@ export default function Play() {
 
   const [creatorList, setCreatorList] = useState([])
 
-  const [confirmApplyOpen, setConfirmApplyOpen] = useState(false)
+  const { openModal, closeModal, showAlert } = useModal()
 
   const fetchReserved = async (date, theaters) => {
     if (!date) {
@@ -92,7 +93,10 @@ export default function Play() {
         setCreatorList(res.data ? res.data : res)
       })
       .catch((err) => {
-        alert("크리에이터 목록을 불러올 수 없습니다.\n" + (err?.message || err))
+        showAlert({
+          message: "크리에이터 목록을 불러올 수 없습니다.\n" + (err?.message || err),
+          type: "error",
+        })
       })
   }, [])
 
@@ -170,7 +174,7 @@ export default function Play() {
       setTheaters((prev) => [...prev, { id: nextId, code: nextCode, name: nextName }])
       setSelectedHours((prev) => ({ ...prev, [nextId]: [] }))
     } catch (e) {
-      alert("상영관 추가에 실패했습니다.\n" + (e?.message || e))
+      showAlert({ message: "상영관 추가에 실패했습니다.\n" + (e?.message || e), type: "error" })
     }
   }
 
@@ -178,30 +182,37 @@ export default function Play() {
   const handleDeleteTheater = async (id) => {
     const theater = theaters.find((t) => t.id === id)
     if ((reservedHours[id]?.length ?? 0) > 0) {
-      alert("이미 상영이 등록된 상영관은 삭제할 수 없습니다.")
+      showAlert({ message: "이미 상영이 등록된 상영관은 삭제할 수 없습니다.", type: "warning" })
       return
     }
-    if (!window.confirm("정말 삭제하시겠습니까?")) return
-    try {
-      await deleteTheater({ code: theater.code })
-      setTheaters((prev) => prev.filter((t) => t.id !== id))
-      setSelectedHours((prev) => {
-        const newObj = { ...prev }
-        delete newObj[id]
-        return newObj
-      })
-      setTimeout(() => {
-        setSelectedTheater((prev) => {
-          if (prev === id) {
-            const remain = theaters.filter((t) => t.id !== id)
-            return remain.length > 0 ? remain[0].id : null
-          }
-          return prev
-        })
-      }, 0)
-    } catch (e) {
-      alert("상영관 삭제에 실패했습니다.\n" + (e?.message || e))
-    }
+    openModal({
+      title: "확인",
+      content: "정말 삭제하시겠습니까?",
+      type: "confirm",
+      fn: async () => {
+        closeModal()
+        try {
+          await deleteTheater({ code: theater.code })
+          setTheaters((prev) => prev.filter((t) => t.id !== id))
+          setSelectedHours((prev) => {
+            const newObj = { ...prev }
+            delete newObj[id]
+            return newObj
+          })
+          setTimeout(() => {
+            setSelectedTheater((prev) => {
+              if (prev === id) {
+                const remain = theaters.filter((t) => t.id !== id)
+                return remain.length > 0 ? remain[0].id : null
+              }
+              return prev
+            })
+          }, 0)
+        } catch (e) {
+          showAlert({ message: "상영관 삭제에 실패했습니다.\n" + (e?.message || e), type: "error" })
+        }
+      },
+    })
   }
 
   const canGoNext = (() => {
@@ -271,7 +282,7 @@ export default function Play() {
           movieCode: selectedMovieInfo.movieCode,
         }
         await createSchedule(payload)
-        alert("상영 스케줄이 저장되었습니다.")
+        showAlert({ message: "상영 스케줄이 저장되었습니다.", type: "success" })
         setStep(1)
         setGoStep2(false)
         setSelectedMovieInfo(null)
@@ -279,24 +290,32 @@ export default function Play() {
         setDiscount("")
         setSelectedHours((prev) => ({ ...prev, [selectedTheater]: [] }))
       } catch (err) {
-        alert("저장에 실패했습니다.\n" + (err?.message || err))
+        showAlert({ message: "저장에 실패했습니다.\n" + (err?.message || err), type: "error" })
       }
     }
 
     const handleApply = () => {
       if (!selectedMovieInfo) {
-        alert("영화를 등록해주세요.")
+        showAlert({ message: "영화를 등록해주세요.", type: "warning" })
         return
       }
       if (!price) {
-        alert("가격을 입력해주세요.")
+        showAlert({ message: "가격을 입력해주세요.", type: "warning" })
         return
       }
       if (selectedHourArr.length < 2) {
-        alert("상영 시간을 2시간 이상 선택해주세요.")
+        showAlert({ message: "상영 시간을 2시간 이상 선택해주세요.", type: "warning" })
         return
       }
-      setConfirmApplyOpen(true)
+      openModal({
+        title: "확인",
+        content: "정말로 상영스케줄을 등록하시겠습니까?",
+        type: "confirm",
+        fn: () => {
+          closeModal()
+          doApply()
+        },
+      })
     }
 
     return (
@@ -440,34 +459,6 @@ export default function Play() {
             적용
           </Button>
         </div>
-        {confirmApplyOpen && (
-          <div css={modalOverlay}>
-            <div css={modalBox}>
-              <div css={modalMsg}>정말로 상영스케줄을 등록하시겠습니까?</div>
-              <div css={modalBtnWrap}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  sx={{ minWidth: 90, fontWeight: 600, fontSize: 16 }}
-                  onClick={() => {
-                    setConfirmApplyOpen(false)
-                    doApply()
-                  }}
-                >
-                  확인
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  sx={{ minWidth: 90, fontWeight: 600, fontSize: 16 }}
-                  onClick={() => setConfirmApplyOpen(false)}
-                >
-                  취소
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
         {movieModalOpen && (
           <div css={modalOverlay}>
             <div css={movieModalBox}>
@@ -946,26 +937,4 @@ const modalOverlay = css`
   display: flex;
   align-items: center;
   justify-content: center;
-`
-const modalBox = css`
-  background: #fff;
-  border-radius: 10px;
-  padding: 32px 28px 22px 28px;
-  min-width: 260px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`
-const modalMsg = css`
-  font-size: 18px;
-  color: #222;
-  margin-bottom: 22px;
-  font-weight: 500;
-`
-const modalBtnWrap = css`
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  margin-top: 8px;
 `
