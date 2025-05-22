@@ -26,9 +26,16 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [postForm, setPostForm] = useState(defaultPostForm)
   const handleClickShowPassword = () => setShowPassword((show) => !show)
-  const { openModal, showAlert } = useModal()
+  const { openModal, closeModal, showAlert } = useModal()
 
   const handleLogin = () => {
+    // openModal({
+    //   content: "test",
+    //   fn: () => {
+    //     console.log("이벤트")
+    //     closeModal()
+    //   },
+    // })
     setMessage({
       error: "",
       id: postForm.id === "" ? "※아이디를 입력해주세요." : "",

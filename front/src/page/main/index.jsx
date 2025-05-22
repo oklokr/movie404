@@ -10,6 +10,7 @@ import { Button } from "@mui/material"
 import { usePopup } from "@/component/popupProvider"
 import { useCommon } from "@/store/commonContext"
 import PopMovieDetail from "@/component/popup/popMovieDetail"
+import { useModal } from "@/component/modalProvider"
 
 function MainPage() {
   const [fetchData, setFetchData] = useState({
@@ -23,6 +24,7 @@ function MainPage() {
   const rafRef = useRef()
   const { openPopup } = usePopup()
   const { code } = useCommon()
+  const { openModal, closeModal, showAlert } = useModal()
 
   // 패럴럭스 js
   useEffect(() => {
