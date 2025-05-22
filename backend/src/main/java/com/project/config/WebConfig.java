@@ -34,6 +34,7 @@ public class WebConfig implements WebMvcConfigurer {
             "/api/common/commonCodeList",
             "/api/main/movieList",
             "/api/main/movie/detail",
+            "/api/find/*",
            // "/api/checkId",
         };
 

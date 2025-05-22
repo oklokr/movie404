@@ -11,8 +11,8 @@ import { useState } from "react"
 import { sendAuthEmail, signupCheckEmail } from "@/api/signup"
 import { selectIdbyEmail } from "@/api/findid"
 import { useModal } from "@/component/modalProvider"
+import { useNavigate } from "react-router"
 
-const { openModal, showAlert } = useModal()
 const findid_info = {
   id: "",
   pwd: "",
@@ -20,6 +20,8 @@ const findid_info = {
   authcode: "",
 }
 function findId() {
+  const { openModal, showAlert } = useModal()
+
   const [radio, setRadio] = useState("email")
   const [TelButtonActive, setTelButtonActive] = useState(0)
   const [EmailButtonActive, setEmailButtonActive] = useState(0)
@@ -28,6 +30,7 @@ function findId() {
   const [commentEmail, setCommentEmail] = useState("이메일을 입력해주세요")
   const [Email, setEmail] = useState("")
   const [InputCode, setInputCode] = useState("")
+  const navigate = useNavigate()
 
   function handleChangeEmail(e) {
     const val = e.target.value
@@ -101,7 +104,6 @@ function findId() {
   function authEmailCheck(e) {
     if (InputCode == findid_info.authcode) {
       showAlert({ message: "인증번호가 일치합니다!", type: "success" })
-
       showId()
     } else showAlert({ message: "인증번호가 일치하지 않습니다!", type: "error" })
   }
@@ -116,7 +118,9 @@ function findId() {
       email: findid_info.email,
     }).then((res) => {
       if (res.code === 200) {
-        showAlert({ message: "아이디 : " + res.data, type: "success" })
+        //openModal({ message: "아이디 : " + res.data, type: "confirm" })
+        //alert("아이디:" + res.data)
+        navigate("/resultId", { state: res.data })
       }
     })
   }
@@ -204,8 +208,14 @@ function findId() {
         </>
       )}
 
-      <Button variant="outlined">이전</Button>
-      <Button variant="contained">로그인</Button>
+      <Button
+        variant="outlined"
+        onClick={() => {
+          navigate("/login")
+        }}
+      >
+        이전
+      </Button>
     </>
   )
 }

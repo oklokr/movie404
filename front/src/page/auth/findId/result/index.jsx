@@ -1,1 +1,52 @@
+import { useLocation } from "react-router"
 
+import Card from "@mui/material/Card"
+import CardContent from "@mui/material/CardContent"
+import CardMedia from "@mui/material/CardMedia"
+import Typography from "@mui/material/Typography"
+import Button from "@mui/material/Button"
+import CardActionArea from "@mui/material/CardActionArea"
+import CardActions from "@mui/material/CardActions"
+import logoImg from "@/assets/images/logo/logo2.png"
+
+function resultId() {
+  const location = useLocation()
+
+  return (
+    <div css={css}>
+      <Card sx={{ maxWidth: 500, minHeight: 500 }} css={css}>
+        <CardActionArea sx={{ backgroundColor: "black" }}>
+          <CardMedia component="img" height="300" image={logoImg} alt="logo" />
+        </CardActionArea>
+
+        <CardContent>
+          <Typography
+            gutterBottom
+            variant="h5"
+            component="div"
+            sx={{ display: "flex", paddingTop: "20px" }}
+            css={css}
+          >
+            <Typography variant="h5" sx={{ color: "grey", fontFamily: "fantasy" }}>
+              [ 아이디 찾기 결과 ]
+            </Typography>
+          </Typography>
+          <Typography variant="h3" sx={{ color: "", justifySelf: "center" }}>
+            {location.state}
+          </Typography>
+          <Typography
+            variant="h5"
+            sx={{ color: "text.secondary", fontSize: "small", paddingTop: "30px" }}
+          >
+            *일부 마스킹 처리되어 보여집니다.
+          </Typography>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+const css = {
+  justifyItems: "center",
+}
+
+export default resultId
