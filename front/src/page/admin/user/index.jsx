@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router"
 import { css } from "@emotion/react"
 import { fetchUserList } from "@/api/admin"
 import Button from "@mui/material/Button"
+import { useModal } from "@/component/modalProvider"
 
 const PAGE_SIZE = 5
 
@@ -14,6 +15,7 @@ export default function AdminUser() {
   const [type, setType] = useState("전체")
   const navigate = useNavigate()
   const location = useLocation()
+  const { showAlert } = useModal()
 
   // 쿼리스트링에서 page 읽기
   const getPageFromQuery = () => {
@@ -41,6 +43,7 @@ export default function AdminUser() {
       .then((data) => {
         if (!Array.isArray(data)) {
           setUsers([])
+          showAlert({ message: "회원 목록을 불러올 수 없습니다.", type: "error" })
           return
         }
         setUsers(
@@ -71,8 +74,11 @@ export default function AdminUser() {
           })),
         )
       })
-      .catch(() => setUsers([]))
-  }, [])
+      .catch(() => {
+        setUsers([])
+        showAlert({ message: "회원 목록을 불러올 수 없습니다.", type: "error" })
+      })
+  }, [showAlert])
 
   const filtered = users.filter((u) => {
     const matchType = type === "전체" || u.type === type

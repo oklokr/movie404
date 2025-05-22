@@ -4,6 +4,7 @@ import { useSelector } from "react-redux"
 import { useNavigate } from "react-router"
 import { selectUser } from "@/store/selectors"
 import { communityGetFaqList } from "@/api/community"
+import { useModal } from "@/component/modalProvider"
 
 function Faq() {
   const user = useSelector(selectUser)
@@ -11,6 +12,7 @@ function Faq() {
   const navigate = useNavigate()
   const [faqList, setFaqList] = useState([])
   const [openIndex, setOpenIndex] = useState(null)
+  const { openModal, closeModal, showAlert } = useModal()
 
   useEffect(() => {
     communityGetFaqList()
