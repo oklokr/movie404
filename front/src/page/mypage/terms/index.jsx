@@ -30,15 +30,14 @@ const userinfo = {
 }
 
 const updateTerms = () => {
-  const { showAlert } = useModal()
-
   // alert(userinfo.terms + userinfo.id)
   updateUserTerms({
     id: userinfo.id,
     terms: userinfo.terms,
   }).then((res) => {
     if (res.code === 200) {
-      showAlert({ message: "성공적으로 저장되었습니다.", type: "success" })
+      //showAlert({ message: "성공적으로 저장되었습니다.", type: "success" })
+      alert("성공적으로 저장되었습니다.")
       userinfo.terms = res.data.terms
     }
   })
