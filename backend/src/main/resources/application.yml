@@ -18,9 +18,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:mysql://localhost:3306/bit
+    username: bit
+    password: bit
 
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
@@ -42,7 +42,7 @@ spring:
     secretkey: DQ75ZDEW0G2AE3BO2QHWOMUKDEWDCXK8
 
 server:
-  port: ${SERVER_PORT}
+  port: 9080
 
 mybatis:
   mapper-locations: classpath:mybatis/*.xml
