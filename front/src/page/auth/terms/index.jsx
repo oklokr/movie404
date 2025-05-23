@@ -75,7 +75,7 @@ function terms() {
   const navigate = useNavigate()
 
   function previousPage(e) {
-    navigate("/main")
+    navigate("/login")
   }
 
   return (
