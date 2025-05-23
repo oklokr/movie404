@@ -52,7 +52,7 @@ mybatis:
 
 tmdb:
   api:
-    key: ${TMDB_API_KEY}
+    key: ff91ea6c8c3ef898afc8f92bed76e5da
 
 schedule:
   movie-fetch: "0 0 3 * * *"
