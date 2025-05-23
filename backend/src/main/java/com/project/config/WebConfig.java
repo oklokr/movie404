@@ -50,7 +50,7 @@ public class WebConfig implements WebMvcConfigurer {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:9090");
+        config.addAllowedOrigin("http://192.168.56.101:8080");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 
