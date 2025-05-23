@@ -15,7 +15,12 @@ spring:
     multipart:
       max-file-size: 1MB
       max-request-size: 10MB
-
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+  web:
+    resources:
+      static-locations: classpath:/static/,classpath:/public/,file:/usr/tomcat/webapps/ROOT/
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://192.168.56.101:3306/bit
