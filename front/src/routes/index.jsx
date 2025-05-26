@@ -6,7 +6,7 @@ const pageRoutes = Object.values(modules).flatMap((m) => m.default)
 
 const routes = [
   {
-    path: "/",
+    path: "/not404",
     Component: Layout,
     children: [
       ...pageRoutes,

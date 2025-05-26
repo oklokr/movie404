@@ -32,7 +32,7 @@ function Community() {
         <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
           <li style={{ marginBottom: "18px" }}>
             <NavLink
-              to="/community/notice"
+              to="/not404/community/notice"
               style={({ isActive }) => (isActive ? { ...linkStyle, ...activeStyle } : linkStyle)}
               end
             >
@@ -41,7 +41,7 @@ function Community() {
           </li>
           <li style={{ marginBottom: "18px" }}>
             <NavLink
-              to="/community/qna"
+              to="/not404/community/qna"
               style={({ isActive }) => (isActive ? { ...linkStyle, ...activeStyle } : linkStyle)}
             >
               1:1 문의
@@ -49,7 +49,7 @@ function Community() {
           </li>
           <li style={{ marginBottom: "18px" }}>
             <NavLink
-              to="/community/faq"
+              to="/not404/community/faq"
               style={({ isActive }) => (isActive ? { ...linkStyle, ...activeStyle } : linkStyle)}
             >
               자주 묻는 질문

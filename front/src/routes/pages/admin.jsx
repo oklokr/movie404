@@ -11,7 +11,7 @@ const UserDetail = lazy(() => import("@/page/admin/user/component/detail"))
 
 const admin = [
   {
-    path: "/admin",
+    path: "admin",
     Component: AdminLayout,
     children: [
       {

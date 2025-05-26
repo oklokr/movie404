@@ -5,11 +5,14 @@ const FindPw = lazy(() => import("@/page/auth/findPw"))
 const Signup = lazy(() => import("@/page/auth/signup"))
 const Login = lazy(() => import("@/page/auth/login"))
 const Result = lazy(() => import("@/page/auth/signup/result"))
+const ResultId = lazy(() => import("@/page/auth/findId/result"))
+const ResultPw = lazy(() => import("@/page/auth/findPw/result"))
+
 const Terms = lazy(() => import("@/page/auth/terms"))
 
 const auth = [
   {
-    path: "/login",
+    path: "login",
     Component: Content,
     children: [
       {
@@ -19,7 +22,7 @@ const auth = [
     ],
   },
   {
-    path: "/findId",
+    path: "findId",
     Component: Content,
     children: [
       {
@@ -29,7 +32,7 @@ const auth = [
     ],
   },
   {
-    path: "/findPw",
+    path: "findPw",
     Component: Content,
     children: [
       {
@@ -39,7 +42,7 @@ const auth = [
     ],
   },
   {
-    path: "/signup",
+    path: "signup",
     Component: Content,
     children: [
       {
@@ -49,7 +52,7 @@ const auth = [
     ],
   },
   {
-    path: "/result",
+    path: "result",
     Component: Content,
     children: [
       {
@@ -59,7 +62,27 @@ const auth = [
     ],
   },
   {
-    path: "/terms",
+    path: "resultId",
+    Component: Content,
+    children: [
+      {
+        path: "",
+        Component: ResultId,
+      },
+    ],
+  },
+  {
+    path: "resultPw",
+    Component: Content,
+    children: [
+      {
+        path: "",
+        Component: ResultPw,
+      },
+    ],
+  },
+  {
+    path: "terms",
     Component: Content,
     children: [
       {

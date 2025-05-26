@@ -3,8 +3,8 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.project.repository.QnaMapper">
-    <select id="selectQnaList" resultType="com.project.model.QnaDto">
+<mapper namespace="com.example.not404.repository.QnaMapper">
+    <select id="selectQnaList" resultType="com.example.not404.model.QnaDto">
         SELECT QNA_CODE as qnaCode, TITLE as title, CONTENT as content, USER_ID as userId, WRITE_DATE as writeDate, REPLY as reply
         FROM QNA
         <where>
@@ -15,13 +15,13 @@
         ORDER BY WRITE_DATE DESC
     </select>
 
-    <select id="selectQnaDetail" resultType="com.project.model.QnaDto">
+    <select id="selectQnaDetail" resultType="com.example.not404.model.QnaDto">
         SELECT QNA_CODE as qnaCode, TITLE as title, CONTENT as content, USER_ID as userId, WRITE_DATE as writeDate, REPLY as reply
         FROM QNA
         WHERE QNA_CODE = #{qnaCode}
     </select>
 
-    <insert id="insertQna" parameterType="com.project.model.QnaDto">
+    <insert id="insertQna" parameterType="com.example.not404.model.QnaDto">
         INSERT INTO QNA (QNA_CODE, TITLE, CONTENT, USER_ID, WRITE_DATE)
         VALUES (#{qnaCode}, #{title}, #{content}, #{userId}, NOW())
     </insert>
@@ -30,7 +30,7 @@
         UPDATE QNA SET REPLY = #{reply} WHERE QNA_CODE = #{qnaCode}
     </update>
 
-    <update id="updateQna" parameterType="com.project.model.QnaDto">
+    <update id="updateQna" parameterType="com.example.not404.model.QnaDto">
         UPDATE QNA
         SET TITLE = #{title}, CONTENT = #{content}
         WHERE QNA_CODE = #{qnaCode}
@@ -40,7 +40,7 @@
         DELETE FROM QNA WHERE QNA_CODE = #{qnaCode}
     </delete>
 
-    <select id="selectNoticeList" resultType="com.project.model.QnaDto">
+    <select id="selectNoticeList" resultType="com.example.not404.model.QnaDto">
         SELECT 
             NOTICE_CODE as noticeCode,
             CATEGORY as type,
@@ -60,7 +60,7 @@
         ORDER BY WRITE_DATE DESC
     </select>
 
-    <select id="selectNoticeDetail" resultType="com.project.model.QnaDto">
+    <select id="selectNoticeDetail" resultType="com.example.not404.model.QnaDto">
         SELECT 
             NOTICE_CODE as noticeCode,
             CATEGORY as type,
@@ -72,12 +72,12 @@
         WHERE NOTICE_CODE = #{noticeCode}
     </select>
 
-    <insert id="insertNotice" parameterType="com.project.model.QnaDto">
+    <insert id="insertNotice" parameterType="com.example.not404.model.QnaDto">
         INSERT INTO NOTICE (NOTICE_CODE, CATEGORY, TITLE, CONTENT, WRITER, WRITE_DATE)
         VALUES (#{noticeCode}, #{type}, #{title}, #{content}, #{writer}, NOW())
     </insert>
 
-    <update id="updateNotice" parameterType="com.project.model.QnaDto">
+    <update id="updateNotice" parameterType="com.example.not404.model.QnaDto">
         UPDATE NOTICE
         SET CATEGORY = #{type}, TITLE = #{title}, CONTENT = #{content}
         WHERE NOTICE_CODE = #{noticeCode}
@@ -87,24 +87,24 @@
         DELETE FROM NOTICE WHERE NOTICE_CODE = #{noticeCode}
     </delete>
 
-    <select id="selectFaqList" resultType="com.project.model.QnaDto">
+    <select id="selectFaqList" resultType="com.example.not404.model.QnaDto">
         SELECT FAQ_CODE as faqCode, QUESTION as question, ANSWER as answer
         FROM FAQ
         ORDER BY FAQ_CODE
     </select>
 
-    <select id="selectFaqDetail" resultType="com.project.model.QnaDto">
+    <select id="selectFaqDetail" resultType="com.example.not404.model.QnaDto">
         SELECT FAQ_CODE as faqCode, QUESTION as question, ANSWER as answer
         FROM FAQ
         WHERE FAQ_CODE = #{faqCode}
     </select>
 
-    <insert id="insertFaq" parameterType="com.project.model.QnaDto">
+    <insert id="insertFaq" parameterType="com.example.not404.model.QnaDto">
         INSERT INTO FAQ (FAQ_CODE, QUESTION, ANSWER)
         VALUES (#{faqCode}, #{question}, #{answer})
     </insert>
 
-    <update id="updateFaq" parameterType="com.project.model.QnaDto">
+    <update id="updateFaq" parameterType="com.example.not404.model.QnaDto">
         UPDATE FAQ SET QUESTION = #{question}, ANSWER = #{answer}
         WHERE FAQ_CODE = #{faqCode}
     </update>

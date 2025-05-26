@@ -51,7 +51,7 @@ export default function Header() {
   const handleOpenMyMenu = () => {
     if (!user.info) {
       showAlert({ message: "로그인이 필요한 서비스입니다.", type: "error" })
-      return navigate("/login")
+      return navigate("/not404/login")
     }
     setTimeout(
       () => {
@@ -77,10 +77,10 @@ export default function Header() {
   }, [searchListVisible])
 
   return (
-    <header className={pathname === "/main" ? "main-page" : ""}>
+    <header className={pathname === "/not404/main" ? "main-page" : ""}>
       <div className="header" css={headerStyle}>
         <h1 className="logo">
-          <a href="/main">
+          <a href="/not404/main">
             <span>Not404 Cinema</span>
           </a>
         </h1>
@@ -112,7 +112,9 @@ export default function Header() {
             <IconButton aria-label="user" className="user" onClick={() => handleOpenMyMenu()}>
               <PermIdentityIcon />
             </IconButton>
-            {openMyMenu && <MyMenu state={myMenuState} fn_handleOpenMyMenu={handleOpenMyMenu} />}
+            {openMyMenu && user.info && (
+              <MyMenu state={myMenuState} fn_handleOpenMyMenu={handleOpenMyMenu} />
+            )}
           </li>
         </ul>
       </div>
@@ -191,7 +193,7 @@ const headerStyle = css`
     margin: 0;
     padding: 0;
 
-    li:nth-child(2) {
+    li:nth-of-type(2) {
       position: relative;
     }
 

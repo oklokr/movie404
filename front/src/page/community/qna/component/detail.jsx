@@ -4,6 +4,7 @@ import { useSelector } from "react-redux"
 import { selectUser } from "@/store/selectors"
 import { communityGetQnaDetail, communityReplyQna, communityDeleteQna } from "@/api/community"
 import Button from "@mui/material/Button"
+import { useModal } from "@/component/modalProvider"
 
 export default function QnaDetail() {
   const navigate = useNavigate()
@@ -14,6 +15,7 @@ export default function QnaDetail() {
   const user = useSelector(selectUser)
   const isAdmin = user.info?.userTpcd === "2"
   const isWriter = detail && user.info?.userId === detail.userId
+  const { openModal, closeModal, showAlert } = useModal()
 
   useEffect(() => {
     setLoading(true)
@@ -35,20 +37,33 @@ export default function QnaDetail() {
       .then(() => {
         setDetail({ ...detail, reply: answer })
         setLoading(false)
+        showAlert({ message: "답변이 저장되었습니다.", type: "success" })
       })
-      .catch(() => setLoading(false))
+      .catch(() => {
+        setLoading(false)
+        showAlert({ message: "답변 저장에 실패했습니다.", type: "error" })
+      })
   }
 
   const handleDelete = () => {
-    if (window.confirm("정말 삭제하시겠습니까?")) {
-      setLoading(true)
-      communityDeleteQna({ qnaCode: id })
-        .then(() => {
+    openModal({
+      title: "삭제 확인",
+      content: "정말 삭제하시겠습니까?",
+      type: "confirm",
+      fn: async () => {
+        closeModal()
+        setLoading(true)
+        try {
+          await communityDeleteQna({ qnaCode: id })
+          showAlert({ message: "삭제되었습니다.", type: "success" })
+          navigate("/not404/community/qna")
+        } catch {
+          showAlert({ message: "삭제에 실패했습니다.", type: "error" })
+        } finally {
           setLoading(false)
-          navigate("/community/qna")
-        })
-        .catch(() => setLoading(false))
-    }
+        }
+      },
+    })
   }
 
   if (loading) return <div style={{ padding: 40 }}>로딩중...</div>
@@ -235,7 +250,7 @@ export default function QnaDetail() {
               background: "#e3f2fd",
             },
           }}
-          onClick={() => navigate("/community/qna")}
+          onClick={() => navigate("/not404/community/qna")}
           disabled={loading}
         >
           목록
@@ -255,7 +270,7 @@ export default function QnaDetail() {
                   background: "#1565c0",
                 },
               }}
-              onClick={() => navigate(`/community/qna/${id}/edit`)}
+              onClick={() => navigate(`/not404/community/qna/${id}/edit`)}
               disabled={loading}
             >
               수정

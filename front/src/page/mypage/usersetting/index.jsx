@@ -7,10 +7,9 @@ import { useSelector } from "react-redux"
 import { NavLink } from "react-router"
 import { useModal } from "@/component/modalProvider"
 
-const { openModal, showAlert } = useModal()
 function UserSetMenu() {
   return (
-    <NavLink id="basic-button" to="/mypage/set/user" css={Leftbtn}>
+    <NavLink id="basic-button" to="/not404/mypage/set/user" css={Leftbtn}>
       기본설정
     </NavLink>
   )
@@ -90,6 +89,8 @@ function UserSet() {
       updateSetting()
     }
     const updateSetting = () => {
+      //const { showAlert } = useModal()
+
       updateUserSet({
         id: userinfo.id,
         adult: userinfo.adult,
@@ -99,9 +100,11 @@ function UserSet() {
         age: age,
       }).then((res) => {
         if (res.code === 200) {
-          showAlert({ message: "수정 성공!", type: "success" })
+          alert("수정성공!")
+          //showAlert({ message: "수정 성공!", type: "success" })
         } else {
-          showAlert({ message: "저장실패!", type: "error" })
+          //showAlert({ message: "저장실패!", type: "error" })
+          alert("저장실패!")
         }
       })
     }
@@ -124,6 +127,8 @@ function UserSet() {
       } else userchange.savehistory = "N"
     }
     function handlerAuthAdult(e) {
+      //const { showAlert } = useModal()
+
       const PORTONE_API_SECRET =
         "HAScg24us1bOISHDyTXYY3IWugf79CESXMqOWAOWl5ZX5tvR6jrIrDNtbWkaL8pnAaw6qSYLX3vSym71"
       const identityVerification = `identity-verification-${crypto.randomUUID()}`
@@ -137,11 +142,12 @@ function UserSet() {
       }).then((res) => {
         console.log(encodeURIComponent(res.identityVerificationId))
         if (res.code !== undefined) {
-          return showAlert({ message: "res.message", type: "error" }) //확인필요요
+          //return showAlert({ message: "res.message", type: "error" }) //확인필요요
         } else {
           setAuthAdult(1)
           setAge(23)
-          showAlert({ message: "인증되었습니다!", type: "success" })
+          // showAlert({ message: "인증되었습니다!", type: "success" })
+          alert("인증되었습니다!")
         }
       })
     }

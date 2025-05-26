@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material"
+import { Card, CardActions, CardContent, CardMedia, Grid, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
 import { User, UserMenu } from "./userinfo"
 import { Dvd, DvdMenu } from "./dvd"
@@ -24,13 +24,6 @@ function mypage() {
   const [RPW, setRPW] = useState("")
 
   const location = useLocation()
-  function handlePath(e) {
-    if (e.target.id == "1") setPath("1")
-    else if (e.target.id == "2") setPath("2")
-    else if (e.target.id == "3") setPath("3")
-    else if (e.target.id == "4") setPath("4")
-    else if (e.target.id == "5") setPath("5")
-  }
   useEffect(() => {
     if (location.state != null) {
       if (location.state.path == "1") setPath("1")
@@ -40,24 +33,31 @@ function mypage() {
       else if (location.state.path == "5") setPath("5")
     }
   }, [location])
+  function handlePath(e) {
+    if (e.target.id == "1") setPath("1")
+    else if (e.target.id == "2") setPath("2")
+    else if (e.target.id == "3") setPath("3")
+    else if (e.target.id == "4") setPath("4")
+    else if (e.target.id == "5") setPath("5")
+  }
+
   return (
     <>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 12 }} css={Topcontainer}>
-          <NavLink id="1" to="/mypage/info" css={Topbtn} onClick={handlePath}>
+          <NavLink id="1" to="/not404/mypage/info" css={Topbtn} onClick={handlePath}>
             회원정보
           </NavLink>
-          <NavLink id="2" to="/mypage/dvd" css={Topbtn} onClick={handlePath}>
+          <NavLink id="2" to="/not404/mypage/dvd" css={Topbtn} onClick={handlePath}>
             DVD 목록
           </NavLink>
-          <NavLink id="3" to="/mypage/set" css={Topbtn} onClick={handlePath}>
+          <NavLink id="3" to="/not404/mypage/set" css={Topbtn} onClick={handlePath}>
             설정
           </NavLink>
-
-          <NavLink id="4" to="/mypage/order" css={Topbtn} onClick={handlePath}>
+          <NavLink id="4" to="/not404/mypage/order" css={Topbtn} onClick={handlePath}>
             결제
           </NavLink>
-          <NavLink id="5" to="/mypage/terms" css={Topbtn} onClick={handlePath}>
+          <NavLink id="5" to="/not404/mypage/terms" css={Topbtn} onClick={handlePath}>
             약관
           </NavLink>
         </Grid>
@@ -138,10 +138,7 @@ const Topbtn = {
   align: "center",
   textDecoration: "none",
 }
-const Leftbtn = {
-  fontSize: "1.3rem",
-  align: "center",
-}
+
 const Leftcontainer = {
   borderStyle: "solid",
   maxWidth: "600px",

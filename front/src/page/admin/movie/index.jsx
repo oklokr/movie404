@@ -3,6 +3,7 @@ import { fetchMovieList } from "@/api/admin"
 import { css } from "@emotion/react"
 import { useNavigate, useLocation } from "react-router"
 import Button from "@mui/material/Button"
+import { useModal } from "@/component/modalProvider"
 
 const PAGE_SIZE = 10
 
@@ -12,6 +13,7 @@ export default function Movie() {
   const [total, setTotal] = useState(0)
   const navigate = useNavigate()
   const location = useLocation()
+  const { showAlert } = useModal()
 
   // 쿼리스트링에서 page 읽기
   const params = new URLSearchParams(location.search)
@@ -19,10 +21,14 @@ export default function Movie() {
   const [page, setPage] = useState(initialPage)
 
   const getList = async (name = "", pageNum = 1) => {
-    const res = await fetchMovieList({ movieName: name, page: pageNum, size: PAGE_SIZE })
-    const data = res.data || res
-    setList(data.list || [])
-    setTotal(data.total || 0)
+    try {
+      const res = await fetchMovieList({ movieName: name, page: pageNum, size: PAGE_SIZE })
+      const data = res.data || res
+      setList(data.list || [])
+      setTotal(data.total || 0)
+    } catch (err) {
+      showAlert({ message: "영화 목록을 불러오지 못했습니다.", type: "error" })
+    }
   }
 
   useEffect(() => {
@@ -77,7 +83,7 @@ export default function Movie() {
         <Button
           variant="outlined"
           sx={{ float: "right", minWidth: 90, fontWeight: 600 }}
-          onClick={() => navigate("/admin/movie/edit?page=" + page)}
+          onClick={() => navigate("/not404/admin/movie/edit?page=" + page)}
         >
           등록
         </Button>
@@ -97,7 +103,7 @@ export default function Movie() {
             <dl
               css={listRow}
               key={row.movieCode}
-              onClick={() => navigate(`/admin/movie/${row.movieCode}?page=${page}`)}
+              onClick={() => navigate(`/not404/admin/movie/${row.movieCode}?page=${page}`)}
               style={{ cursor: "pointer" }}
             >
               <dd>{row.movieCode}</dd>

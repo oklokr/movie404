@@ -29,13 +29,6 @@ function Login() {
   const { openModal, closeModal, showAlert } = useModal()
 
   const handleLogin = () => {
-    // openModal({
-    //   content: "test",
-    //   fn: () => {
-    //     console.log("이벤트")
-    //     closeModal()
-    //   },
-    // })
     setMessage({
       error: "",
       id: postForm.id === "" ? "※아이디를 입력해주세요." : "",
@@ -51,7 +44,7 @@ function Login() {
       const expiryDate = new Date(data.tokenValidityStr)
       document.cookie = `authToken=${data.token}; expires=${expiryDate}; path=/; Secure; SameSite=Strict`
       dispatch(setUserInfo(data))
-      navigate("/main")
+      navigate("/not404/main")
     })
   }
 
@@ -75,7 +68,7 @@ function Login() {
   return (
     <div css={loginWrapStyle}>
       <h1 css={logoStyle}>
-        <a href="/">Not404 Cinema</a>
+        <a href="/not404/main">Not404 Cinema</a>
       </h1>
       <div css={loginBoxStyle}>
         <h2>로그인</h2>
@@ -116,13 +109,13 @@ function Login() {
 
         <ul className="link-list">
           <li>
-            <Link to="/terms">회원가입</Link>
+            <Link to="/not404/terms">회원가입</Link>
           </li>
           <li>
-            <Link to="/findId">아이디 찾기</Link>
+            <Link to="/not404/findId">아이디 찾기</Link>
           </li>
           <li>
-            <Link to="/findPw">비밀번호 찾기</Link>
+            <Link to="/not404/findPw">비밀번호 찾기</Link>
           </li>
         </ul>
 

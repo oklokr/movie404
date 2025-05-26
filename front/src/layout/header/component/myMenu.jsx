@@ -21,33 +21,33 @@ export default function MyMenu({ state, fn_handleOpenMyMenu }) {
     <div className={state ? "active" : ""} css={myMenuStyle}>
       <ul>
         <li>
-          <Link to="/mypage" state={{ path: "1" }} onClick={fn_handleOpenMyMenu}>
+          <Link to="/not404/mypage/info" state={{ path: "1" }} onClick={fn_handleOpenMyMenu}>
             MY
           </Link>
         </li>
         <li>
-          <Link to="/mypage/dvd" state={{ path: "2" }} onClick={fn_handleOpenMyMenu}>
+          <Link to="/not404/mypage/dvd" state={{ path: "2" }} onClick={fn_handleOpenMyMenu}>
             나의 DVD
           </Link>
         </li>
         <li>
-          <Link to="/mypage/order" state={{ path: "4" }} onClick={fn_handleOpenMyMenu}>
+          <Link to="/not404/mypage/order" state={{ path: "4" }} onClick={fn_handleOpenMyMenu}>
             결제내역
           </Link>
         </li>
         <li>
-          <Link to="/community/qna" onClick={fn_handleOpenMyMenu}>
+          <Link to="/not404/community/qna" onClick={fn_handleOpenMyMenu}>
             고객센터
           </Link>
         </li>
         <li>
-          <Link to="/mypage/set" state={{ path: "3" }} onClick={fn_handleOpenMyMenu}>
+          <Link to="/not404/mypage/set" state={{ path: "3" }} onClick={fn_handleOpenMyMenu}>
             설정
           </Link>
         </li>
         {user?.info.userTpcd === "2" && (
           <li>
-            <Link to="/admin" onClick={fn_handleOpenMyMenu}>
+            <Link to="/not404/admin" onClick={fn_handleOpenMyMenu}>
               관리자
             </Link>
           </li>

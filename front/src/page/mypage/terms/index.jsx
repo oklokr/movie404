@@ -22,7 +22,6 @@ import { updateUserTerms } from "@/api/admin"
 import { NavLink } from "react-router"
 import { useModal } from "@/component/modalProvider"
 
-const { showAlert } = useModal()
 const userinfo = {
   id: "",
   adult: "",
@@ -37,7 +36,8 @@ const updateTerms = () => {
     terms: userinfo.terms,
   }).then((res) => {
     if (res.code === 200) {
-      showAlert({ message: "성공적으로 저장되었습니다.", type: "success" })
+      //showAlert({ message: "성공적으로 저장되었습니다.", type: "success" })
+      alert("성공적으로 저장되었습니다.")
       userinfo.terms = res.data.terms
     }
   })
@@ -60,13 +60,13 @@ function TermsMenu(props) {
     userinfo.terms = state.info.terms
     return (
       <>
-        <NavLink id="A" to="/mypage/terms/termA" css={Leftbtn} onClick={setSubpath_terms}>
+        <NavLink id="A" to="/not404/mypage/terms/termA" css={Leftbtn} onClick={setSubpath_terms}>
           서비스이용약관
         </NavLink>
-        <NavLink id="B" to="/mypage/terms/termB" css={Leftbtn} onClick={setSubpath_terms}>
+        <NavLink id="B" to="/not404/mypage/terms/termB" css={Leftbtn} onClick={setSubpath_terms}>
           개인정보처리방침
         </NavLink>
-        <NavLink id="C" to="/mypage/terms/termC" css={Leftbtn} onClick={setSubpath_terms}>
+        <NavLink id="C" to="/not404/mypage/terms/termC" css={Leftbtn} onClick={setSubpath_terms}>
           마케팅약관
         </NavLink>
       </>
@@ -75,6 +75,8 @@ function TermsMenu(props) {
 }
 
 function TermsA() {
+  const { showAlert } = useModal()
+
   function TermsASaveEvent(e) {
     if (userinfo.terms[0] == "0") {
       showAlert({ message: "동의하지 않으실 경우 서비스 이용이 불가합니다.", type: "error" })
@@ -174,6 +176,8 @@ function TermsA() {
   )
 }
 function TermsB() {
+  const { showAlert } = useModal()
+
   function TermsBSaveEvent(e) {
     if (userinfo.terms[1] == "0") {
       showAlert({ message: "동의하지 않으실 경우 서비스 이용이 불가합니다.", type: "error" })
@@ -295,8 +299,8 @@ function TermsC(props) {
           </AccordionSummary>
           <AccordionDetails css={cssAccordion}>
             <Typography>
-              해당 약관에 동의할 경우 오둥이 빵 gs25 출시와 같은 최신 오둥이 정보를 제공받으실 수
-              있습니다.
+              해당 약관에 동의할 경우 회원가입 시 등록한 이메일로 각종 이벤트, 쿠폰 등의 정보를
+              제공받으실 수 있습니다.
             </Typography>
           </AccordionDetails>
         </Accordion>

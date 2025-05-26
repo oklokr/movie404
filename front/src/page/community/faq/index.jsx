@@ -4,6 +4,7 @@ import { useSelector } from "react-redux"
 import { useNavigate } from "react-router"
 import { selectUser } from "@/store/selectors"
 import { communityGetFaqList } from "@/api/community"
+import { useModal } from "@/component/modalProvider"
 
 function Faq() {
   const user = useSelector(selectUser)
@@ -11,6 +12,7 @@ function Faq() {
   const navigate = useNavigate()
   const [faqList, setFaqList] = useState([])
   const [openIndex, setOpenIndex] = useState(null)
+  const { openModal, closeModal, showAlert } = useModal()
 
   useEffect(() => {
     communityGetFaqList()
@@ -32,9 +34,9 @@ function Faq() {
 
   const handleWriteOrEdit = () => {
     if (openIndex === null) {
-      navigate("/community/faq/write")
+      navigate("/not404/community/faq/write")
     } else {
-      navigate(`/community/faq/${faqList[openIndex].faqCode}/edit`)
+      navigate(`/not404/community/faq/${faqList[openIndex].faqCode}/edit`)
     }
   }
 

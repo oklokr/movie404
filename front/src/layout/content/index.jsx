@@ -5,7 +5,10 @@ export default function content() {
   const { pathname } = useLocation()
   return (
     <>
-      <div className={`container ${pathname === "/main" ? "main-page" : ""}`} css={containerStyle}>
+      <div
+        className={`container ${pathname === "/not404/main" ? "main-page" : ""}`}
+        css={containerStyle}
+      >
         <Outlet />
       </div>
     </>
@@ -14,4 +17,5 @@ export default function content() {
 
 const containerStyle = css`
   padding-top: 58px;
+  box-sizing: border-box;
 `

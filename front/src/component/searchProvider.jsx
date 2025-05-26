@@ -170,7 +170,7 @@ export function SearchProvider({ children }) {
     position: fixed;
     top: 0;
     left: 0;
-    background: ${pathname === "/main" ? "#000" : "#fff"};
+    background: ${pathname === "/not404/main" ? "#000" : "#fff"};
     opacity: 0;
     transform: scale(0);
     transition:
@@ -224,7 +224,7 @@ export function SearchProvider({ children }) {
     position: absolute;
     top: 0;
     right: 0;
-    color: ${pathname === "/main" ? "#fff" : "#000"};
+    color: ${pathname === "/not404/main" ? "#fff" : "#000"};
     z-index: 10;
     svg {
       width: 48px;
@@ -239,7 +239,7 @@ export function SearchProvider({ children }) {
       {children}
       {searchListVisible && (
         <div
-          className={`${pathname === "/main" ? "main-page" : ""} ${active ? "active" : ""}`}
+          className={`${pathname === "/not404/main" ? "main-page" : ""} ${active ? "active" : ""}`}
           css={searchProviderStyle}
           ref={movieWrapRef}
         >

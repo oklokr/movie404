@@ -3,8 +3,8 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.project.repository.UserMapper">
-    <select id="loginUser" resultType="com.project.model.UserDto">
+<mapper namespace="com.example.not404.repository.UserMapper">
+    <select id="loginUser" resultType="com.example.not404.model.UserDto">
         SELECT
             m.USER_ID,
             m.PASSWD,
@@ -31,7 +31,7 @@
     </select>
 
     <!-- 사용자 정보 조회 -->
-    <select id="getUser" resultType="com.project.model.UserDto">
+    <select id="getUser" resultType="com.example.not404.model.UserDto">
         SELECT
             m.USER_ID,
             m.PASSWD,
@@ -81,7 +81,7 @@
     </update>
 
     <!-- 사용자 목록 조회 -->
-    <select id="getUserList" resultType="com.project.model.UserDto">
+    <select id="getUserList" resultType="com.example.not404.model.UserDto">
         SELECT
             m.USER_ID,
             m.PASSWD,
@@ -110,7 +110,7 @@
         </if>
     </select>
 
-    <select id="getUserDetail" resultType="com.project.model.UserDto">
+    <select id="getUserDetail" resultType="com.example.not404.model.UserDto">
         SELECT
             m.USER_ID,
             m.PASSWD,
@@ -153,16 +153,22 @@
     <select id="checkEmail" resultType="int">
         SELECT COUNT(*) FROM MEMBERS WHERE EMAIL=#{email}
     </select>
-    <insert id="insertUser" parameterType="com.project.model.UserDto">
+          <select id="checkTel" resultType="int">
+        SELECT COUNT(*) FROM MEMBERS WHERE TEL=#{tel}
+    </select>
+    <insert id="insertUser" parameterType="com.example.not404.model.UserDto">
         INSERT MEMBERS 
         (USER_ID, PASSWD, USER_NAME, EMAIL, TEL, SIGNUP_DATE, 
         LANG_TPCD, DATE_TPCD, VIEW_ADULT, SAVE_HISTORY, TERMS, USER_TPCD)
         VALUES
-        (#{userId}, #{passwd}, #{userName}, #{email}, "01088889999", DATE_FORMAT(now(), '%Y-%m-%d'), 
-        '2','1','N','Y',"111",'1')
+        (#{userId}, #{passwd}, #{userName}, #{email}, "", DATE_FORMAT(now(), '%Y-%m-%d'), 
+        '2','1','N','Y',#{terms},'1')
     </insert>
     <select id="selectIdbyEmail" resultType="String">
         SELECT USER_ID FROM MEMBERS WHERE EMAIL=#{email}
+    </select>
+    <select id="selectIdbyTel" resultType="String">
+        SELECT USER_ID FROM MEMBERS WHERE TEL=#{tel}
     </select>
     <select id="checkUserByIdEmail" resultType="int">
         SELECT COUNT(*) FROM MEMBERS WHERE EMAIL=#{email} and USER_ID=#{id}
@@ -175,7 +181,7 @@
     UPDATE MEMBERS SET VIEW_ADULT=#{adult}, LANG_TPCD=#{lang}, DATE_TPCD=#{dateformat}, SAVE_HISTORY=#{savehistory}, AGE=#{age} WHERE USER_ID=#{id}
     </update>
   <update id="updateUser">
-    UPDATE MEMBERS SET PASSWD=#{pwd}, EMAIL=#{email} WHERE USER_ID=#{id}
+    UPDATE MEMBERS SET PASSWD=#{pwd}, EMAIL=#{email}, TEL=#{tel} WHERE USER_ID=#{id}
     </update>
     <select id="selectOrderList" resultType="OrderDto">
        SELECT oh.ORDER_CODE, m.MOVIE_NAME, oh.PRICE, DATE_FORMAT(oh.ORDER_DATE, '%Y-%m-%d %H:%i')as ORDER_DATE, oh.CARD_NUM
@@ -185,4 +191,7 @@
     <select id="selectTermsList" resultType="TermDto">
      SELECT TERMS_TITLE, TERMS_CONTENT, TERMS_REQUIRED FROM TERMS
     </select>
+   
+
+  
 </mapper>

@@ -9,10 +9,11 @@ import FormControl from "@mui/material/FormControl"
 import FormLabel from "@mui/material/FormLabel"
 import { useState } from "react"
 import { sendAuthEmail, signupCheckEmail } from "@/api/signup"
-import { selectIdbyEmail } from "@/api/findid"
+import { selectIdbyEmail, selectIdbyTel } from "@/api/findid"
 import { useModal } from "@/component/modalProvider"
+import { useNavigate } from "react-router"
+import { checkTel, sendSMS, smsAuth } from "@/api/admin"
 
-const { openModal, showAlert } = useModal()
 const findid_info = {
   id: "",
   pwd: "",
@@ -20,14 +21,19 @@ const findid_info = {
   authcode: "",
 }
 function findId() {
+  const { openModal, showAlert } = useModal()
+
   const [radio, setRadio] = useState("email")
   const [TelButtonActive, setTelButtonActive] = useState(0)
   const [EmailButtonActive, setEmailButtonActive] = useState(0)
   const [AuthButtonActive, setAuthButtonActive] = useState(0)
+  const [AuthTelButtonActive, setAuthTelButtonActive] = useState(0)
   const [commentTel, setCommentTel] = useState("휴대폰 번호를 입력해주세요.")
   const [commentEmail, setCommentEmail] = useState("이메일을 입력해주세요")
   const [Email, setEmail] = useState("")
+  const [tel, setTel] = useState("")
   const [InputCode, setInputCode] = useState("")
+  const navigate = useNavigate()
 
   function handleChangeEmail(e) {
     const val = e.target.value
@@ -48,9 +54,11 @@ function findId() {
   }
   function handleChangeTel(e) {
     var val = e.target.value
+    setTel(val)
     var length = val.length
 
     setTelButtonActive(0)
+    setAuthButtonActive(0)
     if (length == 14) {
       val = val.substring(0, length - 1)
       e.target.value = val
@@ -64,6 +72,7 @@ function findId() {
       val = val.substring(0, 3) + "-" + val.substring(3, length)
       e.target.value = val
     }
+    setTel(e.target.value.replaceAll("-", ""))
   }
   const sendEmail = () => {
     sendAuthEmail({
@@ -101,8 +110,7 @@ function findId() {
   function authEmailCheck(e) {
     if (InputCode == findid_info.authcode) {
       showAlert({ message: "인증번호가 일치합니다!", type: "success" })
-
-      showId()
+      showIdbyEmail()
     } else showAlert({ message: "인증번호가 일치하지 않습니다!", type: "error" })
   }
 
@@ -111,17 +119,73 @@ function findId() {
     setInputCode(val)
   }
 
-  const showId = () => {
+  const showIdbyEmail = () => {
     selectIdbyEmail({
       email: findid_info.email,
     }).then((res) => {
       if (res.code === 200) {
-        showAlert({ message: "아이디 : " + res.data, type: "success" })
+        //openModal({ message: "아이디 : " + res.data, type: "confirm" })
+        //alert("아이디:" + res.data)
+        navigate("/not404/resultId", { state: res.data })
       }
     })
   }
+  const showIdbytel = () => {
+    selectIdbyTel({
+      phone: tel,
+    }).then((res) => {
+      if (res.code === 200) {
+        //openModal({ message: "아이디 : " + res.data, type: "confirm" })
+        //alert("아이디:" + res.data)
+        navigate("/not404/resultId", { state: res.data })
+      }
+    })
+  }
+  const [sendsms, isSendSMS] = useState(0)
 
-  function testbutton(e) {}
+  function setTelEventHandler(e) {
+    const sendsms = () => {
+      sendSMS({ phone: tel }).then((res) => {
+        console.log(res)
+        showAlert({
+          message: "문자메시지를 전송했습니다. 휴대폰 인증번호를 입력해주세요",
+          type: "success",
+        })
+
+        isSendSMS(1)
+        setAuthTelButtonActive(1)
+      })
+    }
+
+    checkTel({ phone: tel }).then((res) => {
+      if (res.code == 200) {
+        setAuthTelButtonActive(0)
+        showAlert({ message: "등록되지 않은 번호입니다.", type: "error" })
+      } else {
+        sendsms()
+      }
+    })
+  }
+  const [smsinput, setSMSInput] = useState("")
+
+  function handleChangeAuthTel(e) {
+    const val = e.target.value
+    setSMSInput(val)
+  }
+
+  function handleSMSAuth(e) {
+    const smsauth = () => {
+      smsAuth({ code: smsinput }).then((res) => {
+        console.log(res)
+        if (res.code === 200) {
+          showIdbytel()
+        } else {
+          showAlert({ message: "인증번호가 일치하지 않습니다.", type: "error" })
+        }
+      })
+    }
+    smsauth()
+  }
   return (
     <>
       <h1> 아이디 찾기 </h1>
@@ -184,28 +248,54 @@ function findId() {
         </>
       ) : (
         <>
-          <InputLabel className="input-form">휴대폰 인증 </InputLabel>
-          <TextField
-            id="signup_id"
-            aria-describedby="outlined-weight-helper-text"
-            required
-            helperText={commentTel}
-            onChange={handleChangeTel}
-          />
-          {TelButtonActive == 0 ? (
-            <Button variant="contained" disabled>
-              휴대폰 인증
-            </Button>
-          ) : (
-            <Button variant="contained" onClick={testbutton}>
-              휴대폰 인증
-            </Button>
-          )}
+          <div className="input-form">
+            <InputLabel className="input-form">휴대폰 인증 </InputLabel>
+            <TextField
+              id="signup_id"
+              aria-describedby="outlined-weight-helper-text"
+              required
+              helperText={commentTel}
+              onChange={handleChangeTel}
+            />
+            {TelButtonActive == 0 ? (
+              <Button variant="contained" disabled>
+                휴대폰 인증
+              </Button>
+            ) : (
+              <Button variant="contained" onClick={setTelEventHandler}>
+                휴대폰 인증
+              </Button>
+            )}
+          </div>
+          <div className="input-form">
+            <InputLabel>인증번호 </InputLabel>
+            <OutlinedInput
+              id="signup_email"
+              aria-describedby="outlined-weight-helper-text"
+              required
+              onChange={handleChangeAuthTel}
+            />
+            {AuthTelButtonActive == 0 ? (
+              <Button variant="contained" disabled>
+                인증요청
+              </Button>
+            ) : (
+              <Button variant="contained" onClick={handleSMSAuth}>
+                인증요청
+              </Button>
+            )}
+          </div>
         </>
       )}
 
-      <Button variant="outlined">이전</Button>
-      <Button variant="contained">로그인</Button>
+      <Button
+        variant="outlined"
+        onClick={() => {
+          navigate("/not404/login")
+        }}
+      >
+        이전
+      </Button>
     </>
   )
 }

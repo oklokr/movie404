@@ -13,7 +13,13 @@ import { ModalProvider } from "@/component/modalProvider"
 import { PopupProvider } from "@/component/popupProvider"
 import PopupContainer from "@/component/popupContainer"
 
-const publicPaths = ["/login", "/signup", "/findId", "/findPw", "/404"]
+const publicPaths = [
+  "/not404/login",
+  "/not404/signup",
+  "/not404/findId",
+  "/not404/findPw",
+  "/not404/404",
+]
 
 export default function RootLayout() {
   const location = useLocation()
@@ -31,14 +37,19 @@ export default function RootLayout() {
     : null
 
   useEffect(() => {
+    if (location.pathname === "/not404" || location.pathname === "/not404/") {
+      console.log("메인 이동")
+
+      navigate("/not404/main")
+    }
     if (!code) dispatch(setCommonCode(commonCode))
     if (token && !user.info) {
       commonGetUserInfo().then((res) => {
         if (res.code === 200) dispatch(setUserInfo(res.data))
-        else navigate("/login", { replace: true })
+        else navigate("/not404/login", { replace: true })
       })
     }
-    if (isPublic && token) navigate("/main", { replace: true })
+    if (isPublic && token) navigate("/not404/main", { replace: true })
 
     window.scrollTo(0, 0)
   }, [location.pathname])

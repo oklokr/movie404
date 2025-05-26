@@ -1,0 +1,32 @@
+package com.example.not404.controller.auth;
+
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.not404.model.ApiResponse;
+import com.example.not404.model.UserDto;
+import com.example.not404.service.UserService;
+
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+@RestController
+@RequestMapping("/api")
+public class Login {
+    @Autowired
+    private UserService userService;
+    
+    @PostMapping("/login")
+    public ApiResponse login(@RequestBody Map<String, Object> requestBody) {
+        String id = (String) requestBody.get("id");
+        String passwd = (String) requestBody.get("passwd");
+        UserDto userInfo = userService.loginUser(id, passwd);
+
+        if (userInfo == null) {
+            return new ApiResponse(401, "일치하는 회원정보가 없습니다.", null);
+        }
+        return new ApiResponse(userInfo);
+    }
+}

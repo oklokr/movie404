@@ -17,7 +17,7 @@ import { useNavigate } from "react-router"
 // create an axios instance
 const service = axios.create({
   // baseURL: process.env.VUE_APP_BASE_API,
-  baseURL: "http://localhost:9080",
+  baseURL: "http://localhost:8080/not404",
   timeout: 60000 * 10,
 })
 

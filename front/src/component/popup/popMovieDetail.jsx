@@ -44,7 +44,7 @@ export default function popMovieDetail(props) {
               content: "결제가 완료되었습니다!",
               fn: () => {
                 closePopup()
-                navigate("/mypage")
+                navigate("/not404/mypage")
               },
             })
             console.log(validateRes.data)

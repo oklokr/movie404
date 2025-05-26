@@ -26,13 +26,18 @@ function OrderListMenu(props) {
     <>
       <NavLink
         id="orderlist"
-        to="/mypage/order/orderlist"
+        to="/not404/mypage/order/orderlist"
         css={Leftbtn}
         onClick={setSubpath_orderlist}
       >
         결제내역
       </NavLink>
-      <NavLink id="payment" to="/mypage/order/payment" css={Leftbtn} onClick={setSubpath_orderlist}>
+      <NavLink
+        id="payment"
+        to="/not404/mypage/order/payment"
+        css={Leftbtn}
+        onClick={setSubpath_orderlist}
+      >
         카드관리
       </NavLink>
     </>

@@ -14,7 +14,7 @@ function DvdMenu() {
   userid = state.info.userId
 
   return (
-    <NavLink id="basic-button" to="/mypage/dvd/total" css={Leftbtn}>
+    <NavLink id="basic-button" to="/not404/mypage/dvd/total" css={Leftbtn}>
       전체
     </NavLink>
   )

@@ -15,8 +15,24 @@ import { CommonProvider, useCommon } from "@/store/commonContext"
 import "swiper/css"
 import "swiper/css/pagination"
 import "swiper/css/navigation"
+import { Box, CircularProgress, Typography } from "@mui/material"
 
-const Loading = () => <div>로딩중.</div>
+const Loading = () => (
+  <Box
+    sx={{
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      bgcolor: "#222",
+      color: "#fff",
+    }}
+  >
+    <CircularProgress color="inherit" />
+    <Typography sx={{ mt: 2 }}>로딩중입니다...</Typography>
+  </Box>
+)
 
 const AppLoader = () => {
   const { ready } = useCommon()

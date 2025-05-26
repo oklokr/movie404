@@ -13,7 +13,6 @@ import { insertUser, sendAuthEmail, signupCheckEmail, signupCheckId } from "@/ap
 import { useNavigate, useLocation } from "react-router"
 import { useModal } from "@/component/modalProvider"
 
-const { showAlert } = useModal()
 const user_info = {
   id: "",
   pwd: "",
@@ -22,6 +21,8 @@ const user_info = {
   authcode: "",
 }
 function signup() {
+  const { showAlert } = useModal()
+
   const [commentId, setCommentId] = useState("아이디를 입력해주세요")
   const [commentPW, setCommentPW] = useState("비밀번호를 입력해주세요")
   const [commentRPW, setCommentRPW] = useState("비밀번호 재확인을 입력해주세요")
@@ -133,12 +134,14 @@ function signup() {
       id: user_info.id,
       pwd: user_info.pwd,
       email: user_info.email,
-      terms: location.state,
+      terms: location.state.terms,
     }).then((res) => {
       if (res.code === 200) {
         showAlert({ message: "가입성공!", type: "success" })
 
-        navigate("/result")
+        navigate("/not404/result", { state: user_info.id })
+      } else {
+        showAlert({ message: "가입실패!", type: "fail" })
       }
     })
   }
@@ -224,7 +227,7 @@ function signup() {
     setInputCode(e.target.value)
   }
   function previousPage(e) {
-    navigate("/terms")
+    navigate("/not404/terms")
   }
   return (
     <>

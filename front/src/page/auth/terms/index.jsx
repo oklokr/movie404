@@ -13,9 +13,10 @@ import { useNavigate } from "react-router"
 import { signupTerms } from "@/api/signup"
 import { useModal } from "@/component/modalProvider"
 
-const { showAlert } = useModal()
 //let list=[]
 function terms() {
+  const { showAlert } = useModal()
+
   const [list, setlist] = useState([])
   const [TermA, setTermA] = useState("")
   const [TermB, setTermB] = useState("")
@@ -58,7 +59,7 @@ function terms() {
         message: "다음으로 넘어갑니다.",
         type: "confirm",
       })
-      navigate("/signup", { state: { terms: TermA + TermB + TermC } })
+      navigate("/not404/signup", { state: { terms: TermA + TermB + TermC } })
     } else if (TermC == "") {
       showAlert({
         message: "모든 약관을 확인하시고 동의여부를 클릭해주세요.",
@@ -74,7 +75,7 @@ function terms() {
   const navigate = useNavigate()
 
   function previousPage(e) {
-    navigate("/main")
+    navigate("/not404/login")
   }
 
   return (

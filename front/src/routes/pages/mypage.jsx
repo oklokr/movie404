@@ -9,60 +9,60 @@ const Terms = lazy(() => import("@/page/mypage/terms"))
 
 const mypage = [
   {
-    path: "/mypage",
+    path: "mypage",
     Component: Mypage,
     children: [
       {
-        path: "/mypage/info",
+        path: "info",
         Component: Info,
       },
 
       {
-        path: "/mypage/info/user",
+        path: "info/user",
         Component: Info,
       },
       {
-        path: "/mypage/set",
+        path: "set",
         Component: Set,
       },
       {
-        path: "/mypage/set/user",
+        path: "set/user",
         Component: Set,
       },
       {
-        path: "/mypage/dvd",
+        path: "dvd",
         Component: Dvd,
       },
       {
-        path: "/mypage/dvd/total",
+        path: "dvd/total",
         Component: Dvd,
       },
       {
-        path: "/mypage/order/",
+        path: "order/",
         Component: Order,
       },
       {
-        path: "/mypage/order/orderlist",
+        path: "order/orderlist",
         Component: Order,
       },
       {
-        path: "/mypage/order/payment",
+        path: "order/payment",
         Component: Order,
       },
       {
-        path: "/mypage/terms/",
+        path: "terms/",
         Component: Terms,
       },
       {
-        path: "/mypage/terms/termA",
+        path: "terms/termA",
         Component: Terms,
       },
       {
-        path: "/mypage/terms/termB",
+        path: "terms/termB",
         Component: Terms,
       },
       {
-        path: "/mypage/terms/termC",
+        path: "terms/termC",
         Component: Terms,
       },
     ],

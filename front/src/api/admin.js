@@ -194,3 +194,10 @@ export function smsAuth(data) {
     data,
   }).then((res) => res)
 }
+export function checkTel(data) {
+  return request({
+    url: "api/admin/checktel",
+    method: "post",
+    data,
+  }).then((res) => res)
+}

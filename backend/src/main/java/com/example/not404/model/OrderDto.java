@@ -1,0 +1,14 @@
+package com.example.not404.model;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class OrderDto{
+    private String orderCode;
+    private String movieName;
+    private Long price;
+    private String orderDate;
+    private String cardNum;
+}

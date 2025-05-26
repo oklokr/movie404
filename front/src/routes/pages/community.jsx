@@ -11,7 +11,7 @@ const NoticeEdit = lazy(() => import("@/page/community/notice/component/edit"))
 
 const community = [
   {
-    path: "/community",
+    path: "community",
     Component: Community,
     children: [
       { path: "", Component: Notice },

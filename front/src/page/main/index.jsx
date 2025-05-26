@@ -385,20 +385,6 @@ function MainPage() {
           ))}
         </div>
       </section>
-
-      <section className="qna">
-        <h3>자주 묻는 질문</h3>
-        <div css={faqBox}>
-          {faqList.map((faq, idx) => (
-            <div key={idx}>
-              <div css={faqQuestion} onClick={() => setOpenFAQ(openFAQ === idx ? null : idx)}>
-                Q. {faq.q}
-              </div>
-              {openFAQ === idx && <div css={faqAnswer}>A. {faq.a}</div>}
-            </div>
-          ))}
-        </div>
-      </section>
     </div>
   )
 }

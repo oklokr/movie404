@@ -1,4 +1,4 @@
-import { sendSMS, smsAuth, updateUser } from "@/api/admin"
+import { checkTel, sendSMS, smsAuth, updateUser } from "@/api/admin"
 import { sendAuthEmail, signupCheckEmail } from "@/api/signup"
 import { selectUser } from "@/store/selectors"
 import {
@@ -14,7 +14,6 @@ import { useState } from "react"
 import { useSelector } from "react-redux"
 import { Navigate, NavLink, useNavigate } from "react-router"
 import { useModal } from "@/component/modalProvider"
-const { openModal, showAlert } = useModal()
 
 const userchange = {
   pwd: "",
@@ -31,7 +30,7 @@ const userchange = {
 
 function UserMenu() {
   return (
-    <NavLink id="basic-button" to="/mypage/info/user" css={Leftbtn}>
+    <NavLink id="basic-button" to="/not404/mypage/info/user" css={Leftbtn}>
       기본정보
     </NavLink>
   )
@@ -56,6 +55,7 @@ function User(props) {
     },
   ]
   const navigate = useNavigate()
+  const { showAlert } = useModal()
 
   let state = useSelector(selectUser)
   if (!state.info || state.info === null || state.info === undefined) {
@@ -116,7 +116,7 @@ function User(props) {
         id: userinfo.id,
         pwd: userchange.pwd,
         email: userchange.email + "@" + userchange.domain,
-        // tel: userchange.tel,
+        tel: tel,
       }).then((res) => {
         if (res.code === 200) {
           showAlert({ message: "수정완료", type: "success" })
@@ -252,10 +252,25 @@ function User(props) {
       const sendsms = () => {
         sendSMS({ phone: tel }).then((res) => {
           console.log(res)
+          showAlert({
+            message: "문자메시지를 전송했습니다. 휴대폰 인증번호를 입력해주세요",
+            type: "success",
+          })
+
           isSendSMS(1)
         })
       }
-      sendsms()
+
+      checkTel({ phone: tel }).then((res) => {
+        if (res.code === 200) {
+          sendsms()
+        } else {
+          showAlert({
+            message: "이미 등록된 휴대폰 번호입니다.",
+            type: "error",
+          })
+        }
+      })
     }
     function handleSMSAuth(e) {
       const smsauth = () => {
@@ -263,8 +278,10 @@ function User(props) {
           console.log(res)
           if (res.code === 200) {
             showAlert({ message: "인증성공!", type: "success" })
-
             isSendSMS(0)
+            userchange.tel = tel
+          } else {
+            showAlert({ message: "인증번호가 일치하지 않습니다.", type: "error" })
           }
         })
       }
@@ -423,7 +440,7 @@ function User(props) {
         <Button
           variant="outlined"
           onClick={() => {
-            navigate("/main")
+            navigate("/not404/main")
           }}
         >
           취소

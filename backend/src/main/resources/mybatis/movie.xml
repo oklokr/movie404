@@ -3,9 +3,9 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.project.repository.MovieMapper">
+<mapper namespace="com.example.not404.repository.MovieMapper">
 
-  <select id="selectMovieList" resultType="com.project.model.MovieDto">
+  <select id="selectMovieList" resultType="com.example.not404.model.MovieDto">
     SELECT
       m.MOVIE_CODE   AS movieCode,
       m.MOVIE_NAME   AS movieName,
@@ -77,7 +77,7 @@
     </where>
   </select>
 
-  <select id="selectMovieDetail" resultType="com.project.model.MovieDto">
+  <select id="selectMovieDetail" resultType="com.example.not404.model.MovieDto">
     SELECT
       m.MOVIE_CODE as movieCode,
       m.MOVIE_NAME as movieName,
@@ -113,7 +113,7 @@
     SELECT CREATOR_CODE as code, CREATOR_NAME as name FROM CREATOR
   </select>
 
-  <insert id="insertMovie" parameterType="com.project.model.MovieDto">
+  <insert id="insertMovie" parameterType="com.example.not404.model.MovieDto">
     INSERT INTO MOVIE (
       MOVIE_CODE, GENRE_CODEA, GENRE_CODEB, GENRE_CODEC,
       MOVIE_NAME, DIRECT_CODEA, DIRECT_CODEB,
@@ -132,7 +132,7 @@
     VALUES (#{movieCode}, #{price}, #{startDate}, #{endDate}, #{discount})
   </insert>
 
-  <update id="updateMovie" parameterType="com.project.model.MovieDto">
+  <update id="updateMovie" parameterType="com.example.not404.model.MovieDto">
     UPDATE MOVIE SET
       GENRE_CODEA = #{genreCodeA},
       GENRE_CODEB = #{genreCodeB},
@@ -181,7 +181,7 @@
     DELETE FROM vod WHERE MOVIE_CODE = #{movieCode}
   </delete>
 
-  <select id = "selectUserVodList" resultType="com.project.model.VodDto">
+  <select id = "selectUserVodList" resultType="com.example.not404.model.VodDto">
   select mv.`POSTER` as poster, mv.`MOVIE_NAME` as movieName, mv.`SYNOPSIS`as synopsis, 
 wh.`WATCH_DATE` as watchdate, wh.`WATCH_TIME` as watchtime, ca.`CREATOR_NAME` as directorA,
 cb.`CREATOR_NAME` as actorA, cc.`CREATOR_NAME` as actorB, cd.`CREATOR_NAME` as actorC

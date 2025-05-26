@@ -5,7 +5,7 @@ const Reservation = lazy(() => import("@/page/main/reservation"))
 
 const main = [
   {
-    path: "/main",
+    path: "main",
     Component: Content,
     children: [
       {
